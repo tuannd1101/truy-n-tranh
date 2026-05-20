@@ -1,0 +1,1184 @@
+﻿<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>MangaFlow - Project Library</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Anton&amp;family=Hanken+Grotesk:ital,wght@0,100..900;1,100..900&amp;family=Syne:wght@400..800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "tertiary-fixed": "#ffe16d",
+                        "on-background": "#e4e1ed",
+                        "on-primary-fixed": "#3f001b",
+                        "on-error-container": "#ffdad6",
+                        "secondary-fixed": "#9cf0ff",
+                        "primary-fixed-dim": "#ffb1c5",
+                        "on-tertiary": "#3a3000",
+                        "surface-container-low": "#1b1b23",
+                        "on-primary-fixed-variant": "#8c0a46",
+                        "inverse-on-surface": "#302f39",
+                        "error": "#ffb4ab",
+                        "error-container": "#93000a",
+                        "secondary": "#bdf4ff",
+                        "on-tertiary-fixed-variant": "#544600",
+                        "on-error": "#690005",
+                        "inverse-primary": "#ac2a5d",
+                        "on-secondary-fixed-variant": "#004f58",
+                        "surface-variant": "#34343d",
+                        "surface-container-high": "#292932",
+                        "on-primary": "#650030",
+                        "primary-container": "#ff6b9d",
+                        "on-secondary-fixed": "#001f24",
+                        "secondary-fixed-dim": "#00daf3",
+                        "secondary-container": "#00e3fd",
+                        "on-tertiary-container": "#403500",
+                        "primary": "#ffb1c5",
+                        "tertiary-fixed-dim": "#e9c400",
+                        "on-surface": "#e4e1ed",
+                        "on-primary-container": "#6e0035",
+                        "surface-bright": "#393842",
+                        "on-tertiary-fixed": "#221b00",
+                        "surface-container": "#1f1f28",
+                        "surface-container-lowest": "#0d0d16",
+                        "on-secondary-container": "#00616d",
+                        "inverse-surface": "#e4e1ed",
+                        "tertiary-container": "#ba9c00",
+                        "background": "#13131b",
+                        "on-secondary": "#00363d",
+                        "surface-tint": "#ffb1c5",
+                        "outline-variant": "#574146",
+                        "surface-container-highest": "#34343d",
+                        "on-surface-variant": "#ddbfc5",
+                        "primary-fixed": "#ffd9e1",
+                        "outline": "#a58a90",
+                        "surface-dim": "#13131b",
+                        "tertiary": "#e9c400",
+                        "surface": "#13131b"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "sfx-offset": "-12px",
+                        "margin-edge": "32px",
+                        "panel-gutter": "24px",
+                        "frame-border": "4px"
+                    },
+                    "fontFamily": {
+                        "label-lg": ["Syne"],
+                        "display-lg": ["Anton"],
+                        "headline-lg-mobile": ["Anton"],
+                        "headline-sm": ["Anton"],
+                        "label-sm": ["Syne"],
+                        "headline-md": ["Anton"],
+                        "headline-lg": ["Anton"],
+                        "body-lg": ["Hanken Grotesk"],
+                        "body-md": ["Hanken Grotesk"]
+                    },
+                    "fontSize": {
+                        "label-lg": ["14px", { "lineHeight": "20px", "fontWeight": "700" }],
+                        "display-lg": ["80px", { "lineHeight": "80px", "letterSpacing": "-0.02em", "fontWeight": "400" }],
+                        "headline-lg-mobile": ["36px", { "lineHeight": "40px", "fontWeight": "400" }],
+                        "headline-sm": ["24px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "label-sm": ["12px", { "lineHeight": "16px", "fontWeight": "700" }],
+                        "headline-md": ["32px", { "lineHeight": "36px", "fontWeight": "400" }],
+                        "headline-lg": ["48px", { "lineHeight": "52px", "letterSpacing": "0.04em", "fontWeight": "400" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .screentone-bg {
+            background-image: radial-gradient(#34343d 15%, transparent 16%), radial-gradient(#34343d 15%, transparent 16%);
+            background-size: 8px 8px;
+            background-position: 0 0, 4px 4px;
+        }
+        .watermark-kanji {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-15deg);
+            font-size: 40vw;
+            color: rgba(255, 255, 255, 0.02);
+            z-index: -1;
+            pointer-events: none;
+            font-weight: 900;
+        }
+        .manga-spine-card {
+            transform: perspective(1000px) rotateY(-10deg) rotateX(5deg);
+            transform-style: preserve-3d;
+            transition: transform 0.3s ease;
+        }
+        .manga-spine-card:hover {
+            transform: perspective(1000px) rotateY(0deg) rotateX(0deg) translateZ(20px);
+        }
+        .ink-splash-fab {
+            clip-path: polygon(50% 0%, 83% 12%, 100% 43%, 94% 78%, 68% 100%, 32% 100%, 6% 78%, 0% 43%, 17% 12%);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background font-body-md min-h-screen relative overflow-x-hidden pb-24 md:pb-0">
+<!-- Background Watermark -->
+<div class="watermark-kanji">æ¼«ç”»</div>
+<!-- TopAppBar (Web & Mobile) -->
+<header class="bg-background dark:bg-background border-b-4 border-on-background dark:border-on-background-variant shadow-[4px_4px_0px_0px_rgba(255,177,197,1)] sticky top-0 z-40">
+<div class="flex justify-between items-center w-full px-margin-edge py-4 max-w-7xl mx-auto">
+<div class="flex items-center gap-4">
+<span class="font-display-lg text-headline-lg-mobile md:text-headline-lg text-primary-container dark:text-primary tracking-tighter uppercase">MangaFlow</span>
+</div>
+<!-- Web Navigation -->
+<nav class="hidden md:flex gap-8">
+<a class="text-on-background opacity-70 hover:bg-surface-variant transition-colors px-4 py-2 font-label-lg text-label-lg active:translate-y-1 active:translate-x-1 duration-75" href="#">HOME</a>
+<a class="text-on-background opacity-70 hover:bg-surface-variant transition-colors px-4 py-2 font-label-lg text-label-lg active:translate-y-1 active:translate-x-1 duration-75" href="#">READ</a>
+<a class="text-on-background opacity-70 hover:bg-surface-variant transition-colors px-4 py-2 font-label-lg text-label-lg active:translate-y-1 active:translate-x-1 duration-75" href="#">CREATE</a>
+<a class="text-primary font-bold px-4 py-2 font-label-lg text-label-lg active:translate-y-1 active:translate-x-1 duration-75" href="#">LIBRARY</a>
+</nav>
+<button class="text-primary dark:text-primary-fixed-dim hover:bg-surface-variant transition-colors p-2 rounded-full active:translate-y-1 active:translate-x-1 duration-75">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">account_circle</span>
+</button>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="max-w-7xl mx-auto px-4 md:px-margin-edge py-8 md:py-12">
+<!-- Header Section -->
+<div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-12 gap-6 relative">
+<div class="relative z-10">
+<h1 class="font-display-lg text-display-lg text-on-background tracking-tighter uppercase leading-none transform -skew-x-6">LIBRARY</h1>
+<p class="font-body-lg text-on-surface-variant mt-2 max-w-xl">Your creative archive. Manage, review, and organize your manga projects.</p>
+</div>
+<!-- Filter Chips (Japanese/English) -->
+<div class="flex flex-wrap gap-3 z-10">
+<button class="bg-primary text-on-primary border-frame-border border-black font-label-lg px-4 py-2 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all flex flex-col items-center">
+<span class="text-xs">ã™ã¹ã¦</span>
+<span>All</span>
+</button>
+<button class="bg-surface-container-high text-on-surface border-frame-border border-black font-label-lg px-4 py-2 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all flex flex-col items-center">
+<span class="text-xs">å°‘å¹´</span>
+<span>Shounen</span>
+</button>
+<button class="bg-surface-container-high text-on-surface border-frame-border border-black font-label-lg px-4 py-2 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all flex flex-col items-center">
+<span class="text-xs">é€£è¼‰ä¸­</span>
+<span>Ongoing</span>
+</button>
+</div>
+</div>
+<!-- 2-Column Manga Bookshelf Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-panel-gutter relative z-10">
+<!-- Project Card 1 -->
+<article class="manga-spine-card bg-surface-container border-frame-border border-black p-4 relative group flex gap-4 min-h-[200px]">
+<div class="absolute -top-3 -right-3 bg-secondary text-on-secondary border-2 border-black font-headline-sm px-2 py-1 transform rotate-6 z-20">01</div>
+<!-- Spine Image Placeholder -->
+<div class="w-1/3 bg-surface-variant border-r-2 border-black relative overflow-hidden flex-shrink-0 screentone-bg">
+<img alt="Project Cover" class="w-full h-full object-cover mix-blend-luminosity opacity-80 group-hover:mix-blend-normal group-hover:opacity-100 transition-all" data-alt="A dynamic, high-contrast digital illustration of a cyberpunk city alleyway drawn in a manga brutalist style. Neon pink and cyan lights reflect off wet pavement. Deep black shadows contrast with bright electric highlights. The mood is gritty, energetic, and futuristic, resembling an action-packed shounen manga color spread." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBjoqPF7rrpYts4-QScIArA2OBrvJeikqzwTQbssD1qF-yUTkth95i5jh9DEX17rJ_IO7grbDleiD79SQajVjZGvgsjDavKYXuurdSL7RQg55KZl88VlSLSq0Gg0aZGTfYAUoXozbatgMRO-NxnlP8MGQuh6brB01_pU3WyFjIZL6AVbYhkXpCDrKPxRxHEuPqFzDGa1zyL8DnrYhnz1ZSxLSrsPoD3l11q52E7z-7GSXH_YeuVNDPCHhpQJxYgmdQ4hq1CtFVK9bc"/>
+</div>
+<div class="flex-1 flex flex-col justify-between py-2">
+<div>
+<div class="flex items-center gap-2 mb-2">
+<span class="bg-primary text-on-primary font-label-sm px-2 py-0.5 border border-black transform -skew-x-12">å°‘å¹´ Shounen</span>
+<span class="bg-error text-on-error font-label-sm px-2 py-0.5 border border-black transform skew-x-12">é€£è¼‰ä¸­ Serializing</span>
+</div>
+<h2 class="font-headline-md text-headline-md text-on-background uppercase leading-tight mb-2 group-hover:text-primary transition-colors">Neon Drift</h2>
+<p class="font-body-md text-on-surface-variant line-clamp-2">Cybernetic racing leagues in Neo-Tokyo. Chapter 14 in progress.</p>
+</div>
+<div class="flex justify-between items-center mt-4">
+<span class="font-label-lg text-on-surface-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-sm">schedule</span> Last edited 2h ago
+                        </span>
+<button class="bg-tertiary text-on-tertiary border-2 border-black font-label-sm px-3 py-1 shadow-[2px_2px_0px_0px_rgba(255,177,197,1)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all uppercase tracking-wider">
+                            Edit
+                        </button>
+</div>
+</div>
+</article>
+<!-- Project Card 2 -->
+<article class="manga-spine-card bg-surface-container border-frame-border border-black p-4 relative group flex gap-4 min-h-[200px]">
+<div class="absolute -top-3 -right-3 bg-secondary text-on-secondary border-2 border-black font-headline-sm px-2 py-1 transform -rotate-3 z-20">02</div>
+<div class="w-1/3 bg-surface-variant border-r-2 border-black relative overflow-hidden flex-shrink-0 screentone-bg">
+<img alt="Project Cover" class="w-full h-full object-cover mix-blend-luminosity opacity-80 group-hover:mix-blend-normal group-hover:opacity-100 transition-all" data-alt="A delicate but intense digital ink wash painting of a samurai warrior in a bamboo forest, stylized as a manga page. High contrast black ink strokes on a stark white background with subtle screentone textures. A single splash of vibrant crimson red blood highlights the scene. The mood is tense and dramatic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBPsezFc1vYhdtESlLMwuSPW3GpUernDrlUfu5OB5rVrkC67LWio08DWFYcOd5wzd5WRowhf8lk1FUvaW9WsXTaz_Mf_6jjCeIBiaGJeqLjF12GDvXHIAgDDV4bBbJHrCytCyT0g-9J5g06tTHIS31SjdaM7m2S7d89tMHisvBRsr06gV0QAobAX3UEekCPK47QWxdu7ET3mart_CSttUurEyhetTj98RDSSCDCoGTavZGSx8rZUDM-vmcMXz_vSY1V6EENAf-DG2U"/>
+</div>
+<div class="flex-1 flex flex-col justify-between py-2">
+<div>
+<div class="flex items-center gap-2 mb-2">
+<span class="bg-tertiary text-on-tertiary font-label-sm px-2 py-0.5 border border-black transform -skew-x-12">é’å¹´ Seinen</span>
+<span class="bg-surface-variant text-on-surface-variant font-label-sm px-2 py-0.5 border border-black transform skew-x-12">å®Œçµ Completed</span>
+</div>
+<h2 class="font-headline-md text-headline-md text-on-background uppercase leading-tight mb-2 group-hover:text-primary transition-colors">Crimson Blade</h2>
+<p class="font-body-md text-on-surface-variant line-clamp-2">A masterless samurai seeks vengeance across the Edo period.</p>
+</div>
+<div class="flex justify-between items-center mt-4">
+<span class="font-label-lg text-on-surface-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-sm">schedule</span> Last edited 1w ago
+                        </span>
+<button class="bg-surface-container-high text-on-surface border-2 border-black font-label-sm px-3 py-1 hover:bg-surface-variant transition-colors uppercase tracking-wider">
+                            View
+                        </button>
+</div>
+</div>
+</article>
+<!-- Project Card 3 -->
+<article class="manga-spine-card bg-surface-container border-frame-border border-black p-4 relative group flex gap-4 min-h-[200px]">
+<div class="absolute -top-3 -right-3 bg-secondary text-on-secondary border-2 border-black font-headline-sm px-2 py-1 transform rotate-6 z-20">03</div>
+<div class="w-1/3 bg-surface-variant border-r-2 border-black relative overflow-hidden flex-shrink-0 screentone-bg">
+<img alt="Project Cover" class="w-full h-full object-cover mix-blend-luminosity opacity-80 group-hover:mix-blend-normal group-hover:opacity-100 transition-all" data-alt="A magical girl transformation sequence rendered in an aggressive manga brutalist style. Explosive starbursts and speed lines dominate the background. The character features exaggerated expressions and dynamic poses. High contrast black ink with intense sakura pink and electric blue hard shadows. The mood is chaotic and energetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDLRNo5dW0RkkA1V1V-laVlv7O120KnfeG3MW1-NtYn8t4U7ka6VbOSQntLw1bedSSKJmSXz_x2G4NayJv-fFhOaGgTVi-_ZbECr4IX-9VMmXzcTr1SkJGu-eCTkQzrsbSwJdgyP8YFxIZsVCUbymQRdDNev2aWnmogkNUiREIQGCoQ85yzVWvL4YRTLDWylCASIoztI_OIfX2Fq8HEaap2YXfao84kod7D_gASMO8lc8UPw0VUFNO9ItxlYm4udecxKXuHhaB9vnY"/>
+</div>
+<div class="flex-1 flex flex-col justify-between py-2">
+<div>
+<div class="flex items-center gap-2 mb-2">
+<span class="bg-primary-container text-on-primary-container font-label-sm px-2 py-0.5 border border-black transform -skew-x-12">å°‘å¥³ Shoujo</span>
+<span class="bg-error text-on-error font-label-sm px-2 py-0.5 border border-black transform skew-x-12">é€£è¼‰ä¸­ Serializing</span>
+</div>
+<h2 class="font-headline-md text-headline-md text-on-background uppercase leading-tight mb-2 group-hover:text-primary transition-colors">Starfall Magic</h2>
+<p class="font-body-md text-on-surface-variant line-clamp-2">Middle schoolers protect the galaxy with explosive power.</p>
+</div>
+<div class="flex justify-between items-center mt-4">
+<span class="font-label-lg text-on-surface-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-sm">schedule</span> Last edited 3d ago
+                        </span>
+<button class="bg-tertiary text-on-tertiary border-2 border-black font-label-sm px-3 py-1 shadow-[2px_2px_0px_0px_rgba(255,177,197,1)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all uppercase tracking-wider">
+                            Edit
+                        </button>
+</div>
+</div>
+</article>
+</div>
+</main>
+<!-- Floating Action Button (Create New) -->
+<button class="fixed bottom-24 md:bottom-8 right-8 z-50 bg-primary text-on-primary w-16 h-16 flex items-center justify-center ink-splash-fab shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:scale-110 active:scale-95 transition-transform">
+<span class="material-symbols-outlined text-3xl font-bold">add</span>
+</button>
+<!-- BottomNavBar (Mobile Only) -->
+<nav class="md:hidden bg-surface-container dark:bg-surface-container-lowest border-t-4 border-on-background shadow-[0_-4px_0px_0px_rgba(0,227,253,1)] fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 pb-6 pt-2">
+<button class="flex flex-col items-center justify-center text-on-surface-variant p-2 hover:bg-surface-container-highest transition-transform">
+<span class="material-symbols-outlined">home</span>
+<span class="font-label-sm text-label-sm uppercase tracking-widest mt-1">HOME</span>
+</button>
+<button class="flex flex-col items-center justify-center text-on-surface-variant p-2 hover:bg-surface-container-highest transition-transform">
+<span class="material-symbols-outlined">menu_book</span>
+<span class="font-label-sm text-label-sm uppercase tracking-widest mt-1">READ</span>
+</button>
+<button class="flex flex-col items-center justify-center text-on-surface-variant p-2 hover:bg-surface-container-highest transition-transform">
+<span class="material-symbols-outlined">edit</span>
+<span class="font-label-sm text-label-sm uppercase tracking-widest mt-1">CREATE</span>
+</button>
+<button class="flex flex-col items-center justify-center bg-primary text-on-primary rounded-lg p-2 scale-110 -rotate-3">
+<span class="material-symbols-outlined">auto_stories</span>
+<span class="font-label-sm text-label-sm uppercase tracking-widest mt-1">LIBRARY</span>
+</button>
+</nav>
+</body></html>
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>MangaFlow - Chapter Workflow</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Anton&amp;family=Hanken+Grotesk:wght@400;700&amp;family=Syne:wght@400;700&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .manga-panel {
+            clip-path: polygon(0 0, 100% 2%, 98% 100%, 2% 98%);
+        }
+        .manga-panel-alt {
+            clip-path: polygon(2% 0, 98% 2%, 100% 98%, 0 100%);
+        }
+        .screentone-bg {
+            background-image: radial-gradient(#34343d 1px, transparent 1px);
+            background-size: 8px 8px;
+        }
+        .speedlines-bg {
+            background: repeating-linear-gradient(
+                45deg,
+                transparent,
+                transparent 10px,
+                rgba(255, 107, 157, 0.1) 10px,
+                rgba(255, 107, 157, 0.1) 20px
+            );
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "tertiary-fixed": "#ffe16d",
+                        "on-background": "#e4e1ed",
+                        "on-primary-fixed": "#3f001b",
+                        "on-error-container": "#ffdad6",
+                        "secondary-fixed": "#9cf0ff",
+                        "primary-fixed-dim": "#ffb1c5",
+                        "on-tertiary": "#3a3000",
+                        "surface-container-low": "#1b1b23",
+                        "on-primary-fixed-variant": "#8c0a46",
+                        "inverse-on-surface": "#302f39",
+                        "error": "#ffb4ab",
+                        "error-container": "#93000a",
+                        "secondary": "#bdf4ff",
+                        "on-tertiary-fixed-variant": "#544600",
+                        "on-error": "#690005",
+                        "inverse-primary": "#ac2a5d",
+                        "on-secondary-fixed-variant": "#004f58",
+                        "surface-variant": "#34343d",
+                        "surface-container-high": "#292932",
+                        "on-primary": "#650030",
+                        "primary-container": "#ff6b9d",
+                        "on-secondary-fixed": "#001f24",
+                        "secondary-fixed-dim": "#00daf3",
+                        "secondary-container": "#00e3fd",
+                        "on-tertiary-container": "#403500",
+                        "primary": "#ffb1c5",
+                        "tertiary-fixed-dim": "#e9c400",
+                        "on-surface": "#e4e1ed",
+                        "on-primary-container": "#6e0035",
+                        "surface-bright": "#393842",
+                        "on-tertiary-fixed": "#221b00",
+                        "surface-container": "#1f1f28",
+                        "surface-container-lowest": "#0d0d16",
+                        "on-secondary-container": "#00616d",
+                        "inverse-surface": "#e4e1ed",
+                        "tertiary-container": "#ba9c00",
+                        "background": "#13131b",
+                        "on-secondary": "#00363d",
+                        "surface-tint": "#ffb1c5",
+                        "outline-variant": "#574146",
+                        "surface-container-highest": "#34343d",
+                        "on-surface-variant": "#ddbfc5",
+                        "primary-fixed": "#ffd9e1",
+                        "outline": "#a58a90",
+                        "surface-dim": "#13131b",
+                        "tertiary": "#e9c400",
+                        "surface": "#13131b"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "sfx-offset": "-12px",
+                        "margin-edge": "32px",
+                        "panel-gutter": "24px",
+                        "frame-border": "4px"
+                    },
+                    "fontFamily": {
+                        "label-lg": ["Syne"],
+                        "display-lg": ["Anton"],
+                        "headline-lg-mobile": ["Anton"],
+                        "headline-sm": ["Anton"],
+                        "label-sm": ["Syne"],
+                        "headline-md": ["Anton"],
+                        "headline-lg": ["Anton"],
+                        "body-lg": ["Hanken Grotesk"],
+                        "body-md": ["Hanken Grotesk"]
+                    },
+                    "fontSize": {
+                        "label-lg": ["14px", { "lineHeight": "20px", "fontWeight": "700" }],
+                        "display-lg": ["80px", { "lineHeight": "80px", "letterSpacing": "-0.02em", "fontWeight": "400" }],
+                        "headline-lg-mobile": ["36px", { "lineHeight": "40px", "fontWeight": "400" }],
+                        "headline-sm": ["24px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "label-sm": ["12px", { "lineHeight": "16px", "fontWeight": "700" }],
+                        "headline-md": ["32px", { "lineHeight": "36px", "fontWeight": "400" }],
+                        "headline-lg": ["48px", { "lineHeight": "52px", "letterSpacing": "0.04em", "fontWeight": "400" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background font-body-md min-h-screen relative overflow-x-hidden selection:bg-primary selection:text-on-primary pb-24 md:pb-0">
+<!-- Watermark Background -->
+<div class="fixed inset-0 pointer-events-none z-0 flex items-center justify-center opacity-5 select-none overflow-hidden">
+<span class="font-display-lg text-[40vw] text-on-background leading-none transform -rotate-12">å‰µä½œ</span>
+</div>
+<!-- TopAppBar (Web) -->
+<header class="hidden md:flex justify-between items-center w-full px-margin-edge py-4 bg-background dark:bg-background border-b-4 border-on-background dark:border-on-background-variant shadow-[4px_4px_0px_0px_rgba(255,177,197,1)] docked full-width top-0 z-50 relative">
+<div class="flex items-center gap-4">
+<div class="font-display-lg text-headline-lg-mobile text-primary-container dark:text-primary tracking-tighter uppercase">
+                MangaFlow
+            </div>
+<nav class="ml-8 flex gap-6">
+<a class="font-label-lg text-label-lg text-on-background opacity-70 hover:bg-surface-variant transition-colors px-3 py-2 rounded-DEFAULT" href="#">HOME</a>
+<a class="font-label-lg text-label-lg text-on-background opacity-70 hover:bg-surface-variant transition-colors px-3 py-2 rounded-DEFAULT" href="#">READ</a>
+<a class="font-label-lg text-label-lg text-primary font-bold hover:bg-surface-variant transition-colors px-3 py-2 rounded-DEFAULT border-b-4 border-primary" href="#">CREATE</a>
+<a class="font-label-lg text-label-lg text-on-background opacity-70 hover:bg-surface-variant transition-colors px-3 py-2 rounded-DEFAULT" href="#">LIBRARY</a>
+</nav>
+</div>
+<button class="active:translate-y-1 active:translate-x-1 duration-75 text-primary dark:text-primary-fixed-dim">
+<span class="material-symbols-outlined text-[32px]">account_circle</span>
+</button>
+</header>
+<!-- TopAppBar (Mobile) -->
+<header class="md:hidden flex justify-between items-center w-full px-margin-edge py-4 bg-background dark:bg-background border-b-4 border-on-background dark:border-on-background-variant shadow-[4px_4px_0px_0px_rgba(255,177,197,1)] docked full-width top-0 z-50 relative">
+<div class="font-display-lg text-headline-lg-mobile text-primary-container dark:text-primary tracking-tighter uppercase">
+            MangaFlow
+        </div>
+<button class="active:translate-y-1 active:translate-x-1 duration-75 text-primary dark:text-primary-fixed-dim">
+<span class="material-symbols-outlined text-[28px]">account_circle</span>
+</button>
+</header>
+<main class="relative z-10 w-full max-w-7xl mx-auto px-4 md:px-margin-edge pt-8 pb-24">
+<!-- Hero: Full-bleed manga cover art with speed line overlays -->
+<section class="relative w-full h-[353px] md:h-[442px] mb-12 border-frame-border border-on-background shadow-[8px_8px_0px_0px_rgba(0,227,253,1)] bg-surface-container overflow-hidden group manga-panel">
+<img alt="Chapter Cover Art" class="w-full h-full object-cover filter grayscale contrast-125 group-hover:scale-105 transition-transform duration-500" data-alt="A highly dynamic, monochromatic digital illustration in a high-contrast manga style. The scene depicts an intense, cinematic action shot of a futuristic samurai, drawn with sharp, aggressive ink lines and deep black shadows. The background is a stark white void cut by aggressive, diagonal speed lines denoting rapid forward motion. The overall mood is adrenaline-fueled and aggressive, utilizing a brutalist ink-and-neon aesthetic with subtle screentone textures in the midtones." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCX4-_bxKuHHxAxUYHYu_gFiPjwL0K4Nl3Yj9A8yrCZVADa7vHPgRwSmfmb73Pigj5G5ucsEKwZpJJ0GoHJSnzMlyBKfpI6OtvteKxGktelUUwageHr9FV00TLrAtq1ScOzPsdF63R2OU1gRFCbozIHxsKK-8IpIDfvO3ejeC6nYHliA2MED08ySi5DESY-kD0Bt4jdzJdp9mjMbmSE2RlIXzBhTl9Dy1dTKwa5UEA_SY-r5aFMGvb1zWqS95BEiP5rwPufg7zJMds"/>
+<div class="absolute inset-0 speedlines-bg pointer-events-none mix-blend-screen opacity-50"></div>
+<div class="absolute bottom-0 left-0 w-full p-6 md:p-8 bg-gradient-to-t from-background via-background/80 to-transparent">
+<div class="inline-block bg-primary text-on-primary font-label-lg text-label-lg px-3 py-1 border-2 border-on-background transform -skew-x-12 mb-4">
+                    CHAPTER 42
+                </div>
+<h1 class="font-headline-lg-mobile md:font-headline-lg text-on-background uppercase tracking-tight text-shadow-sm">
+                    The Neon Blade Awakens
+                </h1>
+</div>
+<!-- Katakana Tag -->
+<div class="absolute top-4 right-4 bg-secondary text-on-secondary font-headline-sm px-2 py-1 border-2 border-on-background transform rotate-6 z-10 shadow-[2px_2px_0px_0px_rgba(255,177,197,1)]">
+                ã‚¢ã‚¯ã‚·ãƒ§ãƒ³
+            </div>
+</section>
+<!-- Workflow Storyboard Strip -->
+<section class="mb-16">
+<div class="flex items-center justify-between mb-6">
+<h2 class="font-headline-md text-primary uppercase flex items-center gap-2">
+<span class="material-symbols-outlined text-[32px]">route</span>
+                    Production Workflow
+                </h2>
+<div class="font-label-lg text-on-surface-variant bg-surface-container px-4 py-2 border-2 border-on-surface-variant rounded-DEFAULT">
+                    60% Complete
+                </div>
+</div>
+<!-- Ink Progress Bar -->
+<div class="w-full h-6 bg-surface-container border-2 border-on-background rounded-full overflow-hidden mb-8 relative p-1 shadow-[inset_0px_4px_4px_rgba(0,0,0,0.5)]">
+<div class="h-full bg-primary rounded-full relative w-[60%] border-r-4 border-on-background" style="background-image: repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(0,0,0,0.1) 10px, rgba(0,0,0,0.1) 20px);">
+<!-- Ink drip effect simulation -->
+<div class="absolute right-0 top-1/2 transform -translate-y-1/2 translate-x-1/2 w-4 h-4 bg-primary rounded-full border-2 border-on-background"></div>
+</div>
+</div>
+<!-- Stages Grid -->
+<div class="grid grid-cols-2 md:grid-cols-5 gap-4 md:gap-panel-gutter">
+<!-- Stage 1: Storyboard -->
+<div class="bg-surface-container-low border-frame-border border-on-background p-4 relative manga-panel group cursor-pointer hover:-translate-y-2 hover:-translate-x-2 transition-transform shadow-[4px_4px_0px_0px_rgba(255,177,197,1)]">
+<div class="absolute -top-3 -left-3 bg-secondary text-on-secondary font-headline-sm w-8 h-8 flex items-center justify-center border-2 border-on-background z-10 transform -rotate-12">1</div>
+<div class="flex flex-col items-center text-center gap-2">
+<span class="material-symbols-outlined text-[48px] text-on-surface-variant group-hover:text-primary transition-colors">edit_document</span>
+<h3 class="font-label-lg text-label-lg uppercase text-on-background">ãƒãƒ¼ãƒ </h3>
+<p class="font-body-md text-on-surface-variant text-sm">Storyboard</p>
+<span class="mt-2 bg-secondary text-on-secondary text-xs px-2 py-1 font-bold rounded-DEFAULT border border-on-background">DONE</span>
+</div>
+</div>
+<!-- Stage 2: Sketch -->
+<div class="bg-surface-container-low border-frame-border border-on-background p-4 relative manga-panel-alt group cursor-pointer hover:-translate-y-2 hover:-translate-x-2 transition-transform shadow-[4px_4px_0px_0px_rgba(255,177,197,1)]">
+<div class="absolute -top-3 -left-3 bg-secondary text-on-secondary font-headline-sm w-8 h-8 flex items-center justify-center border-2 border-on-background z-10 transform rotate-6">2</div>
+<div class="flex flex-col items-center text-center gap-2">
+<span class="material-symbols-outlined text-[48px] text-on-surface-variant group-hover:text-primary transition-colors">draw</span>
+<h3 class="font-label-lg text-label-lg uppercase text-on-background">ä¸‹æ›¸ã</h3>
+<p class="font-body-md text-on-surface-variant text-sm">Sketch</p>
+<span class="mt-2 bg-secondary text-on-secondary text-xs px-2 py-1 font-bold rounded-DEFAULT border border-on-background">DONE</span>
+</div>
+</div>
+<!-- Stage 3: Inking (Active) -->
+<div class="bg-surface-container-high border-frame-border border-primary p-4 relative group cursor-pointer hover:-translate-y-2 hover:-translate-x-2 transition-transform shadow-[8px_8px_0px_0px_rgba(255,177,197,1)] scale-105 z-10 screentone-bg">
+<div class="absolute -top-4 -left-4 bg-primary text-on-primary font-headline-sm w-10 h-10 flex items-center justify-center border-2 border-on-background z-20 transform -rotate-6 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">3</div>
+<div class="absolute -top-2 right-2 text-primary font-bold animate-pulse">
+<span class="material-symbols-outlined text-[24px]">ink_pen</span>
+</div>
+<div class="flex flex-col items-center text-center gap-2 bg-surface-container/80 p-2 rounded-DEFAULT backdrop-blur-sm">
+<span class="material-symbols-outlined text-[48px] text-primary">ink_eraser</span>
+<h3 class="font-label-lg text-label-lg uppercase text-primary font-bold">ãƒšãƒ³å…¥ã‚Œ</h3>
+<p class="font-body-md text-on-surface-variant text-sm">Inking</p>
+<span class="mt-2 bg-primary text-on-primary text-xs px-2 py-1 font-bold rounded-DEFAULT border border-on-background animate-pulse">IN PROGRESS</span>
+</div>
+</div>
+<!-- Stage 4: Screentone -->
+<div class="bg-surface-container-low border-frame-border border-on-surface-variant border-dashed p-4 relative manga-panel group cursor-pointer hover:-translate-y-2 hover:-translate-x-2 transition-transform">
+<div class="absolute -top-3 -left-3 bg-surface-variant text-on-surface-variant font-headline-sm w-8 h-8 flex items-center justify-center border-2 border-on-surface-variant z-10 transform rotate-12">4</div>
+<div class="flex flex-col items-center text-center gap-2 opacity-60">
+<span class="material-symbols-outlined text-[48px] text-on-surface-variant">texture</span>
+<h3 class="font-label-lg text-label-lg uppercase text-on-background">ãƒˆãƒ¼ãƒ³</h3>
+<p class="font-body-md text-on-surface-variant text-sm">Screentone</p>
+<span class="mt-2 bg-surface-variant text-on-surface-variant text-xs px-2 py-1 font-bold rounded-DEFAULT border border-on-surface-variant">PENDING</span>
+</div>
+</div>
+<!-- Stage 5: Complete -->
+<div class="bg-surface-container-low border-frame-border border-on-surface-variant border-dashed p-4 relative manga-panel-alt group cursor-pointer hover:-translate-y-2 hover:-translate-x-2 transition-transform">
+<div class="absolute -top-3 -left-3 bg-surface-variant text-on-surface-variant font-headline-sm w-8 h-8 flex items-center justify-center border-2 border-on-surface-variant z-10 transform -rotate-6">5</div>
+<div class="flex flex-col items-center text-center gap-2 opacity-60">
+<span class="material-symbols-outlined text-[48px] text-on-surface-variant">check_circle</span>
+<h3 class="font-label-lg text-label-lg uppercase text-on-background">å®Œæˆ</h3>
+<p class="font-body-md text-on-surface-variant text-sm">Complete</p>
+<span class="mt-2 bg-surface-variant text-on-surface-variant text-xs px-2 py-1 font-bold rounded-DEFAULT border border-on-surface-variant">PENDING</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Chapter Pages Thumbnails -->
+<section>
+<div class="flex items-center justify-between mb-8 pb-4 border-b-4 border-on-background transform -skew-x-6">
+<h2 class="font-headline-md text-secondary uppercase flex items-center gap-2">
+<span class="material-symbols-outlined text-[32px]">auto_stories</span>
+                    Pages
+                </h2>
+<button class="bg-secondary text-on-secondary font-label-lg uppercase px-6 py-2 border-frame-border border-on-background hover:translate-y-[4px] hover:translate-x-[4px] hover:shadow-none transition-all shadow-[4px_4px_0px_0px_rgba(255,107,157,1)] flex items-center gap-2">
+<span class="material-symbols-outlined text-[20px]">add</span>
+                    New Page
+                </button>
+</div>
+<div class="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
+<!-- Page 1 -->
+<div class="relative group bg-surface border-frame-border border-on-background shadow-[4px_4px_0px_0px_rgba(0,227,253,1)] hover:-translate-y-2 hover:-translate-x-2 transition-transform p-2 pb-12 flex flex-col items-center">
+<div class="w-full aspect-[2/3] bg-surface-container relative overflow-hidden screentone-bg mb-2 border border-on-background/20">
+<!-- Placeholder for manga page thumbnail -->
+<div class="absolute inset-0 flex items-center justify-center text-on-surface-variant">
+<span class="material-symbols-outlined text-[48px]">image</span>
+</div>
+</div>
+<div class="absolute bottom-2 left-0 w-full flex justify-between px-4 items-center">
+<span class="font-label-lg text-label-lg uppercase">PG. 01</span>
+<div class="flex gap-1">
+<div class="w-3 h-3 bg-secondary rounded-full border border-on-background"></div>
+<div class="w-3 h-3 bg-secondary rounded-full border border-on-background"></div>
+<div class="w-3 h-3 bg-primary rounded-full border border-on-background animate-pulse"></div>
+<div class="w-3 h-3 bg-surface-variant rounded-full border border-on-background"></div>
+</div>
+</div>
+<button class="absolute top-2 right-2 bg-background/80 p-1 rounded-DEFAULT border border-on-background opacity-0 group-hover:opacity-100 transition-opacity">
+<span class="material-symbols-outlined text-[20px] text-on-background">more_vert</span>
+</button>
+</div>
+<!-- Page 2 -->
+<div class="relative group bg-surface border-frame-border border-on-background shadow-[4px_4px_0px_0px_rgba(0,227,253,1)] hover:-translate-y-2 hover:-translate-x-2 transition-transform p-2 pb-12 flex flex-col items-center">
+<div class="w-full aspect-[2/3] bg-surface-container relative overflow-hidden screentone-bg mb-2 border border-on-background/20">
+<div class="absolute inset-0 flex items-center justify-center text-on-surface-variant">
+<span class="material-symbols-outlined text-[48px]">image</span>
+</div>
+</div>
+<div class="absolute bottom-2 left-0 w-full flex justify-between px-4 items-center">
+<span class="font-label-lg text-label-lg uppercase">PG. 02</span>
+<div class="flex gap-1">
+<div class="w-3 h-3 bg-secondary rounded-full border border-on-background"></div>
+<div class="w-3 h-3 bg-secondary rounded-full border border-on-background"></div>
+<div class="w-3 h-3 bg-primary rounded-full border border-on-background animate-pulse"></div>
+<div class="w-3 h-3 bg-surface-variant rounded-full border border-on-background"></div>
+</div>
+</div>
+<button class="absolute top-2 right-2 bg-background/80 p-1 rounded-DEFAULT border border-on-background opacity-0 group-hover:opacity-100 transition-opacity">
+<span class="material-symbols-outlined text-[20px] text-on-background">more_vert</span>
+</button>
+</div>
+<!-- Page 3 -->
+<div class="relative group bg-surface border-frame-border border-on-background shadow-[4px_4px_0px_0px_rgba(0,227,253,1)] hover:-translate-y-2 hover:-translate-x-2 transition-transform p-2 pb-12 flex flex-col items-center">
+<div class="w-full aspect-[2/3] bg-surface-container relative overflow-hidden screentone-bg mb-2 border border-on-background/20">
+<div class="absolute inset-0 flex items-center justify-center text-on-surface-variant">
+<span class="material-symbols-outlined text-[48px]">image</span>
+</div>
+</div>
+<div class="absolute bottom-2 left-0 w-full flex justify-between px-4 items-center">
+<span class="font-label-lg text-label-lg uppercase">PG. 03</span>
+<div class="flex gap-1">
+<div class="w-3 h-3 bg-secondary rounded-full border border-on-background"></div>
+<div class="w-3 h-3 bg-primary rounded-full border border-on-background animate-pulse"></div>
+<div class="w-3 h-3 bg-surface-variant rounded-full border border-on-background"></div>
+<div class="w-3 h-3 bg-surface-variant rounded-full border border-on-background"></div>
+</div>
+</div>
+<button class="absolute top-2 right-2 bg-background/80 p-1 rounded-DEFAULT border border-on-background opacity-0 group-hover:opacity-100 transition-opacity">
+<span class="material-symbols-outlined text-[20px] text-on-background">more_vert</span>
+</button>
+</div>
+<!-- Blank Page (Add New) -->
+<div class="relative group bg-surface-container-low border-frame-border border-on-surface-variant border-dashed p-2 pb-12 flex flex-col items-center justify-center cursor-pointer hover:bg-surface-variant transition-colors aspect-[2/3] h-full">
+<div class="flex flex-col items-center justify-center h-full text-on-surface-variant group-hover:text-secondary transition-colors">
+<span class="material-symbols-outlined text-[64px] mb-4">add_box</span>
+<span class="font-label-lg text-label-lg uppercase">Add Blank Page</span>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- BottomNavBar (Mobile) -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 pb-6 pt-2 bg-surface-container dark:bg-surface-container-lowest border-t-4 border-on-background shadow-[0_-4px_0px_0px_rgba(0,227,253,1)] rounded-t-xl text-secondary dark:text-secondary-fixed">
+<a class="flex flex-col items-center justify-center text-on-surface-variant p-2 hover:bg-surface-container-highest transition-transform duration-100 ease-in-out font-label-sm text-label-sm uppercase tracking-widest" href="#">
+<span class="material-symbols-outlined text-[24px] mb-1">home</span>
+            HOME
+        </a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant p-2 hover:bg-surface-container-highest transition-transform duration-100 ease-in-out font-label-sm text-label-sm uppercase tracking-widest" href="#">
+<span class="material-symbols-outlined text-[24px] mb-1">menu_book</span>
+            READ
+        </a>
+<a class="flex flex-col items-center justify-center bg-primary text-on-primary rounded-lg p-2 scale-110 -rotate-3 hover:bg-surface-container-highest transition-transform active:scale-95 duration-100 ease-in-out font-label-sm text-label-sm uppercase tracking-widest" href="#">
+<span class="material-symbols-outlined text-[24px] mb-1" style="font-variation-settings: 'FILL' 1;">edit</span>
+            CREATE
+        </a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant p-2 hover:bg-surface-container-highest transition-transform duration-100 ease-in-out font-label-sm text-label-sm uppercase tracking-widest" href="#">
+<span class="material-symbols-outlined text-[24px] mb-1">auto_stories</span>
+            LIBRARY
+        </a>
+</nav>
+</body></html>
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>MangaFlow - Kanban Board</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Anton&amp;family=Hanken+Grotesk:wght@400;700&amp;family=Syne:wght@400;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "tertiary-fixed": "#ffe16d",
+                        "on-background": "#e4e1ed",
+                        "on-primary-fixed": "#3f001b",
+                        "on-error-container": "#ffdad6",
+                        "secondary-fixed": "#9cf0ff",
+                        "primary-fixed-dim": "#ffb1c5",
+                        "on-tertiary": "#3a3000",
+                        "surface-container-low": "#1b1b23",
+                        "on-primary-fixed-variant": "#8c0a46",
+                        "inverse-on-surface": "#302f39",
+                        "error": "#ffb4ab",
+                        "error-container": "#93000a",
+                        "secondary": "#bdf4ff",
+                        "on-tertiary-fixed-variant": "#544600",
+                        "on-error": "#690005",
+                        "inverse-primary": "#ac2a5d",
+                        "on-secondary-fixed-variant": "#004f58",
+                        "surface-variant": "#34343d",
+                        "surface-container-high": "#292932",
+                        "on-primary": "#650030",
+                        "primary-container": "#ff6b9d",
+                        "on-secondary-fixed": "#001f24",
+                        "secondary-fixed-dim": "#00daf3",
+                        "secondary-container": "#00e3fd",
+                        "on-tertiary-container": "#403500",
+                        "primary": "#ffb1c5",
+                        "tertiary-fixed-dim": "#e9c400",
+                        "on-surface": "#e4e1ed",
+                        "on-primary-container": "#6e0035",
+                        "surface-bright": "#393842",
+                        "on-tertiary-fixed": "#221b00",
+                        "surface-container": "#1f1f28",
+                        "surface-container-lowest": "#0d0d16",
+                        "on-secondary-container": "#00616d",
+                        "inverse-surface": "#e4e1ed",
+                        "tertiary-container": "#ba9c00",
+                        "background": "#13131b",
+                        "on-secondary": "#00363d",
+                        "surface-tint": "#ffb1c5",
+                        "outline-variant": "#574146",
+                        "surface-container-highest": "#34343d",
+                        "on-surface-variant": "#ddbfc5",
+                        "primary-fixed": "#ffd9e1",
+                        "outline": "#a58a90",
+                        "surface-dim": "#13131b",
+                        "tertiary": "#e9c400",
+                        "surface": "#13131b"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "sfx-offset": "-12px",
+                        "margin-edge": "32px",
+                        "panel-gutter": "24px",
+                        "frame-border": "4px"
+                    },
+                    "fontFamily": {
+                        "label-lg": ["Syne"],
+                        "display-lg": ["Anton"],
+                        "headline-lg-mobile": ["Anton"],
+                        "headline-sm": ["Anton"],
+                        "label-sm": ["Syne"],
+                        "headline-md": ["Anton"],
+                        "headline-lg": ["Anton"],
+                        "body-lg": ["Hanken Grotesk"],
+                        "body-md": ["Hanken Grotesk"]
+                    },
+                    "fontSize": {
+                        "label-lg": ["14px", { "lineHeight": "20px", "fontWeight": "700" }],
+                        "display-lg": ["80px", { "lineHeight": "80px", "letterSpacing": "-0.02em", "fontWeight": "400" }],
+                        "headline-lg-mobile": ["36px", { "lineHeight": "40px", "fontWeight": "400" }],
+                        "headline-sm": ["24px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "label-sm": ["12px", { "lineHeight": "16px", "fontWeight": "700" }],
+                        "headline-md": ["32px", { "lineHeight": "36px", "fontWeight": "400" }],
+                        "headline-lg": ["48px", { "lineHeight": "52px", "letterSpacing": "0.04em", "fontWeight": "400" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body {
+            background-image: radial-gradient(#34343d 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+        .manga-panel {
+            clip-path: polygon(0 0, 100% 2%, 98% 100%, 2% 98%);
+        }
+        .sticky-note {
+            background-color: #ffe16d;
+            color: #221b00;
+            box-shadow: 4px 4px 0px 0px rgba(0,0,0,1);
+            transform: rotate(-2deg);
+        }
+        .sticky-note:nth-child(even) {
+            transform: rotate(1deg);
+        }
+        .power-bar {
+            background: repeating-linear-gradient(
+                45deg,
+                #000,
+                #000 10px,
+                #ffb1c5 10px,
+                #ffb1c5 20px
+            );
+        }
+        .sfx-button {
+            box-shadow: 4px 4px 0px 0px #00e3fd;
+        }
+        .sfx-button:active {
+            transform: translate(4px, 4px);
+            box-shadow: 0px 0px 0px 0px #00e3fd;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background font-body-md min-h-screen flex flex-col relative pb-24 md:pb-0 overflow-x-hidden">
+<!-- TopAppBar -->
+<header class="bg-background dark:bg-background border-b-4 border-on-background dark:border-on-background-variant shadow-[4px_4px_0px_0px_rgba(255,177,197,1)] flex justify-between items-center w-full px-margin-edge py-4 fixed top-0 z-50 docked full-width">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-4xl text-primary" data-icon="brush">brush</span>
+<span class="font-display-lg text-headline-lg-mobile md:text-display-lg text-primary-container dark:text-primary tracking-tighter uppercase">MangaFlow</span>
+</div>
+<nav class="hidden md:flex gap-8 items-center font-label-lg text-label-lg">
+<a class="text-on-background opacity-70 hover:bg-surface-variant transition-colors p-2 rounded" href="#">HOME</a>
+<a class="text-on-background opacity-70 hover:bg-surface-variant transition-colors p-2 rounded" href="#">READ</a>
+<a class="text-primary font-bold hover:bg-surface-variant transition-colors p-2 rounded border-b-2 border-primary" href="#">CREATE</a>
+<a class="text-on-background opacity-70 hover:bg-surface-variant transition-colors p-2 rounded" href="#">LIBRARY</a>
+</nav>
+<button class="material-symbols-outlined text-on-background hover:bg-surface-variant p-2 rounded-full transition-colors" data-icon="account_circle">account_circle</button>
+</header>
+<!-- Main Content Canvas -->
+<main class="flex-1 mt-24 px-4 md:px-margin-edge flex flex-col gap-8">
+<!-- Action Header -->
+<div class="flex justify-between items-end border-b-4 border-outline pb-4 mb-4 relative">
+<div class="absolute inset-0 opacity-10 pointer-events-none text-[120px] font-display-lg overflow-hidden whitespace-nowrap z-0 -translate-y-8 translate-x-8 text-primary">å‰µä½œ</div>
+<div class="relative z-10">
+<h1 class="font-headline-lg text-headline-lg-mobile md:text-headline-lg uppercase text-primary">Chapter 42: The Awakening</h1>
+<p class="font-label-lg text-secondary uppercase tracking-widest">Sprint 04 - Kanban Board</p>
+</div>
+<button class="sfx-button relative z-10 bg-primary text-on-primary font-headline-sm uppercase px-6 py-2 border-frame-border border-black transition-transform">
+<span class="material-symbols-outlined align-middle mr-2" data-icon="add_circle">add_circle</span> NEW TASK
+            </button>
+</div>
+<!-- Kanban Columns Container -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-panel-gutter flex-1 items-start">
+<!-- Column 1: Backlog -->
+<div class="manga-panel bg-surface-container-low border-frame-border border-black p-4 flex flex-col gap-4 relative">
+<div class="absolute top-0 right-0 bg-secondary text-on-secondary font-headline-sm px-2 py-1 border-b-4 border-l-4 border-black -m-1 translate-x-2 -translate-y-2">ARC 1</div>
+<h2 class="font-headline-md uppercase border-b-4 border-dashed border-outline-variant pb-2 pt-4">Backlog</h2>
+<div class="flex flex-col gap-4">
+<!-- Task Card -->
+<div class="sticky-note p-4 border-2 border-black flex flex-col gap-2 cursor-pointer hover:scale-105 transition-transform">
+<div class="flex justify-between items-start">
+<span class="font-label-lg uppercase border border-black px-1 bg-white/50">#001</span>
+<span class="material-symbols-outlined" data-icon="edit_document">edit_document</span>
+</div>
+<p class="font-body-md font-bold text-lg leading-tight">Draft storyboard for final battle sequence.</p>
+<div class="mt-2">
+<div class="font-label-sm uppercase mb-1">Power Level: LOW</div>
+<div class="w-full h-2 bg-black/20 border border-black"><div class="h-full bg-tertiary w-1/4 border-r border-black"></div></div>
+</div>
+</div>
+<!-- Task Card -->
+<div class="sticky-note p-4 border-2 border-black flex flex-col gap-2 cursor-pointer hover:scale-105 transition-transform">
+<div class="flex justify-between items-start">
+<span class="font-label-lg uppercase border border-black px-1 bg-white/50">#004</span>
+<span class="material-symbols-outlined" data-icon="brush">brush</span>
+</div>
+<p class="font-body-md font-bold text-lg leading-tight">Design new antagonist weapon variants.</p>
+<div class="mt-2">
+<div class="font-label-sm uppercase mb-1">Power Level: MID</div>
+<div class="w-full h-2 bg-black/20 border border-black"><div class="h-full bg-secondary w-1/2 border-r border-black"></div></div>
+</div>
+</div>
+</div>
+</div>
+<!-- Column 2: In Progress -->
+<div class="manga-panel bg-surface-container border-frame-border border-black p-4 flex flex-col gap-4 relative shadow-[8px_8px_0px_0px_rgba(255,107,157,1)] -translate-y-2 z-10">
+<div class="absolute top-0 right-0 bg-primary text-on-primary font-headline-sm px-2 py-1 border-b-4 border-l-4 border-black -m-1 translate-x-2 -translate-y-2">ARC 2</div>
+<h2 class="font-headline-md uppercase border-b-4 border-dashed border-outline-variant pb-2 pt-4">Inking (WIP)</h2>
+<div class="flex flex-col gap-4">
+<!-- Task Card -->
+<div class="sticky-note p-4 border-2 border-black flex flex-col gap-2 cursor-pointer hover:scale-105 transition-transform relative">
+<div class="absolute -left-2 -top-2 bg-error text-on-error font-label-lg px-2 border-2 border-black rotate-12">URGENT</div>
+<div class="flex justify-between items-start mt-2">
+<span class="font-label-lg uppercase border border-black px-1 bg-white/50">#002</span>
+<span class="material-symbols-outlined text-error" data-icon="local_fire_department">local_fire_department</span>
+</div>
+<p class="font-body-md font-bold text-lg leading-tight">Ink pages 12-15 before deadline!</p>
+<div class="mt-2">
+<div class="font-label-sm uppercase mb-1 text-error font-bold">Power Level: ULTRA</div>
+<div class="w-full h-4 border-2 border-black power-bar"></div>
+</div>
+</div>
+</div>
+</div>
+<!-- Column 3: Done -->
+<div class="manga-panel bg-surface-container-high border-frame-border border-black p-4 flex flex-col gap-4 relative opacity-80">
+<div class="absolute top-0 right-0 bg-surface-variant text-on-surface-variant font-headline-sm px-2 py-1 border-b-4 border-l-4 border-black -m-1 translate-x-2 -translate-y-2">ARC 3</div>
+<h2 class="font-headline-md uppercase border-b-4 border-dashed border-outline-variant pb-2 pt-4">Published</h2>
+<div class="flex flex-col gap-4">
+<!-- Task Card -->
+<div class="sticky-note p-4 border-2 border-black flex flex-col gap-2 opacity-60 grayscale filter">
+<div class="flex justify-between items-start">
+<span class="font-label-lg uppercase border border-black px-1 bg-white/50 line-through">#000</span>
+<span class="material-symbols-outlined" data-icon="check_circle">check_circle</span>
+</div>
+<p class="font-body-md font-bold text-lg leading-tight line-through">Character sketches approval.</p>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- BottomNavBar (Mobile Only) -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 pb-6 pt-2 bg-background border-t-4 border-on-background shadow-[0_-4px_0px_0px_rgba(0,227,253,1)] rounded-t-xl bg-surface-container dark:bg-surface-container-lowest">
+<a class="flex flex-col items-center justify-center text-on-surface-variant p-2 hover:bg-surface-container-highest transition-transform" href="#">
+<span class="material-symbols-outlined" data-icon="home">home</span>
+<span class="font-label-sm text-label-sm uppercase tracking-widest mt-1">HOME</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant p-2 hover:bg-surface-container-highest transition-transform" href="#">
+<span class="material-symbols-outlined" data-icon="menu_book">menu_book</span>
+<span class="font-label-sm text-label-sm uppercase tracking-widest mt-1">READ</span>
+</a>
+<a class="flex flex-col items-center justify-center bg-primary text-on-primary rounded-lg p-2 scale-110 -rotate-3 hover:bg-surface-container-highest transition-transform active:scale-95 duration-100 ease-in-out" href="#">
+<span class="material-symbols-outlined" data-icon="edit">edit</span>
+<span class="font-label-sm text-label-sm uppercase tracking-widest mt-1">CREATE</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant p-2 hover:bg-surface-container-highest transition-transform" href="#">
+<span class="material-symbols-outlined" data-icon="auto_stories">auto_stories</span>
+<span class="font-label-sm text-label-sm uppercase tracking-widest mt-1">LIBRARY</span>
+</a>
+</nav>
+</body></html>
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>User Profile - MangaFlow</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Anton&amp;family=Hanken+Grotesk:wght@400;700&amp;family=Syne:wght@400;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "tertiary-fixed": "#ffe16d",
+                        "on-background": "#e4e1ed",
+                        "on-primary-fixed": "#3f001b",
+                        "on-error-container": "#ffdad6",
+                        "secondary-fixed": "#9cf0ff",
+                        "primary-fixed-dim": "#ffb1c5",
+                        "on-tertiary": "#3a3000",
+                        "surface-container-low": "#1b1b23",
+                        "on-primary-fixed-variant": "#8c0a46",
+                        "inverse-on-surface": "#302f39",
+                        "error": "#ffb4ab",
+                        "error-container": "#93000a",
+                        "secondary": "#bdf4ff",
+                        "on-tertiary-fixed-variant": "#544600",
+                        "on-error": "#690005",
+                        "inverse-primary": "#ac2a5d",
+                        "on-secondary-fixed-variant": "#004f58",
+                        "surface-variant": "#34343d",
+                        "surface-container-high": "#292932",
+                        "on-primary": "#650030",
+                        "primary-container": "#ff6b9d",
+                        "on-secondary-fixed": "#001f24",
+                        "secondary-fixed-dim": "#00daf3",
+                        "secondary-container": "#00e3fd",
+                        "on-tertiary-container": "#403500",
+                        "primary": "#ffb1c5",
+                        "tertiary-fixed-dim": "#e9c400",
+                        "on-surface": "#e4e1ed",
+                        "on-primary-container": "#6e0035",
+                        "surface-bright": "#393842",
+                        "on-tertiary-fixed": "#221b00",
+                        "surface-container": "#1f1f28",
+                        "surface-container-lowest": "#0d0d16",
+                        "on-secondary-container": "#00616d",
+                        "inverse-surface": "#e4e1ed",
+                        "tertiary-container": "#ba9c00",
+                        "background": "#13131b",
+                        "on-secondary": "#00363d",
+                        "surface-tint": "#ffb1c5",
+                        "outline-variant": "#574146",
+                        "surface-container-highest": "#34343d",
+                        "on-surface-variant": "#ddbfc5",
+                        "primary-fixed": "#ffd9e1",
+                        "outline": "#a58a90",
+                        "surface-dim": "#13131b",
+                        "tertiary": "#e9c400",
+                        "surface": "#13131b"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "sfx-offset": "-12px",
+                        "margin-edge": "32px",
+                        "panel-gutter": "24px",
+                        "frame-border": "4px"
+                    },
+                    "fontFamily": {
+                        "label-lg": ["Syne"],
+                        "display-lg": ["Anton"],
+                        "headline-lg-mobile": ["Anton"],
+                        "headline-sm": ["Anton"],
+                        "label-sm": ["Syne"],
+                        "headline-md": ["Anton"],
+                        "headline-lg": ["Anton"],
+                        "body-lg": ["Hanken Grotesk"],
+                        "body-md": ["Hanken Grotesk"]
+                    },
+                    "fontSize": {
+                        "label-lg": ["14px", { "lineHeight": "20px", "fontWeight": "700" }],
+                        "display-lg": ["80px", { "lineHeight": "80px", "letterSpacing": "-0.02em", "fontWeight": "400" }],
+                        "headline-lg-mobile": ["36px", { "lineHeight": "40px", "fontWeight": "400" }],
+                        "headline-sm": ["24px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "label-sm": ["12px", { "lineHeight": "16px", "fontWeight": "700" }],
+                        "headline-md": ["32px", { "lineHeight": "36px", "fontWeight": "400" }],
+                        "headline-lg": ["48px", { "lineHeight": "52px", "letterSpacing": "0.04em", "fontWeight": "400" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .screentone-bg {
+            background-image: radial-gradient(var(--tw-colors-surface-container-high) 1px, transparent 1px);
+            background-size: 4px 4px;
+        }
+        .manga-panel {
+            clip-path: polygon(0 0, 100% 5%, 95% 100%, 5% 95%);
+        }
+        .manga-panel-reverse {
+            clip-path: polygon(5% 0, 95% 5%, 100% 100%, 0 95%);
+        }
+        .speed-lines {
+            background: repeating-linear-gradient(
+                45deg,
+                transparent,
+                transparent 10px,
+                var(--tw-colors-surface-container-high) 10px,
+                var(--tw-colors-surface-container-high) 11px
+            );
+        }
+        .watermark {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-15deg);
+            font-size: 40vw;
+            color: rgba(255, 255, 255, 0.02);
+            z-index: -1;
+            pointer-events: none;
+            font-family: 'Anton', sans-serif;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background min-h-screen relative overflow-x-hidden font-body-md pb-24 md:pb-0">
+<!-- Watermark -->
+<div class="watermark uppercase">æ¼«ç”»</div>
+<!-- TopAppBar (Hidden on MD for pure Canvas focus if preferred, but kept per instructions if intended as global nav. Adjusting to a profile context) -->
+<header class="bg-background dark:bg-background text-primary dark:text-primary-fixed-dim docked full-width top-0 border-b-4 border-on-background dark:border-on-background-variant shadow-[4px_4px_0px_0px_rgba(255,177,197,1)] flex justify-between items-center w-full px-margin-edge py-4 z-40 relative md:hidden">
+<div class="flex items-center gap-4">
+<!-- Simulated Avatar Leading -->
+<div class="w-10 h-10 rounded-full border-2 border-primary overflow-hidden">
+<img alt="Avatar" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB5hsPaRaiWNqbR1pddV-UsLuBo-bQfdqRNYv3D46cTs5CTtMLTaCbK_LoZtc-JRdBqqRo9HmXX2u1ZjWNSVie-2sZoX_XgV7kSjKcFhqhLIQtHy-Q93gwyVipVLOzHXkiqHZTsY0s2PQdQ8PuhWOBrUbMobs3_EUj6zfN6bMdZnc9d0RXSDGDeB9GyeAZIYadrRc1V7Eh_yG-zgIWVxNt8G2fBle5Qdvb20YFAqw0gl2qHPMpmrQ-csY1vsKkIBp4lEkVGgHCQnec"/>
+</div>
+<h1 class="font-display-lg text-headline-lg-mobile text-primary-container dark:text-primary tracking-tighter uppercase m-0 leading-none">MangaFlow</h1>
+</div>
+<div class="text-on-background opacity-70 hover:bg-surface-variant transition-colors active:translate-y-1 active:translate-x-1 duration-75 p-2 rounded">
+<span class="material-symbols-outlined text-3xl">account_circle</span>
+</div>
+</header>
+<!-- Desktop Sidebar (if needed, but Profile implies focus. Omitting sidebar to focus on Profile Canvas, per relevance check on "Canvas Prioritization") -->
+<!-- Main Content Canvas -->
+<main class="max-w-7xl mx-auto px-4 md:px-margin-edge py-8">
+<!-- Profile Header Area: The "Trading Card" and Stats -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-panel-gutter mb-12">
+<!-- Character Card (Avatar) -->
+<div class="lg:col-span-4 relative group">
+<div class="manga-panel bg-surface-container-high border-frame-border border-on-background p-4 relative z-10 shadow-[8px_8px_0px_0px_rgba(0,227,253,1)] hover:shadow-[12px_12px_0px_0px_rgba(0,227,253,1)] transition-all duration-300">
+<div class="absolute top-2 right-2 bg-on-background text-background font-label-lg px-2 py-1 rotate-3 border-2 border-primary z-20">
+                        P.01
+                    </div>
+<div class="relative w-full aspect-[3/4] overflow-hidden border-2 border-on-background bg-surface screentone-bg flex items-center justify-center">
+<!-- Placeholder for high-energy character avatar -->
+<img alt="High-contrast manga-style portrait of a creator" class="w-full h-full object-cover grayscale contrast-125 mix-blend-luminosity" data-alt="A striking digital illustration in a manga-brutalist style featuring a dynamic, intense portrait of a young creator. The character is drawn with thick, aggressive ink lines and dramatic halftone dot shading, echoing traditional Japanese comic art. High-key lighting highlights the subject against a stark, screentone-patterned background, accented by vibrant flashes of neon pink and electric cyan. The mood is highly energetic, capturing the 'Creative Adrenaline' of a shounen manga protagonist." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBuvLzFKn2c8P_oCZ1XGLDA4XU7ZCmvwtKpuljjVwDClfX0HJvXVVVkLk_eslXQGW2JAgAfXjQ0vlyWt6Uel5c179bmTS48a0pcMpctttvzhau_c6dA-amkzXNQTvPVTUnsXLbaHZu4lKI_1PeEj20EP7No93qR5voTGiKG07QAf0-Tw98tmYOeDj2lNHkWz4GTk-Oic6iVYHhX2DuPFBxVTPkwr-Zi77h1BxO9yy5tRB0gGLt6tdZ59s3tb18XySqFx1dvBO7ZGLs"/>
+<!-- Overlay Effect -->
+<div class="absolute inset-0 bg-primary/20 mix-blend-color"></div>
+</div>
+<!-- Role Badge -->
+<div class="absolute -bottom-6 left-1/2 -translate-x-1/2 bg-primary text-on-primary font-headline-sm uppercase px-6 py-2 border-frame-border border-on-background shadow-[4px_4px_0px_0px_rgba(255,177,197,1)] -rotate-2 whitespace-nowrap z-20">
+                        ä½œç”» [ Artist ]
+                    </div>
+</div>
+</div>
+<!-- Character Status Screen (Stats) -->
+<div class="lg:col-span-8 flex flex-col justify-center mt-12 lg:mt-0 relative">
+<div class="manga-panel-reverse bg-surface-container border-frame-border border-on-background p-8 relative shadow-[8px_8px_0px_0px_rgba(255,107,157,1)]">
+<div class="absolute top-0 right-0 w-32 h-32 speed-lines opacity-20 pointer-events-none"></div>
+<div class="mb-6">
+<h2 class="font-headline-lg text-primary uppercase tracking-wider">Kenta 'Inkslinger' Sato</h2>
+<p class="font-label-lg text-on-surface-variant flex items-center gap-2 mt-2">
+<span class="bg-tertiary text-on-tertiary px-2 py-0.5 rounded-sm rotate-1 font-bold">LVL. 42</span>
+                            Master of the G-Pen
+                        </p>
+</div>
+<!-- RPG Stats Grid -->
+<div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8">
+<div class="border-b-4 border-on-background pb-2 group">
+<span class="font-label-sm text-secondary uppercase block mb-1">Stamina</span>
+<div class="font-headline-md text-on-background group-hover:text-secondary transition-colors">8,450</div>
+</div>
+<div class="border-b-4 border-on-background pb-2 group">
+<span class="font-label-sm text-primary uppercase block mb-1">Speed Lines</span>
+<div class="font-headline-md text-on-background group-hover:text-primary transition-colors">999+</div>
+</div>
+<div class="border-b-4 border-on-background pb-2 group">
+<span class="font-label-sm text-tertiary uppercase block mb-1">Panels Drawn</span>
+<div class="font-headline-md text-on-background group-hover:text-tertiary transition-colors">12.4k</div>
+</div>
+<div class="border-b-4 border-on-background pb-2 group">
+<span class="font-label-sm text-error uppercase block mb-1">Deadlines Met</span>
+<div class="font-headline-md text-on-background group-hover:text-error transition-colors">84%</div>
+</div>
+</div>
+<!-- Action Buttons -->
+<div class="flex flex-wrap gap-4 mt-8">
+<button class="bg-on-background text-background font-label-lg uppercase px-6 py-3 border-frame-border border-on-background shadow-[4px_4px_0px_0px_rgba(0,227,253,1)] hover:translate-x-1 hover:translate-y-1 hover:shadow-none transition-all duration-75 flex items-center gap-2">
+<span class="material-symbols-outlined">edit</span>
+                            Edit Stats
+                        </button>
+<button class="bg-surface-variant text-on-surface font-label-lg uppercase px-6 py-3 border-frame-border border-on-background shadow-[4px_4px_0px_0px_rgba(255,177,197,1)] hover:translate-x-1 hover:translate-y-1 hover:shadow-none transition-all duration-75 flex items-center gap-2">
+<span class="material-symbols-outlined">share</span>
+                            Share Card
+                        </button>
+</div>
+</div>
+</div>
+</div>
+<!-- Achievements: Arc Completion Stamps -->
+<div class="mt-16">
+<h3 class="font-headline-md text-on-background uppercase mb-8 border-b-4 border-primary inline-block pb-2">Arc Completions</h3>
+<div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6">
+<!-- Stamp 1 -->
+<div class="aspect-square rounded-full border-[6px] border-error flex items-center justify-center p-4 relative group hover:scale-105 transition-transform">
+<div class="absolute inset-0 rounded-full border-4 border-error border-dashed opacity-50 m-2 animate-spin-slow"></div>
+<div class="text-center rotate-[-15deg]">
+<span class="font-display-lg text-error block leading-none">å®Œ</span>
+<span class="font-label-sm text-error uppercase font-bold tracking-widest mt-2 block">Origin Arc</span>
+</div>
+</div>
+<!-- Stamp 2 -->
+<div class="aspect-square rounded-full border-[6px] border-secondary flex items-center justify-center p-4 relative group hover:scale-105 transition-transform">
+<div class="absolute inset-0 rounded-full border-4 border-secondary border-dashed opacity-50 m-2"></div>
+<div class="text-center rotate-[10deg]">
+<span class="font-display-lg text-secondary block leading-none">è¦‡</span>
+<span class="font-label-sm text-secondary uppercase font-bold tracking-widest mt-2 block">Tournament</span>
+</div>
+</div>
+<!-- Stamp 3 (In Progress) -->
+<div class="aspect-square rounded-full border-[6px] border-surface-variant flex items-center justify-center p-4 relative group grayscale opacity-50">
+<div class="text-center">
+<span class="font-display-lg text-surface-variant block leading-none">?</span>
+<span class="font-label-sm text-surface-variant uppercase font-bold tracking-widest mt-2 block">Dark Guild</span>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- BottomNavBar (Mobile Only) - Using Shared Components JSON verbatim for active state logic (Active on "HOME" as fallback, or ideally a "PROFILE" tab if it existed, but using the provided JSON exactly) -->
+<nav class="bg-surface-container dark:bg-surface-container-lowest text-secondary dark:text-secondary-fixed fixed bottom-0 w-full z-50 rounded-t-xl border-t-4 border-on-background shadow-[0_-4px_0px_0px_rgba(0,227,253,1)] fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 pb-6 pt-2 bg-background md:hidden">
+<!-- ITEM 1: HOME (Set as active for demonstration, though 'Profile' isn't explicitly in the JSON array, HOME acts as the base hub) -->
+<a class="flex flex-col items-center justify-center bg-primary text-on-primary rounded-lg p-2 scale-110 -rotate-3 hover:bg-surface-container-highest transition-transform active:scale-95 duration-100 ease-in-out" href="#">
+<span class="material-symbols-outlined text-2xl mb-1" style="font-variation-settings: 'FILL' 1;">home</span>
+<span class="font-label-sm text-label-sm uppercase tracking-widest">HOME</span>
+</a>
+<!-- ITEM 2: READ -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant p-2 hover:bg-surface-container-highest transition-transform active:scale-95 duration-100 ease-in-out" href="#">
+<span class="material-symbols-outlined text-2xl mb-1">menu_book</span>
+<span class="font-label-sm text-label-sm uppercase tracking-widest">READ</span>
+</a>
+<!-- ITEM 3: CREATE -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant p-2 hover:bg-surface-container-highest transition-transform active:scale-95 duration-100 ease-in-out" href="#">
+<span class="material-symbols-outlined text-2xl mb-1">edit</span>
+<span class="font-label-sm text-label-sm uppercase tracking-widest">CREATE</span>
+</a>
+<!-- ITEM 4: LIBRARY -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant p-2 hover:bg-surface-container-highest transition-transform active:scale-95 duration-100 ease-in-out" href="#">
+<span class="material-symbols-outlined text-2xl mb-1">auto_stories</span>
+<span class="font-label-sm text-label-sm uppercase tracking-widest">LIBRARY</span>
+</a>
+</nav>
+</body></html>

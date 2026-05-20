@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>MangaFlow - Chapter Workflow</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Anton&amp;family=Hanken+Grotesk:wght@400;700&amp;family=Syne:wght@400;700&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .manga-panel {
+            clip-path: polygon(0 0, 100% 2%, 98% 100%, 2% 98%);
+        }
+        .manga-panel-alt {
+            clip-path: polygon(2% 0, 98% 2%, 100% 98%, 0 100%);
+        }
+        .screentone-bg {
+            background-image: radial-gradient(#34343d 1px, transparent 1px);
+            background-size: 8px 8px;
+        }
+        .speedlines-bg {
+            background: repeating-linear-gradient(
+                45deg,
+                transparent,
+                transparent 10px,
+                rgba(255, 107, 157, 0.1) 10px,
+                rgba(255, 107, 157, 0.1) 20px
+            );
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "tertiary-fixed": "#ffe16d",
+                        "on-background": "#e4e1ed",
+                        "on-primary-fixed": "#3f001b",
+                        "on-error-container": "#ffdad6",
+                        "secondary-fixed": "#9cf0ff",
+                        "primary-fixed-dim": "#ffb1c5",
+                        "on-tertiary": "#3a3000",
+                        "surface-container-low": "#1b1b23",
+                        "on-primary-fixed-variant": "#8c0a46",
+                        "inverse-on-surface": "#302f39",
+                        "error": "#ffb4ab",
+                        "error-container": "#93000a",
+                        "secondary": "#bdf4ff",
+                        "on-tertiary-fixed-variant": "#544600",
+                        "on-error": "#690005",
+                        "inverse-primary": "#ac2a5d",
+                        "on-secondary-fixed-variant": "#004f58",
+                        "surface-variant": "#34343d",
+                        "surface-container-high": "#292932",
+                        "on-primary": "#650030",
+                        "primary-container": "#ff6b9d",
+                        "on-secondary-fixed": "#001f24",
+                        "secondary-fixed-dim": "#00daf3",
+                        "secondary-container": "#00e3fd",
+                        "on-tertiary-container": "#403500",
+                        "primary": "#ffb1c5",
+                        "tertiary-fixed-dim": "#e9c400",
+                        "on-surface": "#e4e1ed",
+                        "on-primary-container": "#6e0035",
+                        "surface-bright": "#393842",
+                        "on-tertiary-fixed": "#221b00",
+                        "surface-container": "#1f1f28",
+                        "surface-container-lowest": "#0d0d16",
+                        "on-secondary-container": "#00616d",
+                        "inverse-surface": "#e4e1ed",
+                        "tertiary-container": "#ba9c00",
+                        "background": "#13131b",
+                        "on-secondary": "#00363d",
+                        "surface-tint": "#ffb1c5",
+                        "outline-variant": "#574146",
+                        "surface-container-highest": "#34343d",
+                        "on-surface-variant": "#ddbfc5",
+                        "primary-fixed": "#ffd9e1",
+                        "outline": "#a58a90",
+                        "surface-dim": "#13131b",
+                        "tertiary": "#e9c400",
+                        "surface": "#13131b"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "sfx-offset": "-12px",
+                        "margin-edge": "32px",
+                        "panel-gutter": "24px",
+                        "frame-border": "4px"
+                    },
+                    "fontFamily": {
+                        "label-lg": ["Syne"],
+                        "display-lg": ["Anton"],
+                        "headline-lg-mobile": ["Anton"],
+                        "headline-sm": ["Anton"],
+                        "label-sm": ["Syne"],
+                        "headline-md": ["Anton"],
+                        "headline-lg": ["Anton"],
+                        "body-lg": ["Hanken Grotesk"],
+                        "body-md": ["Hanken Grotesk"]
+                    },
+                    "fontSize": {
+                        "label-lg": ["14px", { "lineHeight": "20px", "fontWeight": "700" }],
+                        "display-lg": ["80px", { "lineHeight": "80px", "letterSpacing": "-0.02em", "fontWeight": "400" }],
+                        "headline-lg-mobile": ["36px", { "lineHeight": "40px", "fontWeight": "400" }],
+                        "headline-sm": ["24px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "label-sm": ["12px", { "lineHeight": "16px", "fontWeight": "700" }],
+                        "headline-md": ["32px", { "lineHeight": "36px", "fontWeight": "400" }],
+                        "headline-lg": ["48px", { "lineHeight": "52px", "letterSpacing": "0.04em", "fontWeight": "400" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background font-body-md min-h-screen relative overflow-x-hidden selection:bg-primary selection:text-on-primary pb-24 md:pb-0">
+<!-- Watermark Background -->
+<div class="fixed inset-0 pointer-events-none z-0 flex items-center justify-center opacity-5 select-none overflow-hidden">
+<span class="font-display-lg text-[40vw] text-on-background leading-none transform -rotate-12">創作</span>
+</div>
+<!-- TopAppBar (Web) -->
+<header class="hidden md:flex justify-between items-center w-full px-margin-edge py-4 bg-background dark:bg-background border-b-4 border-on-background dark:border-on-background-variant shadow-[4px_4px_0px_0px_rgba(255,177,197,1)] docked full-width top-0 z-50 relative">
+<div class="flex items-center gap-4">
+<div class="font-display-lg text-headline-lg-mobile text-primary-container dark:text-primary tracking-tighter uppercase">
+                MangaFlow
+            </div>
+<nav class="ml-8 flex gap-6">
+<a class="font-label-lg text-label-lg text-on-background opacity-70 hover:bg-surface-variant transition-colors px-3 py-2 rounded-DEFAULT" href="#">HOME</a>
+<a class="font-label-lg text-label-lg text-on-background opacity-70 hover:bg-surface-variant transition-colors px-3 py-2 rounded-DEFAULT" href="#">READ</a>
+<a class="font-label-lg text-label-lg text-primary font-bold hover:bg-surface-variant transition-colors px-3 py-2 rounded-DEFAULT border-b-4 border-primary" href="#">CREATE</a>
+<a class="font-label-lg text-label-lg text-on-background opacity-70 hover:bg-surface-variant transition-colors px-3 py-2 rounded-DEFAULT" href="#">LIBRARY</a>
+</nav>
+</div>
+<button class="active:translate-y-1 active:translate-x-1 duration-75 text-primary dark:text-primary-fixed-dim">
+<span class="material-symbols-outlined text-[32px]">account_circle</span>
+</button>
+</header>
+<!-- TopAppBar (Mobile) -->
+<header class="md:hidden flex justify-between items-center w-full px-margin-edge py-4 bg-background dark:bg-background border-b-4 border-on-background dark:border-on-background-variant shadow-[4px_4px_0px_0px_rgba(255,177,197,1)] docked full-width top-0 z-50 relative">
+<div class="font-display-lg text-headline-lg-mobile text-primary-container dark:text-primary tracking-tighter uppercase">
+            MangaFlow
+        </div>
+<button class="active:translate-y-1 active:translate-x-1 duration-75 text-primary dark:text-primary-fixed-dim">
+<span class="material-symbols-outlined text-[28px]">account_circle</span>
+</button>
+</header>
+<main class="relative z-10 w-full max-w-7xl mx-auto px-4 md:px-margin-edge pt-8 pb-24">
+<!-- Hero: Full-bleed manga cover art with speed line overlays -->
+<section class="relative w-full h-[353px] md:h-[442px] mb-12 border-frame-border border-on-background shadow-[8px_8px_0px_0px_rgba(0,227,253,1)] bg-surface-container overflow-hidden group manga-panel">
+<img alt="Chapter Cover Art" class="w-full h-full object-cover filter grayscale contrast-125 group-hover:scale-105 transition-transform duration-500" data-alt="A highly dynamic, monochromatic digital illustration in a high-contrast manga style. The scene depicts an intense, cinematic action shot of a futuristic samurai, drawn with sharp, aggressive ink lines and deep black shadows. The background is a stark white void cut by aggressive, diagonal speed lines denoting rapid forward motion. The overall mood is adrenaline-fueled and aggressive, utilizing a brutalist ink-and-neon aesthetic with subtle screentone textures in the midtones." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCX4-_bxKuHHxAxUYHYu_gFiPjwL0K4Nl3Yj9A8yrCZVADa7vHPgRwSmfmb73Pigj5G5ucsEKwZpJJ0GoHJSnzMlyBKfpI6OtvteKxGktelUUwageHr9FV00TLrAtq1ScOzPsdF63R2OU1gRFCbozIHxsKK-8IpIDfvO3ejeC6nYHliA2MED08ySi5DESY-kD0Bt4jdzJdp9mjMbmSE2RlIXzBhTl9Dy1dTKwa5UEA_SY-r5aFMGvb1zWqS95BEiP5rwPufg7zJMds"/>
+<div class="absolute inset-0 speedlines-bg pointer-events-none mix-blend-screen opacity-50"></div>
+<div class="absolute bottom-0 left-0 w-full p-6 md:p-8 bg-gradient-to-t from-background via-background/80 to-transparent">
+<div class="inline-block bg-primary text-on-primary font-label-lg text-label-lg px-3 py-1 border-2 border-on-background transform -skew-x-12 mb-4">
+                    CHAPTER 42
+                </div>
+<h1 class="font-headline-lg-mobile md:font-headline-lg text-on-background uppercase tracking-tight text-shadow-sm">
+                    The Neon Blade Awakens
+                </h1>
+</div>
+<!-- Katakana Tag -->
+<div class="absolute top-4 right-4 bg-secondary text-on-secondary font-headline-sm px-2 py-1 border-2 border-on-background transform rotate-6 z-10 shadow-[2px_2px_0px_0px_rgba(255,177,197,1)]">
+                アクション
+            </div>
+</section>
+<!-- Workflow Storyboard Strip -->
+<section class="mb-16">
+<div class="flex items-center justify-between mb-6">
+<h2 class="font-headline-md text-primary uppercase flex items-center gap-2">
+<span class="material-symbols-outlined text-[32px]">route</span>
+                    Production Workflow
+                </h2>
+<div class="font-label-lg text-on-surface-variant bg-surface-container px-4 py-2 border-2 border-on-surface-variant rounded-DEFAULT">
+                    60% Complete
+                </div>
+</div>
+<!-- Ink Progress Bar -->
+<div class="w-full h-6 bg-surface-container border-2 border-on-background rounded-full overflow-hidden mb-8 relative p-1 shadow-[inset_0px_4px_4px_rgba(0,0,0,0.5)]">
+<div class="h-full bg-primary rounded-full relative w-[60%] border-r-4 border-on-background" style="background-image: repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(0,0,0,0.1) 10px, rgba(0,0,0,0.1) 20px);">
+<!-- Ink drip effect simulation -->
+<div class="absolute right-0 top-1/2 transform -translate-y-1/2 translate-x-1/2 w-4 h-4 bg-primary rounded-full border-2 border-on-background"></div>
+</div>
+</div>
+<!-- Stages Grid -->
+<div class="grid grid-cols-2 md:grid-cols-5 gap-4 md:gap-panel-gutter">
+<!-- Stage 1: Storyboard -->
+<div class="bg-surface-container-low border-frame-border border-on-background p-4 relative manga-panel group cursor-pointer hover:-translate-y-2 hover:-translate-x-2 transition-transform shadow-[4px_4px_0px_0px_rgba(255,177,197,1)]">
+<div class="absolute -top-3 -left-3 bg-secondary text-on-secondary font-headline-sm w-8 h-8 flex items-center justify-center border-2 border-on-background z-10 transform -rotate-12">1</div>
+<div class="flex flex-col items-center text-center gap-2">
+<span class="material-symbols-outlined text-[48px] text-on-surface-variant group-hover:text-primary transition-colors">edit_document</span>
+<h3 class="font-label-lg text-label-lg uppercase text-on-background">ネーム</h3>
+<p class="font-body-md text-on-surface-variant text-sm">Storyboard</p>
+<span class="mt-2 bg-secondary text-on-secondary text-xs px-2 py-1 font-bold rounded-DEFAULT border border-on-background">DONE</span>
+</div>
+</div>
+<!-- Stage 2: Sketch -->
+<div class="bg-surface-container-low border-frame-border border-on-background p-4 relative manga-panel-alt group cursor-pointer hover:-translate-y-2 hover:-translate-x-2 transition-transform shadow-[4px_4px_0px_0px_rgba(255,177,197,1)]">
+<div class="absolute -top-3 -left-3 bg-secondary text-on-secondary font-headline-sm w-8 h-8 flex items-center justify-center border-2 border-on-background z-10 transform rotate-6">2</div>
+<div class="flex flex-col items-center text-center gap-2">
+<span class="material-symbols-outlined text-[48px] text-on-surface-variant group-hover:text-primary transition-colors">draw</span>
+<h3 class="font-label-lg text-label-lg uppercase text-on-background">下書き</h3>
+<p class="font-body-md text-on-surface-variant text-sm">Sketch</p>
+<span class="mt-2 bg-secondary text-on-secondary text-xs px-2 py-1 font-bold rounded-DEFAULT border border-on-background">DONE</span>
+</div>
+</div>
+<!-- Stage 3: Inking (Active) -->
+<div class="bg-surface-container-high border-frame-border border-primary p-4 relative group cursor-pointer hover:-translate-y-2 hover:-translate-x-2 transition-transform shadow-[8px_8px_0px_0px_rgba(255,177,197,1)] scale-105 z-10 screentone-bg">
+<div class="absolute -top-4 -left-4 bg-primary text-on-primary font-headline-sm w-10 h-10 flex items-center justify-center border-2 border-on-background z-20 transform -rotate-6 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">3</div>
+<div class="absolute -top-2 right-2 text-primary font-bold animate-pulse">
+<span class="material-symbols-outlined text-[24px]">ink_pen</span>
+</div>
+<div class="flex flex-col items-center text-center gap-2 bg-surface-container/80 p-2 rounded-DEFAULT backdrop-blur-sm">
+<span class="material-symbols-outlined text-[48px] text-primary">ink_eraser</span>
+<h3 class="font-label-lg text-label-lg uppercase text-primary font-bold">ペン入れ</h3>
+<p class="font-body-md text-on-surface-variant text-sm">Inking</p>
+<span class="mt-2 bg-primary text-on-primary text-xs px-2 py-1 font-bold rounded-DEFAULT border border-on-background animate-pulse">IN PROGRESS</span>
+</div>
+</div>
+<!-- Stage 4: Screentone -->
+<div class="bg-surface-container-low border-frame-border border-on-surface-variant border-dashed p-4 relative manga-panel group cursor-pointer hover:-translate-y-2 hover:-translate-x-2 transition-transform">
+<div class="absolute -top-3 -left-3 bg-surface-variant text-on-surface-variant font-headline-sm w-8 h-8 flex items-center justify-center border-2 border-on-surface-variant z-10 transform rotate-12">4</div>
+<div class="flex flex-col items-center text-center gap-2 opacity-60">
+<span class="material-symbols-outlined text-[48px] text-on-surface-variant">texture</span>
+<h3 class="font-label-lg text-label-lg uppercase text-on-background">トーン</h3>
+<p class="font-body-md text-on-surface-variant text-sm">Screentone</p>
+<span class="mt-2 bg-surface-variant text-on-surface-variant text-xs px-2 py-1 font-bold rounded-DEFAULT border border-on-surface-variant">PENDING</span>
+</div>
+</div>
+<!-- Stage 5: Complete -->
+<div class="bg-surface-container-low border-frame-border border-on-surface-variant border-dashed p-4 relative manga-panel-alt group cursor-pointer hover:-translate-y-2 hover:-translate-x-2 transition-transform">
+<div class="absolute -top-3 -left-3 bg-surface-variant text-on-surface-variant font-headline-sm w-8 h-8 flex items-center justify-center border-2 border-on-surface-variant z-10 transform -rotate-6">5</div>
+<div class="flex flex-col items-center text-center gap-2 opacity-60">
+<span class="material-symbols-outlined text-[48px] text-on-surface-variant">check_circle</span>
+<h3 class="font-label-lg text-label-lg uppercase text-on-background">完成</h3>
+<p class="font-body-md text-on-surface-variant text-sm">Complete</p>
+<span class="mt-2 bg-surface-variant text-on-surface-variant text-xs px-2 py-1 font-bold rounded-DEFAULT border border-on-surface-variant">PENDING</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Chapter Pages Thumbnails -->
+<section>
+<div class="flex items-center justify-between mb-8 pb-4 border-b-4 border-on-background transform -skew-x-6">
+<h2 class="font-headline-md text-secondary uppercase flex items-center gap-2">
+<span class="material-symbols-outlined text-[32px]">auto_stories</span>
+                    Pages
+                </h2>
+<button class="bg-secondary text-on-secondary font-label-lg uppercase px-6 py-2 border-frame-border border-on-background hover:translate-y-[4px] hover:translate-x-[4px] hover:shadow-none transition-all shadow-[4px_4px_0px_0px_rgba(255,107,157,1)] flex items-center gap-2">
+<span class="material-symbols-outlined text-[20px]">add</span>
+                    New Page
+                </button>
+</div>
+<div class="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
+<!-- Page 1 -->
+<div class="relative group bg-surface border-frame-border border-on-background shadow-[4px_4px_0px_0px_rgba(0,227,253,1)] hover:-translate-y-2 hover:-translate-x-2 transition-transform p-2 pb-12 flex flex-col items-center">
+<div class="w-full aspect-[2/3] bg-surface-container relative overflow-hidden screentone-bg mb-2 border border-on-background/20">
+<!-- Placeholder for manga page thumbnail -->
+<div class="absolute inset-0 flex items-center justify-center text-on-surface-variant">
+<span class="material-symbols-outlined text-[48px]">image</span>
+</div>
+</div>
+<div class="absolute bottom-2 left-0 w-full flex justify-between px-4 items-center">
+<span class="font-label-lg text-label-lg uppercase">PG. 01</span>
+<div class="flex gap-1">
+<div class="w-3 h-3 bg-secondary rounded-full border border-on-background"></div>
+<div class="w-3 h-3 bg-secondary rounded-full border border-on-background"></div>
+<div class="w-3 h-3 bg-primary rounded-full border border-on-background animate-pulse"></div>
+<div class="w-3 h-3 bg-surface-variant rounded-full border border-on-background"></div>
+</div>
+</div>
+<button class="absolute top-2 right-2 bg-background/80 p-1 rounded-DEFAULT border border-on-background opacity-0 group-hover:opacity-100 transition-opacity">
+<span class="material-symbols-outlined text-[20px] text-on-background">more_vert</span>
+</button>
+</div>
+<!-- Page 2 -->
+<div class="relative group bg-surface border-frame-border border-on-background shadow-[4px_4px_0px_0px_rgba(0,227,253,1)] hover:-translate-y-2 hover:-translate-x-2 transition-transform p-2 pb-12 flex flex-col items-center">
+<div class="w-full aspect-[2/3] bg-surface-container relative overflow-hidden screentone-bg mb-2 border border-on-background/20">
+<div class="absolute inset-0 flex items-center justify-center text-on-surface-variant">
+<span class="material-symbols-outlined text-[48px]">image</span>
+</div>
+</div>
+<div class="absolute bottom-2 left-0 w-full flex justify-between px-4 items-center">
+<span class="font-label-lg text-label-lg uppercase">PG. 02</span>
+<div class="flex gap-1">
+<div class="w-3 h-3 bg-secondary rounded-full border border-on-background"></div>
+<div class="w-3 h-3 bg-secondary rounded-full border border-on-background"></div>
+<div class="w-3 h-3 bg-primary rounded-full border border-on-background animate-pulse"></div>
+<div class="w-3 h-3 bg-surface-variant rounded-full border border-on-background"></div>
+</div>
+</div>
+<button class="absolute top-2 right-2 bg-background/80 p-1 rounded-DEFAULT border border-on-background opacity-0 group-hover:opacity-100 transition-opacity">
+<span class="material-symbols-outlined text-[20px] text-on-background">more_vert</span>
+</button>
+</div>
+<!-- Page 3 -->
+<div class="relative group bg-surface border-frame-border border-on-background shadow-[4px_4px_0px_0px_rgba(0,227,253,1)] hover:-translate-y-2 hover:-translate-x-2 transition-transform p-2 pb-12 flex flex-col items-center">
+<div class="w-full aspect-[2/3] bg-surface-container relative overflow-hidden screentone-bg mb-2 border border-on-background/20">
+<div class="absolute inset-0 flex items-center justify-center text-on-surface-variant">
+<span class="material-symbols-outlined text-[48px]">image</span>
+</div>
+</div>
+<div class="absolute bottom-2 left-0 w-full flex justify-between px-4 items-center">
+<span class="font-label-lg text-label-lg uppercase">PG. 03</span>
+<div class="flex gap-1">
+<div class="w-3 h-3 bg-secondary rounded-full border border-on-background"></div>
+<div class="w-3 h-3 bg-primary rounded-full border border-on-background animate-pulse"></div>
+<div class="w-3 h-3 bg-surface-variant rounded-full border border-on-background"></div>
+<div class="w-3 h-3 bg-surface-variant rounded-full border border-on-background"></div>
+</div>
+</div>
+<button class="absolute top-2 right-2 bg-background/80 p-1 rounded-DEFAULT border border-on-background opacity-0 group-hover:opacity-100 transition-opacity">
+<span class="material-symbols-outlined text-[20px] text-on-background">more_vert</span>
+</button>
+</div>
+<!-- Blank Page (Add New) -->
+<div class="relative group bg-surface-container-low border-frame-border border-on-surface-variant border-dashed p-2 pb-12 flex flex-col items-center justify-center cursor-pointer hover:bg-surface-variant transition-colors aspect-[2/3] h-full">
+<div class="flex flex-col items-center justify-center h-full text-on-surface-variant group-hover:text-secondary transition-colors">
+<span class="material-symbols-outlined text-[64px] mb-4">add_box</span>
+<span class="font-label-lg text-label-lg uppercase">Add Blank Page</span>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- BottomNavBar (Mobile) -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 pb-6 pt-2 bg-surface-container dark:bg-surface-container-lowest border-t-4 border-on-background shadow-[0_-4px_0px_0px_rgba(0,227,253,1)] rounded-t-xl text-secondary dark:text-secondary-fixed">
+<a class="flex flex-col items-center justify-center text-on-surface-variant p-2 hover:bg-surface-container-highest transition-transform duration-100 ease-in-out font-label-sm text-label-sm uppercase tracking-widest" href="#">
+<span class="material-symbols-outlined text-[24px] mb-1">home</span>
+            HOME
+        </a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant p-2 hover:bg-surface-container-highest transition-transform duration-100 ease-in-out font-label-sm text-label-sm uppercase tracking-widest" href="#">
+<span class="material-symbols-outlined text-[24px] mb-1">menu_book</span>
+            READ
+        </a>
+<a class="flex flex-col items-center justify-center bg-primary text-on-primary rounded-lg p-2 scale-110 -rotate-3 hover:bg-surface-container-highest transition-transform active:scale-95 duration-100 ease-in-out font-label-sm text-label-sm uppercase tracking-widest" href="#">
+<span class="material-symbols-outlined text-[24px] mb-1" style="font-variation-settings: 'FILL' 1;">edit</span>
+            CREATE
+        </a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant p-2 hover:bg-surface-container-highest transition-transform duration-100 ease-in-out font-label-sm text-label-sm uppercase tracking-widest" href="#">
+<span class="material-symbols-outlined text-[24px] mb-1">auto_stories</span>
+            LIBRARY
+        </a>
+</nav>
+</body></html>
