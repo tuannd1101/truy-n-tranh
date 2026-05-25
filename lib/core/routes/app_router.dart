@@ -1,0 +1,147 @@
+import 'package:flutter/material.dart';
+import '../../presentation/screens/screens.dart';
+
+/// Route generator for the app
+class AppRouter {
+  // Route names
+  static const String home = '/';
+  static const String search = '/search';
+  static const String mangaDetail = '/manga-detail';
+  static const String reading = '/manga-reading';
+  static const String profile = '/profile';
+  static const String login = '/login';
+  static const String register = '/register';
+  static const String subscription = '/subscription';
+  static const String payment = '/payment';
+  static const String paymentWebView = '/payment-webview';
+  static const String paymentResult = '/payment-result';
+
+  /// Generate routes based on route settings
+  static Route<dynamic> generateRoute(RouteSettings settings) {
+    // Extract route arguments
+    final args = settings.arguments;
+
+    // Route to appropriate screen
+    switch (settings.name) {
+      case home:
+        return MaterialPageRoute(
+          builder: (_) => const HomeScreen(),
+          settings: settings,
+        );
+
+      case search:
+        return MaterialPageRoute(
+          builder: (_) => const SearchScreen(),
+          settings: settings,
+        );
+
+      case mangaDetail:
+        final mangaId = args is int ? args : 0;
+        return MaterialPageRoute(
+          builder: (_) => MangaDetailScreen(mangaId: mangaId),
+          settings: settings,
+        );
+
+      case reading:
+        final readingArgs = args as Map<String, dynamic>?;
+        final mangaId = readingArgs?['mangaId'] as int? ?? 0;
+        final chapterId = readingArgs?['chapterId'] as int? ?? 0;
+        return MaterialPageRoute(
+          builder: (_) =>
+              MangaReadingScreen(mangaId: mangaId, chapterId: chapterId),
+          settings: settings,
+        );
+
+      case profile:
+        return MaterialPageRoute(
+          builder: (_) => const ProfileScreen(),
+          settings: settings,
+        );
+
+      case login:
+        return MaterialPageRoute(
+          builder: (_) => const LoginScreen(),
+          settings: settings,
+        );
+
+      case register:
+        return MaterialPageRoute(
+          builder: (_) => const RegisterScreen(),
+          settings: settings,
+        );
+
+      case subscription:
+        return MaterialPageRoute(
+          builder: (_) => const SubscriptionScreen(),
+          settings: settings,
+        );
+
+      case payment:
+        final plan = args as Map<String, dynamic>? ?? {};
+        return MaterialPageRoute(
+          builder: (_) => PaymentScreen(plan: plan),
+          settings: settings,
+        );
+
+      case paymentWebView:
+        final webViewArgs = args as Map<String, dynamic>?;
+        final url = webViewArgs?['url'] as String? ?? '';
+        final method = webViewArgs?['method'];
+        return MaterialPageRoute(
+          builder: (_) => PaymentWebViewScreen(url: url, method: method),
+          settings: settings,
+        );
+
+      case paymentResult:
+        final resultArgs = args as Map<String, dynamic>?;
+        final success = resultArgs?['success'] as bool? ?? false;
+        return MaterialPageRoute(
+          builder: (_) => PaymentResultScreen(success: success),
+          settings: settings,
+        );
+
+      default:
+        return _errorRoute('Route not found: ${settings.name}');
+    }
+  }
+
+  /// Generate error route
+  static Route<dynamic> _errorRoute(String message) {
+    return MaterialPageRoute(
+      builder: (context) => Scaffold(
+        appBar: AppBar(title: const Text('Error')),
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(Icons.error_outline, size: 64, color: Colors.red),
+              const SizedBox(height: 16),
+              Text(
+                'Navigation Error',
+                style: Theme.of(context).textTheme.headlineSmall,
+              ),
+              const SizedBox(height: 8),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 32),
+                child: Text(
+                  message,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(color: Colors.grey),
+                ),
+              ),
+              const SizedBox(height: 24),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.of(
+                    context,
+                  ).pushNamedAndRemoveUntil(home, (route) => false);
+                },
+                child: const Text('Go to Home'),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
