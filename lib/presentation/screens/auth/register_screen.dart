@@ -1,10 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'dart:ui';
+import 'package:flutter/services.dart';
 import '../../../core/constants/app_colors.dart';
-import '../../../core/constants/app_text_styles.dart';
-import '../../../core/utils/ui_helpers.dart';
-import '../../../providers/auth_provider.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -13,332 +9,76 @@ class RegisterScreen extends StatefulWidget {
   State<RegisterScreen> createState() => _RegisterScreenState();
 }
 
-class _RegisterScreenState extends State<RegisterScreen>
-    with SingleTickerProviderStateMixin {
-  final _formKey = GlobalKey<FormState>();
-  final _nameController = TextEditingController();
+class _RegisterScreenState extends State<RegisterScreen> {
+  final _usernameController = TextEditingController();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
-
-  bool _isPasswordVisible = false;
-  bool _isConfirmPasswordVisible = false;
   bool _isLoading = false;
-
-  late AnimationController _animationController;
-  late Animation<double> _fadeAnimation;
 
   @override
   void initState() {
     super.initState();
-    _animationController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 1000),
-    );
-    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(
-        parent: _animationController,
-        curve: Curves.easeOut,
-      ),
-    );
-    _animationController.forward();
+    SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+      statusBarColor: Colors.transparent,
+      statusBarIconBrightness: Brightness.light,
+    ));
   }
 
   @override
   void dispose() {
-    _nameController.dispose();
+    _usernameController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
     _confirmPasswordController.dispose();
-    _animationController.dispose();
     super.dispose();
-  }
-
-  Future<void> _handleRegister() async {
-    if (!_formKey.currentState!.validate()) return;
-    
-    setState(() => _isLoading = true);
-    try {
-      final authProvider = Provider.of<AuthProvider>(context, listen: false);
-      await authProvider.register(
-        _nameController.text.trim(),
-        _emailController.text.trim(),
-        _passwordController.text,
-      );
-
-      if (mounted) {
-        setState(() => _isLoading = false);
-        UiHelpers.showSuccessSnackbar(
-            context, "Đăng ký thành công! Vui lòng đăng nhập.");
-        Navigator.pop(context); // Go back to login
-      }
-    } catch (e) {
-      if (mounted) {
-        setState(() => _isLoading = false);
-        final errorMsg = Provider.of<AuthProvider>(context, listen: false)
-                .errorMessage ??
-            "Đăng ký thất bại.";
-        UiHelpers.showErrorSnackbar(context, errorMsg);
-      }
-    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      extendBodyBehindAppBar: true,
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new, color: Colors.white),
-          onPressed: () => Navigator.pop(context),
-        ),
-      ),
+      backgroundColor: AppColors.background,
       body: Stack(
         children: [
-          // Dynamic Gradient Background
-          Container(
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topRight,
-                end: Alignment.bottomLeft,
-                colors: [
-                  Color(0xFF1E1E2C),
-                  Color(0xFF2A2A40),
-                  AppColors.primaryDark,
-                ],
-              ),
-            ),
-          ),
-          
-          // Decorative Orbs
-          Positioned(
-            top: 50,
-            right: -100,
-            child: Container(
-              width: 250,
-              height: 250,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: AppColors.primary.withOpacity(0.3),
-              ),
-            ),
-          ),
-          Positioned(
-            bottom: -50,
-            left: -100,
-            child: Container(
-              width: 300,
-              height: 300,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: const Color(0xFF6C63FF).withOpacity(0.2),
-              ),
-            ),
-          ),
-          
-          // Glassmorphism Blur Effect overlay
-          Positioned.fill(
-            child: BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: 50, sigmaY: 50),
-              child: Container(
-                color: Colors.black.withOpacity(0.1),
-              ),
-            ),
-          ),
-          
-          // Main Content
+          // Background speed-lines
+          Positioned.fill(child: CustomPaint(painter: _SpeedLinesPainter())),
+          // Main content
           SafeArea(
-            child: Center(
-              child: SingleChildScrollView(
-                physics: const BouncingScrollPhysics(),
-                padding: const EdgeInsets.symmetric(horizontal: 24.0),
-                child: FadeTransition(
-                  opacity: _fadeAnimation,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      // Title
-                      const Text(
-                        'Tạo tài khoản',
-                        style: TextStyle(
-                          fontSize: 32,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                          letterSpacing: 0.5,
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        'Tham gia cộng đồng đọc truyện',
-                        style: TextStyle(
-                          fontSize: 16,
-                          color: Colors.white.withOpacity(0.7),
-                        ),
-                      ),
-                      const SizedBox(height: 40),
-                      
-                      // Form
-                      Form(
-                        key: _formKey,
-                        child: Column(
-                          children: [
-                            _buildGlassTextField(
-                              controller: _nameController,
-                              hintText: 'Họ và tên',
-                              icon: Icons.person_outline,
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return 'Vui lòng nhập họ tên';
-                                }
-                                return null;
-                              },
-                            ),
-                            const SizedBox(height: 16),
-                            _buildGlassTextField(
-                              controller: _emailController,
-                              hintText: 'Email',
-                              icon: Icons.email_outlined,
-                              keyboardType: TextInputType.emailAddress,
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return 'Vui lòng nhập email';
-                                }
-                                if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
-                                    .hasMatch(value)) {
-                                  return 'Email không hợp lệ';
-                                }
-                                return null;
-                              },
-                            ),
-                            const SizedBox(height: 16),
-                            _buildGlassTextField(
-                              controller: _passwordController,
-                              hintText: 'Mật khẩu',
-                              icon: Icons.lock_outline,
-                              isPassword: true,
-                              isVisible: _isPasswordVisible,
-                              onVisibilityToggle: () {
-                                setState(() {
-                                  _isPasswordVisible = !_isPasswordVisible;
-                                });
-                              },
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return 'Vui lòng nhập mật khẩu';
-                                }
-                                if (value.length < 6) {
-                                  return 'Mật khẩu phải từ 6 ký tự';
-                                }
-                                return null;
-                              },
-                            ),
-                            const SizedBox(height: 16),
-                            _buildGlassTextField(
-                              controller: _confirmPasswordController,
-                              hintText: 'Xác nhận mật khẩu',
-                              icon: Icons.lock_reset,
-                              isPassword: true,
-                              isVisible: _isConfirmPasswordVisible,
-                              onVisibilityToggle: () {
-                                setState(() {
-                                  _isConfirmPasswordVisible = !_isConfirmPasswordVisible;
-                                });
-                              },
-                              validator: (value) {
-                                if (value != _passwordController.text) {
-                                  return 'Mật khẩu không khớp';
-                                }
-                                return null;
-                              },
-                            ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(height: 40),
-                      
-                      // Register Button
-                      AnimatedContainer(
-                        duration: const Duration(milliseconds: 300),
-                        width: double.infinity,
-                        height: 55,
-                        decoration: BoxDecoration(
-                          gradient: const LinearGradient(
-                            colors: [AppColors.primary, AppColors.primaryDark],
-                            begin: Alignment.centerLeft,
-                            end: Alignment.centerRight,
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 40),
+              child: Column(
+                children: [
+                  // Title
+                  Transform.rotate(
+                    angle: -0.05,
+                    child: const Text(
+                      'JOIN THE SQUAD',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontFamily: 'sans-serif',
+                        fontSize: 36,
+                        fontWeight: FontWeight.w900,
+                        color: Colors.white,
+                        letterSpacing: 2,
+                        shadows: [
+                          Shadow(
+                            color: AppColors.secondaryContainer,
+                            offset: Offset(0, 0),
+                            blurRadius: 15,
                           ),
-                          borderRadius: BorderRadius.circular(16),
-                          boxShadow: [
-                            BoxShadow(
-                              color: AppColors.primary.withOpacity(0.4),
-                              blurRadius: 15,
-                              offset: const Offset(0, 5),
-                            )
-                          ],
-                        ),
-                        child: ElevatedButton(
-                          onPressed: _isLoading ? null : _handleRegister,
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.transparent,
-                            shadowColor: Colors.transparent,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(16),
-                            ),
-                          ),
-                          child: _isLoading
-                              ? const SizedBox(
-                                  height: 24,
-                                  width: 24,
-                                  child: CircularProgressIndicator(
-                                    color: Colors.white,
-                                    strokeWidth: 2.5,
-                                  ),
-                                )
-                              : const Text(
-                                  'ĐĂNG KÝ',
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.white,
-                                    letterSpacing: 1.5,
-                                  ),
-                                ),
-                        ),
-                      ),
-                      const SizedBox(height: 32),
-                      
-                      // Login Link
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            'Đã có tài khoản? ',
-                            style: TextStyle(
-                              color: Colors.white.withOpacity(0.7),
-                              fontSize: 15,
-                            ),
-                          ),
-                          GestureDetector(
-                            onTap: () {
-                              Navigator.pop(context);
-                            },
-                            child: const Text(
-                              'Đăng nhập ngay',
-                              style: TextStyle(
-                                color: AppColors.primaryLight,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 15,
-                              ),
-                            ),
+                          Shadow(
+                            color: AppColors.secondaryContainer,
+                            offset: Offset(0, 0),
+                            blurRadius: 30,
                           ),
                         ],
                       ),
-                      const SizedBox(height: 24),
-                    ],
+                    ),
                   ),
-                ),
+                  const SizedBox(height: 32),
+                  // Register Card
+                  _buildRegisterCard(),
+                ],
               ),
             ),
           ),
@@ -347,55 +87,274 @@ class _RegisterScreenState extends State<RegisterScreen>
     );
   }
 
-  Widget _buildGlassTextField({
-    required TextEditingController controller,
-    required String hintText,
-    required IconData icon,
-    bool isPassword = false,
-    bool isVisible = false,
-    VoidCallback? onVisibilityToggle,
-    TextInputType? keyboardType,
-    String? Function(String?)? validator,
-  }) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.08),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: Colors.white.withOpacity(0.15),
-          width: 1,
-        ),
-      ),
-      child: TextFormField(
-        controller: controller,
-        obscureText: isPassword && !isVisible,
-        keyboardType: keyboardType,
-        style: const TextStyle(color: Colors.white),
-        decoration: InputDecoration(
-          hintText: hintText,
-          hintStyle: TextStyle(color: Colors.white.withOpacity(0.5)),
-          prefixIcon: Icon(icon, color: Colors.white.withOpacity(0.7)),
-          suffixIcon: isPassword
-              ? IconButton(
-                  icon: Icon(
-                    isVisible ? Icons.visibility : Icons.visibility_off,
-                    color: Colors.white.withOpacity(0.7),
+  Widget _buildRegisterCard() {
+    return Transform.rotate(
+      angle: 0.017, // ~1 degree tilt
+      child: Stack(
+        clipBehavior: Clip.none,
+        children: [
+          // Card body
+          ClipPath(
+            clipper: _MangaCardClipper(),
+            child: Container(
+              width: double.infinity,
+              decoration: BoxDecoration(
+                color: AppColors.surfaceContainer,
+                border: Border.all(color: Colors.black, width: 4),
+              ),
+              child: Stack(
+                children: [
+                  Positioned.fill(
+                    child: CustomPaint(painter: _HalftonePainter()),
                   ),
-                  onPressed: onVisibilityToggle,
-                )
-              : null,
-          border: InputBorder.none,
-          contentPadding: const EdgeInsets.symmetric(
-            horizontal: 20,
-            vertical: 16,
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(28, 40, 28, 28),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        _buildMangaField(
+                          label: 'USERNAME',
+                          hint: 'Enter your alias',
+                          controller: _usernameController,
+                        ),
+                        const SizedBox(height: 24),
+                        _buildMangaField(
+                          label: 'EMAIL',
+                          hint: 'your@email.com',
+                          controller: _emailController,
+                          keyboardType: TextInputType.emailAddress,
+                        ),
+                        const SizedBox(height: 24),
+                        _buildMangaField(
+                          label: 'PASSWORD',
+                          hint: '••••••••',
+                          controller: _passwordController,
+                          obscureText: true,
+                        ),
+                        const SizedBox(height: 24),
+                        _buildMangaField(
+                          label: 'CONFIRM PASSWORD',
+                          hint: '••••••••',
+                          controller: _confirmPasswordController,
+                          obscureText: true,
+                        ),
+                        const SizedBox(height: 40),
+                        _buildStartCreatingButton(),
+                        const SizedBox(height: 32),
+                        Center(
+                          child: GestureDetector(
+                            onTap: () => Navigator.pop(context),
+                            child: const Text(
+                              'ALREADY A MEMBER? SIGN IN',
+                              style: TextStyle(
+                                fontFamily: 'sans-serif',
+                                color: AppColors.secondaryContainer,
+                                fontSize: 13,
+                                fontWeight: FontWeight.w900,
+                                decoration: TextDecoration.underline,
+                                decorationColor: AppColors.secondaryContainer,
+                                decorationThickness: 2,
+                                letterSpacing: 1,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ),
-          errorStyle: const TextStyle(
-            color: Color(0xFFFF6B6B),
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-        validator: validator,
+        ],
       ),
     );
   }
+
+  Widget _buildMangaField({
+    required String label,
+    required String hint,
+    required TextEditingController controller,
+    TextInputType keyboardType = TextInputType.text,
+    bool obscureText = false,
+  }) {
+    return Stack(
+      clipBehavior: Clip.none,
+      children: [
+        // Solid dark background for input
+        Container(
+          margin: const EdgeInsets.only(top: 8),
+          color: const Color(0xFF1B1B23), // Darker surface for input
+          child: TextField(
+            controller: controller,
+            keyboardType: keyboardType,
+            obscureText: obscureText,
+            style: const TextStyle(
+                color: Colors.white, fontSize: 14, fontWeight: FontWeight.w600),
+            decoration: InputDecoration(
+              hintText: hint,
+              hintStyle: const TextStyle(
+                  color: AppColors.onSurfaceVariant,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600),
+              filled: true,
+              fillColor: Colors.transparent,
+              border: InputBorder.none,
+              contentPadding:
+                  const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+            ),
+          ),
+        ),
+        // Overlapping label
+        Positioned(
+          top: 0,
+          left: 12,
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+            color: Colors.white,
+            child: Text(
+              label,
+              style: const TextStyle(
+                fontFamily: 'sans-serif',
+                fontSize: 10,
+                fontWeight: FontWeight.w900,
+                color: Colors.black,
+                letterSpacing: 1,
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildStartCreatingButton() {
+    return GestureDetector(
+      onTap: _isLoading ? null : _handleRegister,
+      child: Stack(
+        clipBehavior: Clip.none,
+        children: [
+          // Cyan offset shadow
+          Positioned(
+            top: 6,
+            left: 6,
+            right: -6,
+            bottom: -6,
+            child: Container(
+              color: AppColors.secondaryContainer,
+            ),
+          ),
+          // Actual button body
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.symmetric(vertical: 18),
+            decoration: BoxDecoration(
+              color: AppColors.primaryContainer,
+            ),
+            child: _isLoading
+                ? const Center(
+                    child: SizedBox(
+                      width: 24,
+                      height: 24,
+                      child: CircularProgressIndicator(
+                        color: Colors.black,
+                        strokeWidth: 3,
+                      ),
+                    ),
+                  )
+                : const Center(
+                    child: Text(
+                      'START CREATING',
+                      style: TextStyle(
+                        fontFamily: 'sans-serif',
+                        fontSize: 22,
+                        fontWeight: FontWeight.w900,
+                        color: Colors.black,
+                        letterSpacing: 1,
+                      ),
+                    ),
+                  ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _handleRegister() async {
+    if (_usernameController.text.isEmpty ||
+        _emailController.text.isEmpty ||
+        _passwordController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Vui lòng điền đủ thông tin')),
+      );
+      return;
+    }
+    setState(() => _isLoading = true);
+    await Future.delayed(const Duration(seconds: 1));
+    if (mounted) {
+      setState(() => _isLoading = false);
+      Navigator.pop(context); // Go back to login
+    }
+  }
+}
+
+// ──────────────────────────────────────────────────────────
+// CUSTOM CLIPPERS & PAINTERS (Reused from Login)
+// ──────────────────────────────────────────────────────────
+
+class _MangaCardClipper extends CustomClipper<Path> {
+  @override
+  Path getClip(Size size) {
+    final path = Path();
+    path.moveTo(0, 0);
+    path.lineTo(size.width, size.height * 0.02);
+    path.lineTo(size.width * 0.98, size.height);
+    path.lineTo(size.width * 0.02, size.height * 0.98);
+    path.close();
+    return path;
+  }
+  @override
+  bool shouldReclip(covariant CustomClipper<Path> oldClipper) => false;
+}
+
+class _SpeedLinesPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = AppColors.primaryContainer.withOpacity(0.04)
+      ..strokeWidth = 1;
+    const count = 30;
+    final cx = size.width * 0.5;
+    final cy = size.height; // Radiate from bottom center
+    for (int i = 0; i < count; i++) {
+      final angle = (i / count) * 3.14159 * 2;
+      canvas.drawLine(
+        Offset(cx, cy),
+        Offset(
+          cx + size.width * 2 * _cos(angle),
+          cy - size.height * 2 * _sin(angle),
+        ),
+        paint,
+      );
+    }
+  }
+  double _cos(double a) => (a < 1.57) ? 1 - a * 0.6 : (a < 3.14) ? -0.4 + (a - 1.57) * 0.3 : -0.6;
+  double _sin(double a) => _cos(a - 1.5708);
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
+}
+
+class _HalftonePainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()..color = Colors.white.withOpacity(0.04);
+    const spacing = 8.0;
+    for (double x = 0; x < size.width; x += spacing) {
+      for (double y = 0; y < size.height; y += spacing) {
+        canvas.drawCircle(Offset(x, y), 1, paint);
+      }
+    }
+  }
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }

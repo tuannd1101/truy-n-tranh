@@ -16,6 +16,8 @@ class AppRouter {
   static const String payment = '/payment';
   static const String paymentWebView = '/payment-webview';
   static const String paymentResult = '/payment-result';
+  static const String create = '/create';
+  static const String library = '/library';
 
   /// Generate routes based on route settings
   static Route<dynamic> generateRoute(RouteSettings settings) {
@@ -39,6 +41,18 @@ class AppRouter {
       case search:
         return MaterialPageRoute(
           builder: (_) => const SearchScreen(),
+          settings: settings,
+        );
+
+      case create:
+        return MaterialPageRoute(
+          builder: (_) => const TaskBoardScreen(),
+          settings: settings,
+        );
+
+      case library:
+        return MaterialPageRoute(
+          builder: (_) => const LibraryScreen(),
           settings: settings,
         );
 
