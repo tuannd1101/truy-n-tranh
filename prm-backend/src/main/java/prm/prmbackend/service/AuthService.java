@@ -12,5 +12,5 @@ public interface AuthService {
     AuthResponseDTO loginLocal(LoginRequestDTO request);
     String forgotPassword(ForgotPasswordRequestDTO request);
     String resetPassword(ResetPasswordRequestDTO request);
-    UserResponseDTO getCurrentUser();
+    UserResponseDTO getCurrentUser(String token);
 }

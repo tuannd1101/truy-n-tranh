@@ -1,5 +1,7 @@
 package prm.prmbackend.service.impl;
 
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import prm.prmbackend.dto.request.ForgotPasswordRequestDTO;
 import prm.prmbackend.dto.request.LoginRequestDTO;
@@ -7,42 +9,77 @@ import prm.prmbackend.dto.request.RegisterRequestDTO;
 import prm.prmbackend.dto.request.ResetPasswordRequestDTO;
 import prm.prmbackend.dto.response.AuthResponseDTO;
 import prm.prmbackend.dto.response.UserResponseDTO;
+import prm.prmbackend.entity.Account;
+import prm.prmbackend.entity.Role;
 import prm.prmbackend.exception.AppException;
 import prm.prmbackend.exception.ErrorCode;
+import prm.prmbackend.repository.AccountRepository;
+import prm.prmbackend.repository.RoleRepository;
 import prm.prmbackend.service.AuthService;
+import prm.prmbackend.utils.JwtUtil;
 
 @Service
+@RequiredArgsConstructor
 public class AuthServiceImpl implements AuthService {
+
+    private final AccountRepository accountRepository;
+    private final RoleRepository roleRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final JwtUtil jwtUtil;
 
     @Override
     public String registerLocal(RegisterRequestDTO request) {
-        if ("test@test.com".equals(request.getEmail())) {
+        if (accountRepository.existsByEmail(request.getEmail())) {
             throw new AppException(ErrorCode.USER_EXISTED);
         }
-        return "User registered successfully";
+
+        Role freeRole = roleRepository.findByName("Free")
+                .orElseGet(() -> roleRepository.save(Role.builder()
+                        .name("Free")
+                        .description("Free User")
+                        .build()));
+
+        Account account = Account.builder()
+                .email(request.getEmail())
+                .password(passwordEncoder.encode(request.getPassword()))
+                .fullName(request.getFullName())
+                .roleId(freeRole.getId())
+                .status("ACTIVE")
+                .build();
+
+        accountRepository.save(account);
+
+        return "Đăng ký tài khoản thành công";
     }
 
     @Override
     public AuthResponseDTO loginLocal(LoginRequestDTO request) {
-        if ("wrong@test.com".equals(request.getEmail())) {
-            throw new AppException(ErrorCode.USER_NOT_EXISTED);
-        }
-        if ("wrongpassword".equals(request.getPassword())) {
-            throw new AppException(ErrorCode.INVALID_PASSWORD);
+        Account account = accountRepository.findByEmail(request.getEmail())
+                .orElseThrow(() -> new AppException(ErrorCode.INVALID_AUTHENTICATION));
+
+        if (!passwordEncoder.matches(request.getPassword(), account.getPassword())) {
+            throw new AppException(ErrorCode.INVALID_AUTHENTICATION);
         }
 
-        UserResponseDTO mockUser = UserResponseDTO.builder()
-                .id("1")
-                .fullName("Nguyen Van A")
-                .email(request.getEmail())
-                .role("free")
-                .isPremium(false)
-                .isFree(true)
+        String roleName = "Free";
+        if (account.getRoleId() != null) {
+            roleName = roleRepository.findById(account.getRoleId())
+                    .map(Role::getName)
+                    .orElse("Free");
+        }
+
+        String token = jwtUtil.generateToken(account.getEmail(), roleName);
+
+        UserResponseDTO userResponse = UserResponseDTO.builder()
+                .id(account.getId())
+                .fullName(account.getFullName())
+                .email(account.getEmail())
+                .role(roleName)
                 .build();
 
         return AuthResponseDTO.builder()
-                .token("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.mock_token.12345")
-                .user(mockUser)
+                .token(token)
+                .user(userResponse)
                 .build();
     }
 
@@ -51,7 +88,7 @@ public class AuthServiceImpl implements AuthService {
         if ("wrong@test.com".equals(request.getEmail())) {
             throw new AppException(ErrorCode.USER_NOT_EXISTED);
         }
-        return "Password reset instructions have been sent to your email";
+        return "Hướng dẫn đặt lại mật khẩu đã được gửi vào email của bạn";
     }
 
     @Override
@@ -59,18 +96,37 @@ public class AuthServiceImpl implements AuthService {
         if ("invalid_token".equals(request.getToken())) {
             throw new AppException(ErrorCode.INVALID_KEY);
         }
-        return "Password has been reset successfully";
+        return "Mật khẩu đã được thay đổi thành công";
     }
 
     @Override
-    public UserResponseDTO getCurrentUser() {
+    public UserResponseDTO getCurrentUser(String token) {
+        if (token == null || token.isEmpty()) {
+            throw new AppException(ErrorCode.UNAUTHENTICATED);
+        }
+
+        String email;
+        try {
+            email = jwtUtil.extractUsername(token);
+        } catch (Exception e) {
+            throw new AppException(ErrorCode.UNAUTHENTICATED);
+        }
+
+        Account account = accountRepository.findByEmail(email)
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+
+        String roleName = "Free";
+        if (account.getRoleId() != null) {
+            roleName = roleRepository.findById(account.getRoleId())
+                    .map(Role::getName)
+                    .orElse("Free");
+        }
+
         return UserResponseDTO.builder()
-                .id("1")
-                .fullName("Nguyen Van A")
-                .email("user@example.com")
-                .role("free")
-                .isPremium(false)
-                .isFree(true)
+                .id(account.getId())
+                .fullName(account.getFullName())
+                .email(account.getEmail())
+                .role(roleName)
                 .build();
     }
 }

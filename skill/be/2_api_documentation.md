@@ -84,10 +84,7 @@ Thay vì trả về Stack Trace khó đọc, backend sẽ tự động bắt cá
       "id": "1",
       "fullName": "Nguyen Van A",
       "email": "user@example.com",
-      "role": "free",
-      "isPremium": false,
-      "isFree": true,
-      "premiumExpiryDate": null
+      "role": "Free"
     }
   },
   "errors": null
@@ -149,10 +146,7 @@ Thay vì trả về Stack Trace khó đọc, backend sẽ tự động bắt cá
     "id": "1",
     "fullName": "Nguyen Van A",
     "email": "user@example.com",
-    "role": "free",
-    "isPremium": false,
-    "isFree": true,
-    "premiumExpiryDate": null
+    "role": "free"
   },
   "errors": null
 }

@@ -26,11 +26,11 @@ class User {
   factory User.fromJson(Map<String, dynamic> json) {
     return User(
       id: json['id'] as String,
-      name: json['name'] as String,
-      email: json['email'] as String,
+      name: json['fullName'] as String? ?? json['name'] as String? ?? '',
+      email: json['email'] as String? ?? '',
       avatarUrl: json['avatarUrl'] as String?,
       role: UserRole.values.firstWhere(
-        (e) => e.toString() == 'UserRole.${json['role']}',
+        (e) => e.toString().toLowerCase() == 'userrole.${json['role']?.toString().toLowerCase()}',
         orElse: () => UserRole.guest,
       ),
       premiumExpiryDate: json['premiumExpiryDate'] != null

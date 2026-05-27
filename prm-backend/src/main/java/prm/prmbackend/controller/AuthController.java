@@ -63,11 +63,16 @@ public class AuthController {
     }
 
     @GetMapping("/me")
-    public ResponseEntity<BaseApiResponse<UserResponseDTO>> getMe() {
+    public ResponseEntity<BaseApiResponse<UserResponseDTO>> getMe(
+            @RequestHeader(value = "Authorization", required = false) String token) {
         
-        UserResponseDTO data = authService.getCurrentUser();
+        if (token != null && token.startsWith("Bearer ")) {
+            token = token.substring(7);
+        }
+
+        UserResponseDTO data = authService.getCurrentUser(token);
 
         return ResponseEntity
-                .ok(BaseApiResponse.ok("Success", data));
+                .ok(BaseApiResponse.ok("Thành công", data));
     }
 }

@@ -9,11 +9,10 @@ The backend database should store the following fields to match the frontend `Us
 - `id` (UUID or String, Primary Key)
 - `email` (String, Unique, Not Null)
 - `password_hash` (String, Not Null)
-- `full_name` (String, Not Null)
-- `avatar_url` (String, Nullable)
-- `role` (Enum: `guest`, `free`, `premium`, `admin`) - Default: `free`
-- `created_at` (Timestamp, Default: Current Time)
-- `premium_expires_at` (Timestamp, Nullable)
+- `roleId`: String (Reference to Role)
+- `status`: String ("ACTIVE", "INACTIVE", "BANNED")
+- `createdAt`: LocalDateTime
+- `updatedAt`: LocalDateTime
 - `reset_password_token` (String, Nullable)
 - `reset_password_expires_at` (Timestamp, Nullable)
 
@@ -35,7 +34,7 @@ The backend database should store the following fields to match the frontend `Us
 1. **Validate input:** Check if `email` is in valid format, `password` meets strength requirements (e.g., min 6 chars), and `full_name` is not empty.
 2. **Check duplicate:** Ensure `email` does not already exist in the database. Return `409 Conflict` if it does.
 3. **Hash password:** Hash the incoming `password` securely (e.g., using BCrypt or Argon2).
-4. **Create user:** Insert the new user into the database with default role `free`.
+4. **Create user:** Insert the new user into the database with default role `Free`.
 5. **Return Response:** Optionally return a JWT token for auto-login, or simply a success message requiring manual login.
 
 **Success Response (201 Created):**
@@ -46,7 +45,7 @@ The backend database should store the following fields to match the frontend `Us
     "id": "uuid",
     "email": "user@example.com",
     "full_name": "Nguyen Van A",
-    "role": "free",
+    "role": "Free",
     "created_at": "2026-05-27T12:00:00Z"
   }
 }
@@ -79,9 +78,8 @@ The backend database should store the following fields to match the frontend `Us
     "email": "user@example.com",
     "full_name": "Nguyen Van A",
     "avatar_url": null,
-    "role": "free",
-    "created_at": "2026-05-27T12:00:00Z",
-    "premium_expires_at": null
+    "role": "Free",
+    "created_at": "2026-05-27T12:00:00Z"
   }
 }
 ```
@@ -147,3 +145,24 @@ The backend database should store the following fields to match the frontend `Us
 
 **Success Response (200 OK):**
 Return the `User` object (matches Login response's `user` field).
+
+## 3. Context Entities (MongoDB)
+
+Hệ thống sử dụng **MongoDB** nên các Entity sẽ được biểu diễn dưới dạng **Document**.
+
+### 3.1. Role Collection (`roles`)
+Lưu trữ các quyền trong hệ thống.
+- `_id`: String (ObjectId)
+- `name`: String (e.g. "Free", "Premium", "Admin")
+- `description`: String
+
+### 3.2. Account Collection (`accounts`)
+Lưu trữ thông tin xác thực của người dùng.
+- `_id`: String (ObjectId)
+- `email`: String (Unique, Indexed)
+- `password`: String (Hashed)
+- `fullName`: String
+- `roleId`: String (Reference to Role)
+- `status`: String ("ACTIVE", "INACTIVE", "BANNED")
+- `createdAt`: LocalDateTime
+- `updatedAt`: LocalDateTime

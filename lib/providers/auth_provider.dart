@@ -42,7 +42,7 @@ class AuthProvider extends ChangeNotifier {
       await _storage.write(key: 'jwt_token', value: token);
       
       // Fetch user info
-      await _fetchCurrentUser();
+      await fetchCurrentUser();
       
     } catch (e) {
       _status = AuthStatus.unauthenticated;
@@ -77,7 +77,7 @@ class AuthProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> _fetchCurrentUser() async {
+  Future<void> fetchCurrentUser() async {
     try {
       final user = await _authRepository.getCurrentUser();
       _currentUser = user;
@@ -100,7 +100,7 @@ class AuthProvider extends ChangeNotifier {
     if (token != null) {
       _status = AuthStatus.loading;
       notifyListeners();
-      await _fetchCurrentUser();
+      await fetchCurrentUser();
     } else {
       _status = AuthStatus.unauthenticated;
       notifyListeners();
