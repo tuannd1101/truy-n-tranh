@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_text_styles.dart';
 import '../../../core/constants/app_dimensions.dart';
+import '../../../core/utils/ui_helpers.dart';
+import '../../../providers/auth_provider.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -33,17 +36,24 @@ class _LoginScreenState extends State<LoginScreen> {
       _isLoading = true;
     });
 
-    // TODO: Call API Login
-    await Future.delayed(const Duration(seconds: 2)); // Simulate API call
+    try {
+      final authProvider = Provider.of<AuthProvider>(context, listen: false);
+      await authProvider.login(
+        _emailController.text.trim(),
+        _passwordController.text,
+      );
 
-    if (mounted) {
-      setState(() {
-        _isLoading = false;
-      });
-
-      // TODO: Check response and navigate
-      // If success, navigate to home
-      Navigator.pushReplacementNamed(context, '/home');
+      if (mounted) {
+        setState(() => _isLoading = false);
+        UiHelpers.showSuccessSnackbar(context, "Đăng nhập thành công!");
+        Navigator.pushReplacementNamed(context, '/home');
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() => _isLoading = false);
+        final errorMsg = Provider.of<AuthProvider>(context, listen: false).errorMessage ?? "Đăng nhập thất bại.";
+        UiHelpers.showErrorSnackbar(context, errorMsg);
+      }
     }
   }
 

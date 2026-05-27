@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 import 'core/theme/app_theme.dart';
 import 'core/routes/app_router.dart';
+import 'providers/auth_provider.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -12,7 +14,14 @@ void main() {
     DeviceOrientation.portraitDown,
   ]);
 
-  runApp(const MyApp());
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => AuthProvider()),
+      ],
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {

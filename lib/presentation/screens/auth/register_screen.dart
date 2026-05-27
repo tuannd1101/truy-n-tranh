@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_text_styles.dart';
 import '../../../core/constants/app_dimensions.dart';
+import '../../../core/utils/ui_helpers.dart';
+import '../../../providers/auth_provider.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -38,24 +41,25 @@ class _RegisterScreenState extends State<RegisterScreen> {
       _isLoading = true;
     });
 
-    // TODO: Call API Register
-    await Future.delayed(const Duration(seconds: 2)); // Simulate API call
-
-    if (mounted) {
-      setState(() {
-        _isLoading = false;
-      });
-
-      // Show success message
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Đăng ký thành công! Vui lòng đăng nhập.'),
-          backgroundColor: AppColors.success,
-        ),
+    try {
+      final authProvider = Provider.of<AuthProvider>(context, listen: false);
+      await authProvider.register(
+        _nameController.text.trim(),
+        _emailController.text.trim(),
+        _passwordController.text,
       );
 
-      // Navigate to login
-      Navigator.pushReplacementNamed(context, '/login');
+      if (mounted) {
+        setState(() => _isLoading = false);
+        UiHelpers.showSuccessSnackbar(context, "Đăng ký thành công! Vui lòng đăng nhập.");
+        Navigator.pushReplacementNamed(context, '/login');
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() => _isLoading = false);
+        final errorMsg = Provider.of<AuthProvider>(context, listen: false).errorMessage ?? "Đăng ký thất bại.";
+        UiHelpers.showErrorSnackbar(context, errorMsg);
+      }
     }
   }
 
