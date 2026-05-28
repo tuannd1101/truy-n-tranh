@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_text_styles.dart';
 import '../../../core/constants/app_dimensions.dart';
+import 'package:provider/provider.dart';
+import '../../../providers/auth_provider.dart';
+import '../../../data/models/user.dart';
+import '../../../core/routes/app_router.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -11,15 +15,33 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  // TODO: Get from auth provider
-  bool _isLoggedIn = true;
-  String _userRole = 'FREE_USER'; // GUEST, FREE_USER, PREMIUM_USER
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<AuthProvider>(context, listen: false).fetchCurrentUser();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
+    final authProvider = Provider.of<AuthProvider>(context);
+    final bool _isLoggedIn = authProvider.isAuthenticated;
+    final user = authProvider.currentUser;
+    
+    // Determine Role
+    String _userRole = 'FREE_USER';
+    if (user != null) {
+      if (user.role == UserRole.premium) _userRole = 'PREMIUM_USER';
+    }
+
     if (!_isLoggedIn) {
       return _buildGuestView();
     }
+
+    final String userName = user?.name ?? 'Tên Người Dùng';
+    final String email = user?.email ?? 'user@example.com';
+    final String avatarText = userName.isNotEmpty ? userName[0].toUpperCase() : 'U';
 
     return Scaffold(
       appBar: AppBar(
@@ -41,7 +63,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     radius: 50,
                     backgroundColor: AppColors.primary,
                     child: Text(
-                      'U',
+                      avatarText,
                       style: AppTextStyles.h1.copyWith(
                         color: AppColors.textPrimary,
                       ),
@@ -51,14 +73,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   
                   // User Name
                   Text(
-                    'Tên Người Dùng',
+                    userName,
                     style: AppTextStyles.h3,
                   ),
                   const SizedBox(height: AppDimensions.paddingS),
                   
                   // Email
                   Text(
-                    'user@example.com',
+                    email,
                     style: AppTextStyles.bodyMedium.copyWith(
                       color: AppColors.grey,
                     ),
@@ -291,12 +313,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
             child: const Text('Hủy'),
           ),
           ElevatedButton(
-            onPressed: () {
-              // TODO: Call logout API
-              Navigator.pop(context);
-              setState(() {
-                _isLoggedIn = false;
-              });
+            onPressed: () async {
+              await Provider.of<AuthProvider>(context, listen: false).logout();
+              if (mounted) {
+                Navigator.pop(context);
+                Navigator.pushReplacementNamed(context, AppRouter.login);
+              }
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: AppColors.error,

@@ -4,6 +4,7 @@ import '../../presentation/screens/screens.dart';
 /// Route generator for the app
 class AppRouter {
   // Route names
+  static const String splash = '/splash';
   static const String home = '/';
   static const String search = '/search';
   static const String mangaDetail = '/manga-detail';
@@ -23,6 +24,12 @@ class AppRouter {
 
     // Route to appropriate screen
     switch (settings.name) {
+      case splash:
+        return MaterialPageRoute(
+          builder: (_) => const SplashScreen(),
+          settings: settings,
+        );
+
       case home:
         return MaterialPageRoute(
           builder: (_) => const HomeScreen(),
