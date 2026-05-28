@@ -39,12 +39,6 @@ class AppRouter {
           settings: settings,
         );
 
-      case search:
-        return MaterialPageRoute(
-          builder: (_) => const SearchScreen(),
-          settings: settings,
-        );
-
       case create:
         return MaterialPageRoute(
           builder: (_) => const TaskBoardScreen(),
@@ -60,13 +54,6 @@ class AppRouter {
       case adminDashboard:
         return MaterialPageRoute(
           builder: (_) => const AdminDashboardScreen(),
-          settings: settings,
-        );
-
-      case mangaDetail:
-        final mangaId = args is int ? args : 0;
-        return MaterialPageRoute(
-          builder: (_) => MangaDetailScreen(mangaId: mangaId),
           settings: settings,
         );
 
@@ -95,36 +82,6 @@ class AppRouter {
       case register:
         return MaterialPageRoute(
           builder: (_) => const RegisterScreen(),
-          settings: settings,
-        );
-
-      case subscription:
-        return MaterialPageRoute(
-          builder: (_) => const SubscriptionScreen(),
-          settings: settings,
-        );
-
-      case payment:
-        final plan = args as Map<String, dynamic>? ?? {};
-        return MaterialPageRoute(
-          builder: (_) => PaymentScreen(plan: plan),
-          settings: settings,
-        );
-
-      case paymentWebView:
-        final webViewArgs = args as Map<String, dynamic>?;
-        final url = webViewArgs?['url'] as String? ?? '';
-        final method = webViewArgs?['method'];
-        return MaterialPageRoute(
-          builder: (_) => PaymentWebViewScreen(url: url, method: method),
-          settings: settings,
-        );
-
-      case paymentResult:
-        final resultArgs = args as Map<String, dynamic>?;
-        final success = resultArgs?['success'] as bool? ?? false;
-        return MaterialPageRoute(
-          builder: (_) => PaymentResultScreen(success: success),
           settings: settings,
         );
 
