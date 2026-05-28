@@ -3,7 +3,7 @@
 ## 1. General Information
 
 - **Target**: Personal student project (Exercise/Assignment).
-- **Backend Stack**: Dart
+- **Backend Stack**: Java Spring Boot
 - **Frontend Stack**: Flutter (Dart) for Mobile App.
 - **Architectural Style**: RESTful API /Monolith.
 
