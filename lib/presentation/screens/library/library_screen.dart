@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/routes/app_router.dart';
+import '../../widgets/main_drawer.dart';
+import '../../widgets/main_app_bar.dart';
 
 class LibraryScreen extends StatefulWidget {
   const LibraryScreen({super.key});
@@ -24,7 +26,8 @@ class _LibraryScreenState extends State<LibraryScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
-      appBar: _buildAppBar(),
+      appBar: const MainAppBar(),
+      drawer: const MainDrawer(),
       body: Stack(
         children: [
           SingleChildScrollView(
@@ -47,77 +50,6 @@ class _LibraryScreenState extends State<LibraryScreen> {
             child: _buildFab(),
           ),
         ],
-      ),
-      bottomNavigationBar: _buildBottomNav(),
-    );
-  }
-
-  PreferredSizeWidget _buildAppBar() {
-    return PreferredSize(
-      preferredSize: const Size.fromHeight(60),
-      child: Container(
-        decoration: const BoxDecoration(
-          color: Color(0xFF13131B),
-          border: Border(
-            bottom: BorderSide(color: AppColors.primaryContainer, width: 2),
-          ),
-        ),
-        child: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Row(
-                  children: [
-                    Container(
-                      width: 28,
-                      height: 28,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        border: Border.all(color: Colors.white, width: 1.5),
-                      ),
-                      child: const Center(
-                        child: Text(
-                          'M',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.w900,
-                            fontSize: 14,
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    const Text(
-                      'MANGAFLOW',
-                      style: TextStyle(
-                        fontFamily: 'sans-serif',
-                        fontSize: 18,
-                        fontWeight: FontWeight.w900,
-                        color: AppColors.primaryContainer,
-                        letterSpacing: 1,
-                      ),
-                    ),
-                  ],
-                ),
-                Container(
-                  width: 32,
-                  height: 32,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    border: Border.all(color: AppColors.primaryContainer, width: 2),
-                  ),
-                  child: const Icon(
-                    Icons.upload,
-                    color: AppColors.primaryContainer,
-                    size: 16,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
       ),
     );
   }
@@ -449,75 +381,6 @@ class _LibraryScreenState extends State<LibraryScreen> {
         ],
       ),
       child: const Icon(Icons.add, color: Colors.black, size: 28),
-    );
-  }
-
-  Widget _buildBottomNav() {
-    return Container(
-      decoration: const BoxDecoration(
-        color: Color(0xFF13131B),
-        border: Border(top: BorderSide(color: Colors.cyanAccent, width: 2)),
-      ),
-      child: SafeArea(
-        child: SizedBox(
-          height: 60,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              _buildNavItem(Icons.home, 'HOME', 0, false),
-              _buildNavItem(Icons.menu_book, 'READ', 1, false),
-              _buildNavItem(Icons.create, 'CREATE', 2, false),
-              _buildNavItem(Icons.my_library_books, 'LIBRARY', 3, true),
-              _buildNavItem(Icons.person, 'PROFILE', 4, false),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildNavItem(IconData icon, String label, int index, bool isActive) {
-    return GestureDetector(
-      onTap: () {
-        if (index == 0) {
-          Navigator.pushReplacementNamed(context, AppRouter.home);
-        } else if (index == 1) {
-          Navigator.pushReplacementNamed(context, AppRouter.reading);
-        } else if (index == 2) {
-          Navigator.pushReplacementNamed(context, AppRouter.create);
-        } else if (index == 4) {
-          Navigator.pushReplacementNamed(context, AppRouter.profile);
-        }
-      },
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        decoration: isActive
-            ? BoxDecoration(
-                color: AppColors.primaryContainer,
-                borderRadius: BorderRadius.circular(8),
-              )
-            : null,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(
-              icon,
-              color: isActive ? Colors.black : Colors.grey,
-              size: 20,
-            ),
-            const SizedBox(height: 4),
-            Text(
-              label,
-              style: TextStyle(
-                fontFamily: 'sans-serif',
-                color: isActive ? Colors.black : Colors.grey,
-                fontSize: 9,
-                fontWeight: FontWeight.w900,
-              ),
-            ),
-          ],
-        ),
-      ),
     );
   }
 }

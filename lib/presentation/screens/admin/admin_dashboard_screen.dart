@@ -152,24 +152,6 @@ class _AdminAppBar extends StatelessWidget implements PreferredSizeWidget {
             ],
           ),
           const SizedBox(width: 12),
-          // Avatar
-          Container(
-            width: 32,
-            height: 32,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              border: Border.all(color: AdminColors.sakuraPink, width: 2),
-              color: AdminColors.surface,
-              boxShadow: const [
-                BoxShadow(color: Colors.black, offset: Offset(2, 2)),
-              ],
-            ),
-            child: const Icon(
-              Icons.military_tech,
-              color: AdminColors.warningYellow,
-              size: 18,
-            ),
-          ),
         ],
       ),
     );

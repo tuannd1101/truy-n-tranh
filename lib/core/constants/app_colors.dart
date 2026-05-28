@@ -71,4 +71,14 @@ class AppColors {
   static const Color overlay = Color(0x80000000);
   static const Color overlayLight = Color(0x40000000);
   static const Color overlayDark = Color(0xB3000000);
+
+  // === SUBSCRIPTION (Premium Features) ===
+  static const Color gold = Color(0xFFFFD700);
+  static const Color onGold = Color(0xFF332B00);
+  static const Color pink = Color(0xFFFF69B4);
+  static const Color onPink = Color(0xFF4A002A);
+  static const Color surfaceCard = Color(0xFF2C2C35);
+  static const Color surfaceDim = Color(0xFF1E1E26);
+  static const Color inkBorderSoft = Color(0xFF42424E);
+  static const Color shadowGold = Color(0x66FFD700);
 }

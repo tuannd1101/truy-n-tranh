@@ -19,6 +19,9 @@ class AppRouter {
   static const String create = '/create';
   static const String library = '/library';
   static const String adminDashboard = '/admin';
+  static const String readingHistory = '/reading-history';
+  static const String favorites = '/favorites';
+  static const String settings = '/settings';
 
   /// Generate routes based on route settings
   static Route<dynamic> generateRoute(RouteSettings settings) {
@@ -36,6 +39,12 @@ class AppRouter {
       case home:
         return MaterialPageRoute(
           builder: (_) => const HomeScreen(),
+          settings: settings,
+        );
+
+      case search:
+        return MaterialPageRoute(
+          builder: (_) => const PlaceholderScreen(screenName: 'Search'),
           settings: settings,
         );
 
@@ -57,6 +66,13 @@ class AppRouter {
           settings: settings,
         );
 
+      case mangaDetail:
+        final mangaId = args is int ? args : 0;
+        return MaterialPageRoute(
+          builder: (_) => MangaDetailScreen(mangaId: mangaId),
+          settings: settings,
+        );
+
       case reading:
         final readingArgs = args as Map<String, dynamic>?;
         final mangaId = readingArgs?['mangaId'] as int? ?? 0;
@@ -73,6 +89,24 @@ class AppRouter {
           settings: settings,
         );
 
+      case readingHistory:
+        return MaterialPageRoute(
+          builder: (_) => const ReadingHistoryScreen(),
+          settings: settings,
+        );
+
+      case favorites:
+        return MaterialPageRoute(
+          builder: (_) => const FavoritesScreen(),
+          settings: settings,
+        );
+
+      case AppRouter.settings:
+        return MaterialPageRoute(
+          builder: (_) => const SettingsScreen(),
+          settings: settings,
+        );
+
       case login:
         return MaterialPageRoute(
           builder: (_) => const LoginScreen(),
@@ -82,6 +116,39 @@ class AppRouter {
       case register:
         return MaterialPageRoute(
           builder: (_) => const RegisterScreen(),
+          settings: settings,
+        );
+
+      case subscription:
+        return MaterialPageRoute(
+          builder: (_) => const SubscriptionScreen(),
+          settings: settings,
+        );
+
+      case payment:
+        final planArgs = args as Map<String, dynamic>? ?? {};
+        final planName = planArgs['plan_name'] as String? ?? 'Premium 1 Tháng';
+        final price = planArgs['price'] as int? ?? 49000;
+        return MaterialPageRoute(
+          builder: (_) => PaymentScreen(planName: planName, price: price),
+          settings: settings,
+        );
+
+      case paymentWebView:
+        final webViewArgs = args as Map<String, dynamic>?;
+        final url = webViewArgs?['url'] as String? ?? '';
+        final method = webViewArgs?['method'];
+        return MaterialPageRoute(
+          builder: (_) => const PlaceholderScreen(screenName: 'Payment WebView'),
+          settings: settings,
+        );
+
+      case paymentResult:
+        final resultArgs = args as Map<String, dynamic>?;
+        final success = resultArgs?['success'] as bool? ?? false;
+        final method = resultArgs?['method'] as String? ?? 'momo';
+        return MaterialPageRoute(
+          builder: (_) => PaymentResultScreen(success: success, method: method),
           settings: settings,
         );
 

@@ -18,21 +18,21 @@ class MangaReadingScreen extends StatefulWidget {
 
 class _MangaReadingScreenState extends State<MangaReadingScreen> {
   final PageController _pageController = PageController();
-  bool _isUIVisible = true;
-  int _currentPage = 11; // 12 in 0-indexed is 11
-  final int _totalPages = 24;
+  bool _isUIVisible = false;
+  int _currentPage = 0;
+  final int _totalPages = 24; // Mock 24 trang
 
   @override
   void initState() {
     super.initState();
-    SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-      statusBarColor: Colors.transparent,
-      statusBarIconBrightness: Brightness.light,
-    ));
+    // Bật chế độ Fullscreen
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
   }
 
   @override
   void dispose() {
+    // Khôi phục UI bình thường khi thoát trang đọc
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
     _pageController.dispose();
     super.dispose();
   }
@@ -46,7 +46,7 @@ class _MangaReadingScreenState extends State<MangaReadingScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF13131B), // Dark manga background
+      backgroundColor: Colors.black, // Dark manga background
       body: Stack(
         children: [
           // Reading Content
@@ -67,16 +67,16 @@ class _MangaReadingScreenState extends State<MangaReadingScreen> {
                   decoration: const BoxDecoration(
                     image: DecorationImage(
                       image: AssetImage('assets/images/hero_artist.png'),
-                      fit: BoxFit.cover,
-                      colorFilter: ColorFilter.mode(Colors.grey, BlendMode.saturation),
+                      fit: BoxFit.contain, // Fit để không bị cắt xén nội dung truyện
                     ),
                   ),
                   child: Center(
                     child: Text(
                       'Page ${index + 1}',
                       style: TextStyle(
+                        fontFamily: 'Anton',
                         color: Colors.white.withOpacity(0.5),
-                        fontSize: 24,
+                        fontSize: 40,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -86,148 +86,190 @@ class _MangaReadingScreenState extends State<MangaReadingScreen> {
             ),
           ),
 
-          // Top App Bar Overlay
-          if (_isUIVisible)
-            Positioned(
-              top: 0,
-              left: 0,
-              right: 0,
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [
-                      Colors.black.withOpacity(0.8),
-                      Colors.transparent,
-                    ],
+          // Top Overlay (App Bar)
+          if (_isUIVisible) _buildTopOverlay(),
+
+          // Bottom Overlay (Page Indicator & Slider)
+          if (_isUIVisible) _buildBottomOverlay(),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTopOverlay() {
+    return Positioned(
+      top: 0,
+      left: 0,
+      right: 0,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              Colors.black.withOpacity(0.9),
+              Colors.transparent,
+            ],
+          ),
+        ),
+        child: SafeArea(
+          bottom: false,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              // Back Button
+              GestureDetector(
+                onTap: () => Navigator.pop(context),
+                child: Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: AppColors.background.withOpacity(0.8),
+                    border: Border.all(color: AppColors.outline),
                   ),
-                ),
-                child: SafeArea(
-                  bottom: false,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      // Back Button
-                      GestureDetector(
-                        onTap: () => Navigator.pop(context),
-                        child: Container(
-                          padding: const EdgeInsets.all(8),
-                          decoration: BoxDecoration(
-                            color: const Color(0xFF1B1B23),
-                            border: Border.all(color: AppColors.primaryContainer, width: 2),
-                          ),
-                          child: const Icon(
-                            Icons.arrow_back,
-                            color: AppColors.primaryContainer,
-                            size: 20,
-                          ),
-                        ),
-                      ),
-                      // Title
-                      const Expanded(
-                        child: Text(
-                          'CH. 42: THE AWAKENI...',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontFamily: 'sans-serif',
-                            color: AppColors.primaryContainer,
-                            fontSize: 16,
-                            fontWeight: FontWeight.w900,
-                            letterSpacing: 1,
-                            shadows: [
-                              Shadow(color: AppColors.primaryContainer, blurRadius: 4),
-                            ],
-                          ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                      // Settings Button
-                      GestureDetector(
-                        onTap: () {}, // Open settings
-                        child: Container(
-                          padding: const EdgeInsets.all(8),
-                          decoration: BoxDecoration(
-                            color: const Color(0xFF1B1B23),
-                            border: Border.all(color: Colors.cyanAccent, width: 2),
-                          ),
-                          child: const Icon(
-                            Icons.settings,
-                            color: Colors.cyanAccent,
-                            size: 20,
-                          ),
-                        ),
-                      ),
-                    ],
+                  child: const Icon(
+                    Icons.arrow_back,
+                    color: AppColors.onSurface,
+                    size: 24,
                   ),
                 ),
               ),
-            ),
-
-          // Bottom Page Indicator Overlay
-          if (_isUIVisible)
-            Positioned(
-              bottom: 0,
-              left: 0,
-              right: 0,
-              child: Container(
-                height: 120,
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.bottomCenter,
-                    end: Alignment.topCenter,
-                    colors: [
-                      Colors.black.withOpacity(0.9),
-                      Colors.transparent,
-                    ],
+              // Title
+              const Expanded(
+                child: Column(
+                  children: [
+                    Text(
+                      'CRIMSON BLADE',
+                      style: TextStyle(
+                        fontFamily: 'Anton',
+                        color: AppColors.onSurface,
+                        fontSize: 16,
+                        letterSpacing: 1,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    Text(
+                      'CH. 42: THE AWAKENING',
+                      style: TextStyle(
+                        fontFamily: 'Syne',
+                        color: AppColors.primaryContainer,
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
+                ),
+              ),
+              // Settings Button
+              GestureDetector(
+                onTap: () {}, // Mở popup cài đặt đọc truyện (độ sáng, chiều cuộn)
+                child: Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: AppColors.background.withOpacity(0.8),
+                    border: Border.all(color: AppColors.outline),
+                  ),
+                  child: const Icon(
+                    Icons.settings,
+                    color: AppColors.onSurface,
+                    size: 24,
                   ),
                 ),
-                child: Center(
-                  child: Padding(
-                    padding: const EdgeInsets.only(top: 40),
-                    child: Stack(
-                      clipBehavior: Clip.none,
-                      children: [
-                        // Pink shadow box
-                        Positioned(
-                          top: 4,
-                          left: 4,
-                          right: -4,
-                          bottom: -4,
-                          child: Container(
-                            decoration: BoxDecoration(
-                              color: AppColors.primaryContainer,
-                              border: Border.all(color: AppColors.primaryContainer, width: 2),
-                            ),
-                          ),
-                        ),
-                        // Main box
-                        Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
-                          decoration: BoxDecoration(
-                            color: const Color(0xFF1B1B23),
-                            border: Border.all(color: Colors.white, width: 2),
-                          ),
-                          child: Text(
-                            '${_currentPage + 1} / $_totalPages',
-                            style: const TextStyle(
-                              fontFamily: 'sans-serif',
-                              color: Colors.cyanAccent,
-                              fontSize: 16,
-                              fontWeight: FontWeight.w900,
-                              letterSpacing: 2,
-                            ),
-                          ),
-                        ),
-                      ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildBottomOverlay() {
+    return Positioned(
+      bottom: 0,
+      left: 0,
+      right: 0,
+      child: Container(
+        height: 140,
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.bottomCenter,
+            end: Alignment.topCenter,
+            colors: [
+              Colors.black.withOpacity(0.95),
+              Colors.transparent,
+            ],
+          ),
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            // Next / Prev Chapter buttons
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  TextButton.icon(
+                    onPressed: () {}, // Chuyển chương trước
+                    icon: const Icon(Icons.skip_previous, color: AppColors.onSurfaceVariant),
+                    label: const Text('CHƯƠNG TRƯỚC', style: TextStyle(color: AppColors.onSurfaceVariant, fontFamily: 'Syne', fontWeight: FontWeight.bold)),
+                  ),
+                  TextButton.icon(
+                    onPressed: () {}, // Chuyển chương tiếp
+                    icon: const Icon(Icons.skip_next, color: AppColors.primaryContainer),
+                    label: const Text('CHƯƠNG TIẾP', style: TextStyle(color: AppColors.primaryContainer, fontFamily: 'Syne', fontWeight: FontWeight.bold)),
+                  ),
+                ],
+              ),
+            ),
+            
+            // Slider & Page count
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
+              child: Row(
+                children: [
+                  Text(
+                    '${_currentPage + 1}',
+                    style: const TextStyle(
+                      fontFamily: 'Anton',
+                      color: AppColors.onSurface,
+                      fontSize: 16,
                     ),
                   ),
-                ),
+                  Expanded(
+                    child: SliderTheme(
+                      data: SliderTheme.of(context).copyWith(
+                        activeTrackColor: AppColors.primaryContainer,
+                        inactiveTrackColor: AppColors.surfaceVariant,
+                        thumbColor: AppColors.onPrimaryContainer,
+                        trackHeight: 4.0,
+                      ),
+                      child: Slider(
+                        value: _currentPage.toDouble(),
+                        min: 0,
+                        max: (_totalPages - 1).toDouble(),
+                        onChanged: (value) {
+                          _pageController.jumpToPage(value.toInt());
+                        },
+                      ),
+                    ),
+                  ),
+                  Text(
+                    '$_totalPages',
+                    style: const TextStyle(
+                      fontFamily: 'Anton',
+                      color: AppColors.onSurfaceVariant,
+                      fontSize: 16,
+                    ),
+                  ),
+                ],
               ),
             ),
-        ],
+          ],
+        ),
       ),
     );
   }
