@@ -44,7 +44,11 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
     if (!mounted) return;
 
     if (authProvider.isAuthenticated) {
-      Navigator.pushReplacementNamed(context, AppRouter.home);
+      if (authProvider.isAdminOrManager) {
+        Navigator.pushReplacementNamed(context, AppRouter.adminDashboard);
+      } else {
+        Navigator.pushReplacementNamed(context, AppRouter.home);
+      }
     } else {
       Navigator.pushReplacementNamed(context, AppRouter.login);
     }

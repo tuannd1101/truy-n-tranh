@@ -1,372 +1,202 @@
 import 'package:flutter/material.dart';
 import '../../../core/constants/app_colors.dart';
-import '../../../core/constants/app_text_styles.dart';
-import '../../../core/constants/app_dimensions.dart';
+import '../../../core/routes/app_router.dart';
 
-class SubscriptionScreen extends StatefulWidget {
+class SubscriptionScreen extends StatelessWidget {
   const SubscriptionScreen({super.key});
-
-  @override
-  State<SubscriptionScreen> createState() => _SubscriptionScreenState();
-}
-
-class _SubscriptionScreenState extends State<SubscriptionScreen> {
-  int? _selectedPlanIndex;
-  bool _isLoading = true;
-  
-  // TODO: Replace with actual data from API
-  List<Map<String, dynamic>> _plans = [];
-
-  @override
-  void initState() {
-    super.initState();
-    _loadPlans();
-  }
-
-  Future<void> _loadPlans() async {
-    setState(() {
-      _isLoading = true;
-    });
-
-    // TODO: Call API to fetch subscription plans
-    await Future.delayed(const Duration(seconds: 1)); // Simulate API call
-
-    _plans = [
-      {
-        'id': 1,
-        'name': 'Gói 1 Tháng',
-        'duration': '1 tháng',
-        'price': 49000,
-        'features': [
-          'Đọc không giới hạn',
-          'Không quảng cáo',
-          'Tải truyện offline',
-        ],
-      },
-      {
-        'id': 2,
-        'name': 'Gói 6 Tháng',
-        'duration': '6 tháng',
-        'price': 249000,
-        'originalPrice': 294000,
-        'discount': '15%',
-        'features': [
-          'Đọc không giới hạn',
-          'Không quảng cáo',
-          'Tải truyện offline',
-          'Ưu tiên hỗ trợ',
-        ],
-        'isPopular': true,
-      },
-      {
-        'id': 3,
-        'name': 'Gói 1 Năm',
-        'duration': '12 tháng',
-        'price': 449000,
-        'originalPrice': 588000,
-        'discount': '24%',
-        'features': [
-          'Đọc không giới hạn',
-          'Không quảng cáo',
-          'Tải truyện offline',
-          'Ưu tiên hỗ trợ',
-          'Badge đặc biệt',
-        ],
-      },
-    ];
-
-    if (mounted) {
-      setState(() {
-        _isLoading = false;
-      });
-    }
-  }
-
-  void _onProceedToPayment() {
-    if (_selectedPlanIndex == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Vui lòng chọn một gói trước khi tiếp tục'),
-        ),
-      );
-      return;
-    }
-
-    final selectedPlan = _plans[_selectedPlanIndex!];
-    Navigator.pushNamed(
-      context,
-      '/payment',
-      arguments: selectedPlan,
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppColors.background,
       appBar: AppBar(
-        title: const Text('Nâng cấp Premium'),
-        backgroundColor: AppColors.surface,
+        backgroundColor: AppColors.background,
         elevation: 0,
+        title: const Text(
+          'ĐĂNG KÝ PREMIUM',
+          style: TextStyle(
+            fontFamily: 'Anton',
+            color: AppColors.gold,
+            letterSpacing: 1.5,
+          ),
+        ),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: AppColors.textPrimary),
-          onPressed: () => Navigator.pop(context),
+          icon: const Icon(Icons.arrow_back, color: AppColors.gold),
+          onPressed: () => Navigator.of(context).pop(),
         ),
       ),
-      body: _isLoading
-          ? const Center(
-              child: CircularProgressIndicator(
-                color: AppColors.primary,
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            // Header Graphic
+            const Icon(Icons.workspace_premium, size: 100, color: AppColors.gold),
+            const SizedBox(height: 24),
+            Text(
+              'TRỞ THÀNH VIP',
+              style: TextStyle(
+                fontFamily: 'Anton',
+                fontSize: 36,
+                color: Colors.white,
+                letterSpacing: 2,
+                shadows: [
+                  Shadow(
+                    color: AppColors.gold.withValues(alpha: 0.8),
+                    blurRadius: 15,
+                  ),
+                ],
               ),
-            )
-          : Column(
-              children: [
-                // Header
-                Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.all(AppDimensions.paddingL),
-                  color: AppColors.primary.withOpacity(0.1),
-                  child: Column(
-                    children: [
-                      const Icon(
-                        Icons.workspace_premium,
-                        size: 64,
-                        color: AppColors.primary,
-                      ),
-                      const SizedBox(height: AppDimensions.paddingM),
-                      Text(
-                        'Đọc truyện không giới hạn',
-                        style: AppTextStyles.h2,
-                        textAlign: TextAlign.center,
-                      ),
-                      const SizedBox(height: AppDimensions.paddingS),
-                      Text(
-                        'Mở khóa toàn bộ chapter Premium và trải nghiệm đọc truyện tốt nhất',
-                        style: AppTextStyles.bodyMedium.copyWith(
-                          color: AppColors.grey,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                    ],
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 8),
+            const Text(
+              'Truy cập không giới hạn. Trải nghiệm tối thượng.',
+              style: TextStyle(
+                color: AppColors.textSecondary,
+                fontSize: 14,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 48),
+
+            // Main Premium Card
+            Container(
+              decoration: BoxDecoration(
+                color: const Color(0xFF1B1B23),
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(color: AppColors.gold, width: 2),
+                boxShadow: [
+                  BoxShadow(
+                    color: AppColors.gold.withValues(alpha: 0.3),
+                    blurRadius: 20,
+                    spreadRadius: 2,
                   ),
-                ),
-                
-                // Plans List
-                Expanded(
-                  child: ListView.builder(
-                    padding: const EdgeInsets.all(AppDimensions.paddingM),
-                    itemCount: _plans.length,
-                    itemBuilder: (context, index) {
-                      final plan = _plans[index];
-                      final isSelected = _selectedPlanIndex == index;
-                      final isPopular = plan['isPopular'] ?? false;
-                      
-                      return Padding(
-                        padding: const EdgeInsets.only(
-                          bottom: AppDimensions.paddingM,
-                        ),
-                        child: _buildPlanCard(
-                          plan: plan,
-                          isSelected: isSelected,
-                          isPopular: isPopular,
-                          onTap: () {
-                            setState(() {
-                              _selectedPlanIndex = index;
-                            });
-                          },
-                        ),
-                      );
-                    },
-                  ),
-                ),
-                
-                // Bottom Button
-                Container(
-                  padding: const EdgeInsets.all(AppDimensions.paddingM),
-                  decoration: BoxDecoration(
-                    color: AppColors.surface,
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.1),
-                        blurRadius: 8,
-                        offset: const Offset(0, -2),
-                      ),
-                    ],
-                  ),
-                  child: SafeArea(
-                    child: SizedBox(
-                      width: double.infinity,
-                      height: 50,
-                      child: ElevatedButton(
-                        onPressed: _onProceedToPayment,
-                        child: const Text('Tiến hành thanh toán'),
+                ],
+              ),
+              padding: const EdgeInsets.all(24),
+              child: Column(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    decoration: BoxDecoration(
+                      color: AppColors.gold,
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: const Text(
+                      'GÓI ĐỘC QUYỀN',
+                      style: TextStyle(
+                        fontFamily: 'Anton',
+                        color: AppColors.onGold,
+                        letterSpacing: 1,
                       ),
                     ),
                   ),
-                ),
-              ],
+                  const SizedBox(height: 24),
+                  const Text(
+                    'Premium 1 Tháng',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        '49.000',
+                        style: TextStyle(
+                          fontFamily: 'Anton',
+                          fontSize: 48,
+                          color: AppColors.gold,
+                          height: 1,
+                        ),
+                      ),
+                      const SizedBox(width: 4),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 8),
+                        child: Text(
+                          'VNĐ\n/tháng',
+                          style: TextStyle(
+                            color: AppColors.gold.withValues(alpha: 0.7),
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 32),
+                  _buildFeatureRow('Không quảng cáo'),
+                  _buildFeatureRow('Đọc chương mới trước 7 ngày'),
+                  _buildFeatureRow('Tải truyện đọc Offline'),
+                  _buildFeatureRow('Ủng hộ trực tiếp tác giả'),
+                ],
+              ),
             ),
+          ],
+        ),
+      ),
+      bottomNavigationBar: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: GestureDetector(
+            onTap: () {
+              Navigator.pushNamed(context, AppRouter.payment, arguments: {
+                'plan_name': 'Premium 1 Tháng',
+                'price': 49000,
+              });
+            },
+            child: Container(
+              height: 60,
+              decoration: BoxDecoration(
+                color: AppColors.gold,
+                borderRadius: BorderRadius.circular(12),
+                boxShadow: [
+                  BoxShadow(
+                    color: AppColors.gold.withValues(alpha: 0.5),
+                    blurRadius: 10,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
+              ),
+              child: const Center(
+                child: Text(
+                  'TIẾN HÀNH THANH TOÁN',
+                  style: TextStyle(
+                    fontFamily: 'Anton',
+                    fontSize: 20,
+                    color: AppColors.onGold,
+                    letterSpacing: 1.5,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
     );
   }
 
-  Widget _buildPlanCard({
-    required Map<String, dynamic> plan,
-    required bool isSelected,
-    required bool isPopular,
-    required VoidCallback onTap,
-  }) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Stack(
+  Widget _buildFeatureRow(String text) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 16),
+      child: Row(
         children: [
-          Container(
-            padding: const EdgeInsets.all(AppDimensions.paddingL),
-            decoration: BoxDecoration(
-              color: isSelected
-                  ? AppColors.primary.withOpacity(0.1)
-                  : AppColors.surface,
-              borderRadius: BorderRadius.circular(AppDimensions.radiusL),
-              border: Border.all(
-                color: isSelected ? AppColors.primary : AppColors.border,
-                width: isSelected ? 2 : 1,
+          const Icon(Icons.check_circle, color: AppColors.gold, size: 20),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Text(
+              text,
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 15,
+                fontWeight: FontWeight.w500,
               ),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            plan['name'],
-                            style: AppTextStyles.h3,
-                          ),
-                          const SizedBox(height: 4),
-                          Text(
-                            plan['duration'],
-                            style: AppTextStyles.bodySmall.copyWith(
-                              color: AppColors.grey,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    if (isSelected)
-                      Container(
-                        padding: const EdgeInsets.all(8),
-                        decoration: const BoxDecoration(
-                          color: AppColors.primary,
-                          shape: BoxShape.circle,
-                        ),
-                        child: const Icon(
-                          Icons.check,
-                          color: AppColors.textPrimary,
-                          size: 20,
-                        ),
-                      ),
-                  ],
-                ),
-                const SizedBox(height: AppDimensions.paddingM),
-                
-                // Price
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Text(
-                      '${plan['price']}đ',
-                      style: AppTextStyles.price,
-                    ),
-                    if (plan['originalPrice'] != null) ...[
-                      const SizedBox(width: AppDimensions.paddingS),
-                      Text(
-                        '${plan['originalPrice']}đ',
-                        style: AppTextStyles.bodySmall.copyWith(
-                          color: AppColors.grey,
-                          decoration: TextDecoration.lineThrough,
-                        ),
-                      ),
-                    ],
-                    if (plan['discount'] != null) ...[
-                      const SizedBox(width: AppDimensions.paddingS),
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: AppDimensions.paddingS,
-                          vertical: 2,
-                        ),
-                        decoration: BoxDecoration(
-                          color: AppColors.error,
-                          borderRadius: BorderRadius.circular(
-                            AppDimensions.radiusS,
-                          ),
-                        ),
-                        child: Text(
-                          '-${plan['discount']}',
-                          style: AppTextStyles.bodySmall.copyWith(
-                            color: AppColors.textLight,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ],
-                ),
-                const SizedBox(height: AppDimensions.paddingM),
-                
-                // Features
-                ...((plan['features'] as List<String>).map(
-                  (feature) => Padding(
-                    padding: const EdgeInsets.only(
-                      bottom: AppDimensions.paddingS,
-                    ),
-                    child: Row(
-                      children: [
-                        const Icon(
-                          Icons.check_circle,
-                          color: AppColors.success,
-                          size: 20,
-                        ),
-                        const SizedBox(width: AppDimensions.paddingS),
-                        Text(
-                          feature,
-                          style: AppTextStyles.bodyMedium,
-                        ),
-                      ],
-                    ),
-                  ),
-                )),
-              ],
             ),
           ),
-          
-          // Popular Badge
-          if (isPopular)
-            Positioned(
-              top: 0,
-              right: 0,
-              child: Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: AppDimensions.paddingM,
-                  vertical: AppDimensions.paddingS,
-                ),
-                decoration: const BoxDecoration(
-                  color: AppColors.primary,
-                  borderRadius: BorderRadius.only(
-                    topRight: Radius.circular(AppDimensions.radiusL),
-                    bottomLeft: Radius.circular(AppDimensions.radiusL),
-                  ),
-                ),
-                child: Text(
-                  'PHỔ BIẾN',
-                  style: AppTextStyles.bodySmall.copyWith(
-                    color: AppColors.textPrimary,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ),
-            ),
         ],
       ),
     );

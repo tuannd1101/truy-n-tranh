@@ -25,6 +25,7 @@ class AuthProvider extends ChangeNotifier {
   bool get isGuest => _currentUser == null;
   bool get isPremium => _currentUser?.isPremium ?? false;
   bool get isFree => _currentUser?.isFree ?? false;
+  bool get isAdminOrManager => (_currentUser?.isAdmin ?? false) || (_currentUser?.isManager ?? false);
 
   void _setLoading() {
     _status = AuthStatus.loading;

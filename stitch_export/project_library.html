@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>MangaFlow - Project Library</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Anton&amp;family=Hanken+Grotesk:ital,wght@0,100..900;1,100..900&amp;family=Syne:wght@400..800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "tertiary-fixed": "#ffe16d",
+                        "on-background": "#e4e1ed",
+                        "on-primary-fixed": "#3f001b",
+                        "on-error-container": "#ffdad6",
+                        "secondary-fixed": "#9cf0ff",
+                        "primary-fixed-dim": "#ffb1c5",
+                        "on-tertiary": "#3a3000",
+                        "surface-container-low": "#1b1b23",
+                        "on-primary-fixed-variant": "#8c0a46",
+                        "inverse-on-surface": "#302f39",
+                        "error": "#ffb4ab",
+                        "error-container": "#93000a",
+                        "secondary": "#bdf4ff",
+                        "on-tertiary-fixed-variant": "#544600",
+                        "on-error": "#690005",
+                        "inverse-primary": "#ac2a5d",
+                        "on-secondary-fixed-variant": "#004f58",
+                        "surface-variant": "#34343d",
+                        "surface-container-high": "#292932",
+                        "on-primary": "#650030",
+                        "primary-container": "#ff6b9d",
+                        "on-secondary-fixed": "#001f24",
+                        "secondary-fixed-dim": "#00daf3",
+                        "secondary-container": "#00e3fd",
+                        "on-tertiary-container": "#403500",
+                        "primary": "#ffb1c5",
+                        "tertiary-fixed-dim": "#e9c400",
+                        "on-surface": "#e4e1ed",
+                        "on-primary-container": "#6e0035",
+                        "surface-bright": "#393842",
+                        "on-tertiary-fixed": "#221b00",
+                        "surface-container": "#1f1f28",
+                        "surface-container-lowest": "#0d0d16",
+                        "on-secondary-container": "#00616d",
+                        "inverse-surface": "#e4e1ed",
+                        "tertiary-container": "#ba9c00",
+                        "background": "#13131b",
+                        "on-secondary": "#00363d",
+                        "surface-tint": "#ffb1c5",
+                        "outline-variant": "#574146",
+                        "surface-container-highest": "#34343d",
+                        "on-surface-variant": "#ddbfc5",
+                        "primary-fixed": "#ffd9e1",
+                        "outline": "#a58a90",
+                        "surface-dim": "#13131b",
+                        "tertiary": "#e9c400",
+                        "surface": "#13131b"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "sfx-offset": "-12px",
+                        "margin-edge": "32px",
+                        "panel-gutter": "24px",
+                        "frame-border": "4px"
+                    },
+                    "fontFamily": {
+                        "label-lg": ["Syne"],
+                        "display-lg": ["Anton"],
+                        "headline-lg-mobile": ["Anton"],
+                        "headline-sm": ["Anton"],
+                        "label-sm": ["Syne"],
+                        "headline-md": ["Anton"],
+                        "headline-lg": ["Anton"],
+                        "body-lg": ["Hanken Grotesk"],
+                        "body-md": ["Hanken Grotesk"]
+                    },
+                    "fontSize": {
+                        "label-lg": ["14px", { "lineHeight": "20px", "fontWeight": "700" }],
+                        "display-lg": ["80px", { "lineHeight": "80px", "letterSpacing": "-0.02em", "fontWeight": "400" }],
+                        "headline-lg-mobile": ["36px", { "lineHeight": "40px", "fontWeight": "400" }],
+                        "headline-sm": ["24px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "label-sm": ["12px", { "lineHeight": "16px", "fontWeight": "700" }],
+                        "headline-md": ["32px", { "lineHeight": "36px", "fontWeight": "400" }],
+                        "headline-lg": ["48px", { "lineHeight": "52px", "letterSpacing": "0.04em", "fontWeight": "400" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .screentone-bg {
+            background-image: radial-gradient(#34343d 15%, transparent 16%), radial-gradient(#34343d 15%, transparent 16%);
+            background-size: 8px 8px;
+            background-position: 0 0, 4px 4px;
+        }
+        .watermark-kanji {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-15deg);
+            font-size: 40vw;
+            color: rgba(255, 255, 255, 0.02);
+            z-index: -1;
+            pointer-events: none;
+            font-weight: 900;
+        }
+        .manga-spine-card {
+            transform: perspective(1000px) rotateY(-10deg) rotateX(5deg);
+            transform-style: preserve-3d;
+            transition: transform 0.3s ease;
+        }
+        .manga-spine-card:hover {
+            transform: perspective(1000px) rotateY(0deg) rotateX(0deg) translateZ(20px);
+        }
+        .ink-splash-fab {
+            clip-path: polygon(50% 0%, 83% 12%, 100% 43%, 94% 78%, 68% 100%, 32% 100%, 6% 78%, 0% 43%, 17% 12%);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background font-body-md min-h-screen relative overflow-x-hidden pb-24 md:pb-0">
+<!-- Background Watermark -->
+<div class="watermark-kanji">漫画</div>
+<!-- TopAppBar (Web & Mobile) -->
+<header class="bg-background dark:bg-background border-b-4 border-on-background dark:border-on-background-variant shadow-[4px_4px_0px_0px_rgba(255,177,197,1)] sticky top-0 z-40">
+<div class="flex justify-between items-center w-full px-margin-edge py-4 max-w-7xl mx-auto">
+<div class="flex items-center gap-4">
+<span class="font-display-lg text-headline-lg-mobile md:text-headline-lg text-primary-container dark:text-primary tracking-tighter uppercase">MangaFlow</span>
+</div>
+<!-- Web Navigation -->
+<nav class="hidden md:flex gap-8">
+<a class="text-on-background opacity-70 hover:bg-surface-variant transition-colors px-4 py-2 font-label-lg text-label-lg active:translate-y-1 active:translate-x-1 duration-75" href="#">HOME</a>
+<a class="text-on-background opacity-70 hover:bg-surface-variant transition-colors px-4 py-2 font-label-lg text-label-lg active:translate-y-1 active:translate-x-1 duration-75" href="#">READ</a>
+<a class="text-on-background opacity-70 hover:bg-surface-variant transition-colors px-4 py-2 font-label-lg text-label-lg active:translate-y-1 active:translate-x-1 duration-75" href="#">CREATE</a>
+<a class="text-primary font-bold px-4 py-2 font-label-lg text-label-lg active:translate-y-1 active:translate-x-1 duration-75" href="#">LIBRARY</a>
+</nav>
+<button class="text-primary dark:text-primary-fixed-dim hover:bg-surface-variant transition-colors p-2 rounded-full active:translate-y-1 active:translate-x-1 duration-75">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">account_circle</span>
+</button>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="max-w-7xl mx-auto px-4 md:px-margin-edge py-8 md:py-12">
+<!-- Header Section -->
+<div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-12 gap-6 relative">
+<div class="relative z-10">
+<h1 class="font-display-lg text-display-lg text-on-background tracking-tighter uppercase leading-none transform -skew-x-6">LIBRARY</h1>
+<p class="font-body-lg text-on-surface-variant mt-2 max-w-xl">Your creative archive. Manage, review, and organize your manga projects.</p>
+</div>
+<!-- Filter Chips (Japanese/English) -->
+<div class="flex flex-wrap gap-3 z-10">
+<button class="bg-primary text-on-primary border-frame-border border-black font-label-lg px-4 py-2 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all flex flex-col items-center">
+<span class="text-xs">すべて</span>
+<span>All</span>
+</button>
+<button class="bg-surface-container-high text-on-surface border-frame-border border-black font-label-lg px-4 py-2 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all flex flex-col items-center">
+<span class="text-xs">少年</span>
+<span>Shounen</span>
+</button>
+<button class="bg-surface-container-high text-on-surface border-frame-border border-black font-label-lg px-4 py-2 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all flex flex-col items-center">
+<span class="text-xs">連載中</span>
+<span>Ongoing</span>
+</button>
+</div>
+</div>
+<!-- 2-Column Manga Bookshelf Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-panel-gutter relative z-10">
+<!-- Project Card 1 -->
+<article class="manga-spine-card bg-surface-container border-frame-border border-black p-4 relative group flex gap-4 min-h-[200px]">
+<div class="absolute -top-3 -right-3 bg-secondary text-on-secondary border-2 border-black font-headline-sm px-2 py-1 transform rotate-6 z-20">01</div>
+<!-- Spine Image Placeholder -->
+<div class="w-1/3 bg-surface-variant border-r-2 border-black relative overflow-hidden flex-shrink-0 screentone-bg">
+<img alt="Project Cover" class="w-full h-full object-cover mix-blend-luminosity opacity-80 group-hover:mix-blend-normal group-hover:opacity-100 transition-all" data-alt="A dynamic, high-contrast digital illustration of a cyberpunk city alleyway drawn in a manga brutalist style. Neon pink and cyan lights reflect off wet pavement. Deep black shadows contrast with bright electric highlights. The mood is gritty, energetic, and futuristic, resembling an action-packed shounen manga color spread." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBjoqPF7rrpYts4-QScIArA2OBrvJeikqzwTQbssD1qF-yUTkth95i5jh9DEX17rJ_IO7grbDleiD79SQajVjZGvgsjDavKYXuurdSL7RQg55KZl88VlSLSq0Gg0aZGTfYAUoXozbatgMRO-NxnlP8MGQuh6brB01_pU3WyFjIZL6AVbYhkXpCDrKPxRxHEuPqFzDGa1zyL8DnrYhnz1ZSxLSrsPoD3l11q52E7z-7GSXH_YeuVNDPCHhpQJxYgmdQ4hq1CtFVK9bc"/>
+</div>
+<div class="flex-1 flex flex-col justify-between py-2">
+<div>
+<div class="flex items-center gap-2 mb-2">
+<span class="bg-primary text-on-primary font-label-sm px-2 py-0.5 border border-black transform -skew-x-12">少年 Shounen</span>
+<span class="bg-error text-on-error font-label-sm px-2 py-0.5 border border-black transform skew-x-12">連載中 Serializing</span>
+</div>
+<h2 class="font-headline-md text-headline-md text-on-background uppercase leading-tight mb-2 group-hover:text-primary transition-colors">Neon Drift</h2>
+<p class="font-body-md text-on-surface-variant line-clamp-2">Cybernetic racing leagues in Neo-Tokyo. Chapter 14 in progress.</p>
+</div>
+<div class="flex justify-between items-center mt-4">
+<span class="font-label-lg text-on-surface-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-sm">schedule</span> Last edited 2h ago
+                        </span>
+<button class="bg-tertiary text-on-tertiary border-2 border-black font-label-sm px-3 py-1 shadow-[2px_2px_0px_0px_rgba(255,177,197,1)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all uppercase tracking-wider">
+                            Edit
+                        </button>
+</div>
+</div>
+</article>
+<!-- Project Card 2 -->
+<article class="manga-spine-card bg-surface-container border-frame-border border-black p-4 relative group flex gap-4 min-h-[200px]">
+<div class="absolute -top-3 -right-3 bg-secondary text-on-secondary border-2 border-black font-headline-sm px-2 py-1 transform -rotate-3 z-20">02</div>
+<div class="w-1/3 bg-surface-variant border-r-2 border-black relative overflow-hidden flex-shrink-0 screentone-bg">
+<img alt="Project Cover" class="w-full h-full object-cover mix-blend-luminosity opacity-80 group-hover:mix-blend-normal group-hover:opacity-100 transition-all" data-alt="A delicate but intense digital ink wash painting of a samurai warrior in a bamboo forest, stylized as a manga page. High contrast black ink strokes on a stark white background with subtle screentone textures. A single splash of vibrant crimson red blood highlights the scene. The mood is tense and dramatic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBPsezFc1vYhdtESlLMwuSPW3GpUernDrlUfu5OB5rVrkC67LWio08DWFYcOd5wzd5WRowhf8lk1FUvaW9WsXTaz_Mf_6jjCeIBiaGJeqLjF12GDvXHIAgDDV4bBbJHrCytCyT0g-9J5g06tTHIS31SjdaM7m2S7d89tMHisvBRsr06gV0QAobAX3UEekCPK47QWxdu7ET3mart_CSttUurEyhetTj98RDSSCDCoGTavZGSx8rZUDM-vmcMXz_vSY1V6EENAf-DG2U"/>
+</div>
+<div class="flex-1 flex flex-col justify-between py-2">
+<div>
+<div class="flex items-center gap-2 mb-2">
+<span class="bg-tertiary text-on-tertiary font-label-sm px-2 py-0.5 border border-black transform -skew-x-12">青年 Seinen</span>
+<span class="bg-surface-variant text-on-surface-variant font-label-sm px-2 py-0.5 border border-black transform skew-x-12">完結 Completed</span>
+</div>
+<h2 class="font-headline-md text-headline-md text-on-background uppercase leading-tight mb-2 group-hover:text-primary transition-colors">Crimson Blade</h2>
+<p class="font-body-md text-on-surface-variant line-clamp-2">A masterless samurai seeks vengeance across the Edo period.</p>
+</div>
+<div class="flex justify-between items-center mt-4">
+<span class="font-label-lg text-on-surface-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-sm">schedule</span> Last edited 1w ago
+                        </span>
+<button class="bg-surface-container-high text-on-surface border-2 border-black font-label-sm px-3 py-1 hover:bg-surface-variant transition-colors uppercase tracking-wider">
+                            View
+                        </button>
+</div>
+</div>
+</article>
+<!-- Project Card 3 -->
+<article class="manga-spine-card bg-surface-container border-frame-border border-black p-4 relative group flex gap-4 min-h-[200px]">
+<div class="absolute -top-3 -right-3 bg-secondary text-on-secondary border-2 border-black font-headline-sm px-2 py-1 transform rotate-6 z-20">03</div>
+<div class="w-1/3 bg-surface-variant border-r-2 border-black relative overflow-hidden flex-shrink-0 screentone-bg">
+<img alt="Project Cover" class="w-full h-full object-cover mix-blend-luminosity opacity-80 group-hover:mix-blend-normal group-hover:opacity-100 transition-all" data-alt="A magical girl transformation sequence rendered in an aggressive manga brutalist style. Explosive starbursts and speed lines dominate the background. The character features exaggerated expressions and dynamic poses. High contrast black ink with intense sakura pink and electric blue hard shadows. The mood is chaotic and energetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDLRNo5dW0RkkA1V1V-laVlv7O120KnfeG3MW1-NtYn8t4U7ka6VbOSQntLw1bedSSKJmSXz_x2G4NayJv-fFhOaGgTVi-_ZbECr4IX-9VMmXzcTr1SkJGu-eCTkQzrsbSwJdgyP8YFxIZsVCUbymQRdDNev2aWnmogkNUiREIQGCoQ85yzVWvL4YRTLDWylCASIoztI_OIfX2Fq8HEaap2YXfao84kod7D_gASMO8lc8UPw0VUFNO9ItxlYm4udecxKXuHhaB9vnY"/>
+</div>
+<div class="flex-1 flex flex-col justify-between py-2">
+<div>
+<div class="flex items-center gap-2 mb-2">
+<span class="bg-primary-container text-on-primary-container font-label-sm px-2 py-0.5 border border-black transform -skew-x-12">少女 Shoujo</span>
+<span class="bg-error text-on-error font-label-sm px-2 py-0.5 border border-black transform skew-x-12">連載中 Serializing</span>
+</div>
+<h2 class="font-headline-md text-headline-md text-on-background uppercase leading-tight mb-2 group-hover:text-primary transition-colors">Starfall Magic</h2>
+<p class="font-body-md text-on-surface-variant line-clamp-2">Middle schoolers protect the galaxy with explosive power.</p>
+</div>
+<div class="flex justify-between items-center mt-4">
+<span class="font-label-lg text-on-surface-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-sm">schedule</span> Last edited 3d ago
+                        </span>
+<button class="bg-tertiary text-on-tertiary border-2 border-black font-label-sm px-3 py-1 shadow-[2px_2px_0px_0px_rgba(255,177,197,1)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all uppercase tracking-wider">
+                            Edit
+                        </button>
+</div>
+</div>
+</article>
+</div>
+</main>
+<!-- Floating Action Button (Create New) -->
+<button class="fixed bottom-24 md:bottom-8 right-8 z-50 bg-primary text-on-primary w-16 h-16 flex items-center justify-center ink-splash-fab shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:scale-110 active:scale-95 transition-transform">
+<span class="material-symbols-outlined text-3xl font-bold">add</span>
+</button>
+<!-- BottomNavBar (Mobile Only) -->
+<nav class="md:hidden bg-surface-container dark:bg-surface-container-lowest border-t-4 border-on-background shadow-[0_-4px_0px_0px_rgba(0,227,253,1)] fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 pb-6 pt-2">
+<button class="flex flex-col items-center justify-center text-on-surface-variant p-2 hover:bg-surface-container-highest transition-transform">
+<span class="material-symbols-outlined">home</span>
+<span class="font-label-sm text-label-sm uppercase tracking-widest mt-1">HOME</span>
+</button>
+<button class="flex flex-col items-center justify-center text-on-surface-variant p-2 hover:bg-surface-container-highest transition-transform">
+<span class="material-symbols-outlined">menu_book</span>
+<span class="font-label-sm text-label-sm uppercase tracking-widest mt-1">READ</span>
+</button>
+<button class="flex flex-col items-center justify-center text-on-surface-variant p-2 hover:bg-surface-container-highest transition-transform">
+<span class="material-symbols-outlined">edit</span>
+<span class="font-label-sm text-label-sm uppercase tracking-widest mt-1">CREATE</span>
+</button>
+<button class="flex flex-col items-center justify-center bg-primary text-on-primary rounded-lg p-2 scale-110 -rotate-3">
+<span class="material-symbols-outlined">auto_stories</span>
+<span class="font-label-sm text-label-sm uppercase tracking-widest mt-1">LIBRARY</span>
+</button>
+</nav>
+</body></html>

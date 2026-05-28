@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:prm393_project/core/constants/app_colors.dart';
 
 /// Enum representing user roles in the application
-enum UserRole { guest, free, premium }
+enum UserRole { guest, free, premium, manager, admin }
 
 /// User model representing a user in the application
 class User {
@@ -79,9 +79,19 @@ class User {
   /// Check if user is guest
   bool get isGuest => role == UserRole.guest;
 
+  /// Check if user is admin
+  bool get isAdmin => role == UserRole.admin;
+
+  /// Check if user is manager
+  bool get isManager => role == UserRole.manager;
+
   /// Get role badge text for display
   String get roleBadgeText {
     switch (role) {
+      case UserRole.admin:
+        return 'Admin';
+      case UserRole.manager:
+        return 'Manager';
       case UserRole.premium:
         return 'Premium User';
       case UserRole.free:
@@ -94,6 +104,10 @@ class User {
   /// Get role badge color for display
   Color get roleBadgeColor {
     switch (role) {
+      case UserRole.admin:
+        return AppColors.warning; // Yellow for admin
+      case UserRole.manager:
+        return AppColors.secondaryContainer; // Purple for manager
       case UserRole.premium:
         return AppColors.primary;
       case UserRole.free:

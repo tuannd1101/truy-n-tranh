@@ -81,17 +81,28 @@ public class GlobalExceptionHandler {
 
     // ── type mismatch (e.g. invalid enum value in @RequestParam) ─────────────
 
-    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
-    public ResponseEntity<BaseApiResponse<Object>> handleTypeMismatch(
-            MethodArgumentTypeMismatchException ex) {
+    @ExceptionHandler(value = MethodArgumentNotValidException.class)
+    public ResponseEntity<BaseApiResponse<Object>> handlingValidationException(
+            MethodArgumentNotValidException exception) {
+        String enumKey = exception.getFieldError().getDefaultMessage();
+        ErrorCode errorCode = ErrorCode.UNCATEGORIZED_EXCEPTION;
 
-        String detail = String.format(
-                "Parameter '%s' has invalid value '%s'", ex.getName(), ex.getValue());
+        try {
+            errorCode = ErrorCode.valueOf(enumKey);
+            return ResponseEntity
+                    .status(errorCode.getStatusCode())
+                    .body(BaseApiResponse.error(errorCode.getMessage(), null));
+        } catch (IllegalArgumentException e) {
+            Map<String, String> errors = new HashMap<>();
+            exception.getBindingResult().getAllErrors().forEach((error) -> {
+                String fieldName = ((FieldError) error).getField();
+                String errorMessage = error.getDefaultMessage();
+                errors.put(fieldName, errorMessage);
+            });
 
-        return ResponseEntity
-                .badRequest()
-                .body(BaseApiResponse.error(
-                        "Invalid request parameter",
-                        ApiError.of("INVALID_PARAMETER", detail)));
+            return ResponseEntity
+                    .badRequest()
+                    .body(BaseApiResponse.error("Validation failed", errors));
+        }
     }
 }
