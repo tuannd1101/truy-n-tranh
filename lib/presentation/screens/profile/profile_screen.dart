@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/routes/app_router.dart';
+import '../../widgets/main_drawer.dart';
+import '../../widgets/main_app_bar.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -24,68 +26,25 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
-      appBar: _buildAppBar(),
+      appBar: const MainAppBar(),
+      drawer: const MainDrawer(),
       body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
         child: Column(
           children: [
             _buildProfileCard(),
+            const SizedBox(height: 24),
+            _buildPremiumButton(),
             const SizedBox(height: 32),
             _buildAttributesSection(),
             const SizedBox(height: 32),
             _buildCompletedArcsSection(),
             const SizedBox(height: 32),
+            _buildMenuSection(),
+            const SizedBox(height: 32),
             _buildLogoutButton(),
             const SizedBox(height: 40),
           ],
-        ),
-      ),
-      bottomNavigationBar: _buildBottomNav(),
-    );
-  }
-
-  PreferredSizeWidget _buildAppBar() {
-    return PreferredSize(
-      preferredSize: const Size.fromHeight(60),
-      child: Container(
-        decoration: const BoxDecoration(
-          color: Color(0xFF13131B),
-          border: Border(
-            bottom: BorderSide(color: AppColors.primaryContainer, width: 2),
-          ),
-        ),
-        child: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Text(
-                  'MANGAFLOW',
-                  style: TextStyle(
-                    fontFamily: 'sans-serif',
-                    fontSize: 20,
-                    fontWeight: FontWeight.w900,
-                    color: AppColors.primaryContainer,
-                    letterSpacing: 1,
-                  ),
-                ),
-                Container(
-                  width: 32,
-                  height: 32,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    border: Border.all(color: AppColors.primaryContainer, width: 2),
-                  ),
-                  child: const Icon(
-                    Icons.person_outline,
-                    color: AppColors.primaryContainer,
-                    size: 18,
-                  ),
-                ),
-              ],
-            ),
-          ),
         ),
       ),
     );
@@ -479,6 +438,62 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
+  Widget _buildMenuSection() {
+    return Container(
+      width: double.infinity,
+      decoration: BoxDecoration(
+        color: const Color(0xFF1B1B23),
+        border: Border.all(color: Colors.white.withOpacity(0.2)),
+      ),
+      child: Column(
+        children: [
+          _buildMenuItem(Icons.history, 'LỊCH SỬ ĐỌC', () {
+            Navigator.pushNamed(context, AppRouter.readingHistory);
+          }),
+          Divider(color: Colors.white.withOpacity(0.1), height: 1),
+          _buildMenuItem(Icons.favorite_border, 'TRUYỆN YÊU THÍCH', () {
+            Navigator.pushNamed(context, AppRouter.favorites);
+          }),
+          Divider(color: Colors.white.withOpacity(0.1), height: 1),
+          _buildMenuItem(Icons.settings_outlined, 'CÀI ĐẶT', () {
+            Navigator.pushNamed(context, AppRouter.settings);
+          }),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMenuItem(IconData icon, String title, VoidCallback onTap) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+          child: Row(
+            children: [
+              Icon(icon, color: AppColors.onSurface, size: 24),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Text(
+                  title,
+                  style: const TextStyle(
+                    fontFamily: 'Syne',
+                    color: AppColors.onSurface,
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: 1,
+                  ),
+                ),
+              ),
+              const Icon(Icons.chevron_right, color: Colors.grey, size: 24),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget _buildLogoutButton() {
     return Container(
       width: double.infinity,
@@ -519,67 +534,36 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  Widget _buildBottomNav() {
+  Widget _buildPremiumButton() {
     return Container(
-      decoration: const BoxDecoration(
-        color: Color(0xFF13131B),
-        border: Border(top: BorderSide(color: Colors.cyanAccent, width: 2)),
-      ),
-      child: SafeArea(
-        child: SizedBox(
-          height: 60,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              _buildNavItem(Icons.home, 'HOME', 0, false),
-              _buildNavItem(Icons.menu_book, 'READ', 1, false),
-              _buildNavItem(Icons.create, 'CREATE', 2, false),
-              _buildNavItem(Icons.my_library_books, 'LIBRARY', 3, false),
-              _buildNavItem(Icons.person, 'PROFILE', 4, true),
-            ],
+      width: double.infinity,
+      decoration: BoxDecoration(
+        color: const Color(0xFF1B1B23),
+        border: Border.all(color: AppColors.gold, width: 2),
+        boxShadow: const [
+          BoxShadow(
+            color: AppColors.gold,
+            offset: Offset(4, 4),
           ),
-        ),
+        ],
       ),
-    );
-  }
-
-  Widget _buildNavItem(IconData icon, String label, int index, bool isActive) {
-    return GestureDetector(
-      onTap: () {
-        if (index == 0) {
-          Navigator.pushReplacementNamed(context, AppRouter.home);
-        } else if (index == 1) {
-          Navigator.pushReplacementNamed(context, AppRouter.reading);
-        } else if (index == 2) {
-          Navigator.pushReplacementNamed(context, AppRouter.create);
-        } else if (index == 3) {
-          Navigator.pushReplacementNamed(context, AppRouter.library);
-        }
-      },
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        decoration: isActive
-            ? BoxDecoration(
-                color: AppColors.primaryContainer,
-                borderRadius: BorderRadius.circular(8),
-              )
-            : null,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
+      child: MaterialButton(
+        onPressed: () {
+          Navigator.pushNamed(context, AppRouter.subscription);
+        },
+        padding: const EdgeInsets.symmetric(vertical: 16),
+        child: const Row(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              icon,
-              color: isActive ? Colors.black : Colors.grey,
-              size: 20,
-            ),
-            const SizedBox(height: 4),
+            Icon(Icons.workspace_premium, color: AppColors.gold, size: 24),
+            SizedBox(width: 8),
             Text(
-              label,
+              'NÂNG CẤP PREMIUM',
               style: TextStyle(
-                fontFamily: 'sans-serif',
-                color: isActive ? Colors.black : Colors.grey,
-                fontSize: 9,
-                fontWeight: FontWeight.w900,
+                fontFamily: 'Anton',
+                color: AppColors.gold,
+                fontSize: 18,
+                letterSpacing: 2,
               ),
             ),
           ],
