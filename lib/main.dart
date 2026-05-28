@@ -1,34 +1,42 @@
 import 'package:flutter/material.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'theme/app_theme.dart';
-import 'screens/home_dashboard_screen.dart';
+import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
+import 'core/theme/app_theme.dart';
+import 'core/routes/app_router.dart';
+import 'providers/auth_provider.dart';
 
-void main() async {
+void main() {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Đọc dữ liệu từ file .env
-  await dotenv.load(fileName: ".env");
+  // Set preferred orientations
+  SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown,
+  ]);
 
-  // Khởi tạo kết nối với Supabase
-  await Supabase.initialize(
-    url: dotenv.env['SUPABASE_URL']!,
-    anonKey: dotenv.env['SUPABASE_ANON_KEY']!,
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => AuthProvider()),
+      ],
+      child: const MyApp(),
+    ),
   );
-
-  runApp(const MangaFlowApp());
 }
 
-class MangaFlowApp extends StatelessWidget {
-  const MangaFlowApp({super.key});
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'MangaFlow - Studio.Ink',
+      title: 'Manga Reader',
       debugShowCheckedModeBanner: false,
-      theme: AppTheme.dark,
-      home: const HomeDashboardScreen(),
+      theme: AppTheme.lightTheme,
+      darkTheme: AppTheme.darkTheme,
+      themeMode: ThemeMode.light,
+      initialRoute: AppRouter.splash,
+      onGenerateRoute: AppRouter.generateRoute,
     );
   }
 }
