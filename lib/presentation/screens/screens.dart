@@ -10,4 +10,5 @@ export 'subscription/subscription_screen.dart';
 export 'payment/payment_screen.dart';
 export 'payment/payment_webview_screen.dart';
 export 'payment/payment_result_screen.dart';
-export 'splash/splash_screen.dart';
+export 'task/task_board_screen.dart';
+export 'library/library_screen.dart';

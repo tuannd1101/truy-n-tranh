@@ -1,45 +1,74 @@
 import 'package:flutter/material.dart';
 
+/// MangaFlow Otaku Edition Design System Colors
+/// Based on Stitch Cyber-Manga dark theme
 class AppColors {
-  // Primary Colors
-  static const Color primary = Color(0xFFFFC107); // Vàng mật ong
-  static const Color primaryDark = Color(0xFFFFA000);
-  static const Color primaryLight = Color(0xFFFFD54F);
-  
-  // Background Colors
-  static const Color background = Color(0xFFF8F9FA); // Trắng sữa
-  static const Color surface = Color(0xFFFFFFFF); // Trắng
-  static const Color surfaceDark = Color(0xFF1A1A1A); // Đen
-  
-  // Text Colors
-  static const Color textPrimary = Color(0xFF1A1A1A); // Đen
-  static const Color textSecondary = Color(0xFF6C757D); // Xám
-  static const Color textLight = Color(0xFFFFFFFF); // Trắng
-  
-  // Status Colors
-  static const Color success = Color(0xFF28A745); // Xanh lá
-  static const Color error = Color(0xFFDC3545); // Đỏ
-  static const Color warning = Color(0xFFFFC107); // Vàng
-  static const Color info = Color(0xFF17A2B8); // Xanh dương
-  
-  // Tag Colors
-  static const Color tagFree = Color(0xFF28A745); // Xanh lá cho Free
-  static const Color tagPremium = Color(0xFFFFC107); // Vàng cho Premium
-  
-  // Border & Divider
-  static const Color border = Color(0xFFCED4DA); // Xám nhạt
-  static const Color divider = Color(0xFFE0E0E0);
-  
-  // Grey Scale
-  static const Color grey = Color(0xFF6C757D);
-  static const Color greyLight = Color(0xFFF0F0F0);
-  static const Color greyDark = Color(0xFF212529);
-  
-  // Search Bar
-  static const Color searchBarBackground = Color(0xFFF0F0F0); // Light gray
-  
-  // Overlay
-  static const Color overlay = Color(0x80000000); // Black with 50% opacity
-  static const Color overlayLight = Color(0x40000000); // Black with 25% opacity
-  static const Color overlayDark = Color(0xB3000000); // Black with 70% opacity for reading mode
+  // === PRIMARY - Sakura Pink ===
+  static const Color primary = Color(0xFFFFB1C5);
+  static const Color primaryContainer = Color(0xFFFF6B9D);
+  static const Color primaryDark = Color(0xFFFF6B9D);
+  static const Color primaryLight = Color(0xFFFFD9E1);
+  static const Color onPrimary = Color(0xFF650030);
+  static const Color onPrimaryContainer = Color(0xFF6E0035);
+  static const Color inversePrimary = Color(0xFFAC2A5D);
+
+  // === SECONDARY - Electric Purple ===
+  static const Color secondary = Color(0xFFDCB8FF);
+  static const Color secondaryContainer = Color(0xFF7701D0);
+  static const Color onSecondary = Color(0xFF480081);
+  static const Color onSecondaryContainer = Color(0xFFDCB7FF);
+
+  // === TERTIARY - Cyan ===
+  static const Color tertiary = Color(0xFF00DBE9);
+  static const Color tertiaryContainer = Color(0xFF00AFBA);
+  static const Color onTertiary = Color(0xFF00363A);
+
+  // === BACKGROUND & SURFACE (Deep Ink Black) ===
+  static const Color background = Color(0xFF13131B);
+  static const Color surface = Color(0xFF13131B);
+  static const Color surfaceDark = Color(0xFF1F1F28);
+  static const Color surfaceContainer = Color(0xFF1F1F28);
+  static const Color surfaceContainerHigh = Color(0xFF292932);
+  static const Color surfaceContainerHighest = Color(0xFF34343D);
+  static const Color surfaceContainerLow = Color(0xFF1B1B23);
+  static const Color surfaceContainerLowest = Color(0xFF0D0D16);
+  static const Color surfaceBright = Color(0xFF393842);
+  static const Color surfaceVariant = Color(0xFF34343D);
+  static const Color cardBackground = Color(0xFF1A1A1A);
+
+  // === ON SURFACE (Text/Icon on dark backgrounds) ===
+  static const Color onSurface = Color(0xFFE4E1ED);
+  static const Color onSurfaceVariant = Color(0xFFDDBFC5);
+  static const Color onBackground = Color(0xFFE4E1ED);
+  static const Color textPrimary = Color(0xFFE4E1ED);
+  static const Color textSecondary = Color(0xFFDDBFC5);
+  static const Color textLight = Color(0xFFFFFFFF);
+
+  // === GRADIENTS ===
+  static const List<Color> primaryGradient = [primaryContainer, secondaryContainer];
+  static const List<Color> panelAccentGradient = [Color(0xFFFF6B9D), Color(0xFF7701D0)];
+
+  // === STATUS ===
+  static const Color success = Color(0xFF00DBE9);
+  static const Color error = Color(0xFFFFB4AB);
+  static const Color errorContainer = Color(0xFF93000A);
+  static const Color warning = Color(0xFFFFB1C5);
+  static const Color info = Color(0xFF00DBE9);
+
+  // === BORDER & OUTLINE ===
+  static const Color border = Color(0xFF574146);
+  static const Color outline = Color(0xFFA58A90);
+  static const Color outlineVariant = Color(0xFF574146);
+  static const Color divider = Color(0xFF574146);
+
+  // === LEGACY (kept for compatibility) ===
+  static const Color grey = Color(0xFFA58A90);
+  static const Color greyLight = Color(0xFF34343D);
+  static const Color greyDark = Color(0xFF0D0D16);
+  static const Color tagFree = Color(0xFF00DBE9);
+  static const Color tagPremium = Color(0xFFFF6B9D);
+  static const Color searchBarBackground = Color(0xFF1F1F28);
+  static const Color overlay = Color(0x80000000);
+  static const Color overlayLight = Color(0x40000000);
+  static const Color overlayDark = Color(0xB3000000);
 }
