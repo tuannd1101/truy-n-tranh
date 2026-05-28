@@ -14,6 +14,6 @@ import lombok.NoArgsConstructor;
 public class ForgotPasswordRequestDTO {
 
     @NotBlank(message = "Email is required")
-    @Email(message = "Invalid email format")
+    @Email(message = "INVALID_EMAIL")
     private String email;
 }

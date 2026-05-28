@@ -18,6 +18,7 @@ class AppRouter {
   static const String paymentResult = '/payment-result';
   static const String create = '/create';
   static const String library = '/library';
+  static const String adminDashboard = '/admin';
 
   /// Generate routes based on route settings
   static Route<dynamic> generateRoute(RouteSettings settings) {
@@ -53,6 +54,12 @@ class AppRouter {
       case library:
         return MaterialPageRoute(
           builder: (_) => const LibraryScreen(),
+          settings: settings,
+        );
+
+      case adminDashboard:
+        return MaterialPageRoute(
+          builder: (_) => const AdminDashboardScreen(),
           settings: settings,
         );
 
