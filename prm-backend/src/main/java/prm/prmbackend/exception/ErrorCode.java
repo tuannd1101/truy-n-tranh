@@ -12,7 +12,8 @@ public enum ErrorCode {
     USER_NOT_EXISTED("Tài khoản không tồn tại", HttpStatus.NOT_FOUND),
     UNAUTHENTICATED("Chưa đăng nhập", HttpStatus.UNAUTHORIZED),
     UNAUTHORIZED("Bạn không có quyền truy cập", HttpStatus.FORBIDDEN),
-    INVALID_PASSWORD("Mật khẩu không đúng", HttpStatus.BAD_REQUEST);
+    INVALID_PASSWORD("Mật khẩu không đúng", HttpStatus.BAD_REQUEST),
+    INVALID_EMAIL("Email không hợp lệ", HttpStatus.BAD_REQUEST);
 
     private final String message;
     private final HttpStatus statusCode;

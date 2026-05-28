@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
+import '../../../providers/auth_provider.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/routes/app_router.dart';
 
@@ -706,11 +708,36 @@ class _LoginScreenState extends State<LoginScreen>
       return;
     }
     setState(() => _isLoading = true);
-    await Future.delayed(const Duration(seconds: 1));
-    if (mounted) {
-      setState(() => _isLoading = false);
-      Navigator.pushNamedAndRemoveUntil(
-          context, AppRouter.home, (route) => false);
+    
+    try {
+      final authProvider = context.read<AuthProvider>();
+      await authProvider.login(
+        _emailController.text.trim(),
+        _passwordController.text,
+      );
+      
+      if (mounted) {
+        setState(() => _isLoading = false);
+        
+        if (authProvider.isAdminOrManager) {
+          Navigator.pushNamedAndRemoveUntil(
+              context, AppRouter.adminDashboard, (route) => false);
+        } else {
+          Navigator.pushNamedAndRemoveUntil(
+              context, AppRouter.home, (route) => false);
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() => _isLoading = false);
+        final errorMessage = context.read<AuthProvider>().errorMessage ?? e.toString();
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(errorMessage),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
     }
   }
 }

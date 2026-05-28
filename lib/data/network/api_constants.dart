@@ -1,6 +1,15 @@
+import 'package:flutter/foundation.dart';
+
 class ApiConstants {
-  // Đang chạy trên Windows Desktop nên phải dùng localhost hoặc 127.0.0.1 thay vì 10.0.2.2
-  static const String baseUrl = 'http://localhost:8080/api/v1';
+  static String get baseUrl {
+    if (kIsWeb) {
+      return 'http://localhost:8080/api/v1';
+    } else if (defaultTargetPlatform == TargetPlatform.android) {
+      return 'http://10.0.2.2:8080/api/v1';
+    } else {
+      return 'http://localhost:8080/api/v1';
+    }
+  }
 
   static const String login = '/auth/login';
   static const String register = '/auth/register';

@@ -33,15 +33,25 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(value = MethodArgumentNotValidException.class)
     public ResponseEntity<BaseApiResponse<Object>> handlingValidationException(MethodArgumentNotValidException exception) {
-        Map<String, String> errors = new HashMap<>();
-        exception.getBindingResult().getAllErrors().forEach((error) -> {
-            String fieldName = ((FieldError) error).getField();
-            String errorMessage = error.getDefaultMessage();
-            errors.put(fieldName, errorMessage);
-        });
+        String enumKey = exception.getFieldError().getDefaultMessage();
+        ErrorCode errorCode = ErrorCode.UNCATEGORIZED_EXCEPTION;
 
-        return ResponseEntity
-                .badRequest()
-                .body(BaseApiResponse.error("Validation failed", errors));
+        try {
+            errorCode = ErrorCode.valueOf(enumKey);
+            return ResponseEntity
+                    .status(errorCode.getStatusCode())
+                    .body(BaseApiResponse.error(errorCode.getMessage(), null));
+        } catch (IllegalArgumentException e) {
+            Map<String, String> errors = new HashMap<>();
+            exception.getBindingResult().getAllErrors().forEach((error) -> {
+                String fieldName = ((FieldError) error).getField();
+                String errorMessage = error.getDefaultMessage();
+                errors.put(fieldName, errorMessage);
+            });
+
+            return ResponseEntity
+                    .badRequest()
+                    .body(BaseApiResponse.error("Validation failed", errors));
+        }
     }
 }
