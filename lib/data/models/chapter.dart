@@ -2,19 +2,15 @@
 class Chapter {
   final String id;
   final String mangaId;
-  final int chapterNumber;
-  final String title;
-  final List<String> pageUrls;
-  final DateTime updatedAt;
+  final double chapterNumber;
+  final List<String> pages;
   final bool isPremium;
 
   Chapter({
     required this.id,
     required this.mangaId,
     required this.chapterNumber,
-    required this.title,
-    required this.pageUrls,
-    required this.updatedAt,
+    required this.pages,
     this.isPremium = false,
   });
 
@@ -23,15 +19,11 @@ class Chapter {
     return Chapter(
       id: json['id'] as String,
       mangaId: json['mangaId'] as String,
-      chapterNumber: json['chapterNumber'] as int,
-      title: json['title'] as String,
-      pageUrls: (json['pageUrls'] as List<dynamic>?)
+      chapterNumber: (json['chapterNumber'] as num).toDouble(),
+      pages: (json['pages'] as List<dynamic>?)
               ?.map((e) => e as String)
               .toList() ??
           [],
-      updatedAt: json['updatedAt'] != null
-          ? DateTime.parse(json['updatedAt'] as String)
-          : DateTime.now(),
       isPremium: json['isPremium'] as bool? ?? false,
     );
   }
@@ -42,9 +34,7 @@ class Chapter {
       'id': id,
       'mangaId': mangaId,
       'chapterNumber': chapterNumber,
-      'title': title,
-      'pageUrls': pageUrls,
-      'updatedAt': updatedAt.toIso8601String(),
+      'pages': pages,
       'isPremium': isPremium,
     };
   }
@@ -53,28 +43,24 @@ class Chapter {
   Chapter copyWith({
     String? id,
     String? mangaId,
-    int? chapterNumber,
-    String? title,
-    List<String>? pageUrls,
-    DateTime? updatedAt,
+    double? chapterNumber,
+    List<String>? pages,
     bool? isPremium,
   }) {
     return Chapter(
       id: id ?? this.id,
       mangaId: mangaId ?? this.mangaId,
       chapterNumber: chapterNumber ?? this.chapterNumber,
-      title: title ?? this.title,
-      pageUrls: pageUrls ?? this.pageUrls,
-      updatedAt: updatedAt ?? this.updatedAt,
+      pages: pages ?? this.pages,
       isPremium: isPremium ?? this.isPremium,
     );
   }
 
   /// Get total number of pages
-  int get totalPages => pageUrls.length;
+  int get totalPages => pages.length;
 
   /// Get display title with chapter number
-  String get displayTitle => 'Chapter $chapterNumber: $title';
+  String get displayTitle => 'Chapter $chapterNumber';
 
   /// Check if chapter is free content
   bool get isFree => !isPremium;
@@ -91,6 +77,6 @@ class Chapter {
 
   @override
   String toString() {
-    return 'Chapter(id: $id, chapterNumber: $chapterNumber, title: $title, isPremium: $isPremium)';
+    return 'Chapter(id: $id, chapterNumber: $chapterNumber, isPremium: $isPremium)';
   }
 }

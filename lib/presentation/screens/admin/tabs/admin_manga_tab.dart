@@ -3,13 +3,16 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
+import 'package:image_picker/image_picker.dart';
 import '../../../../data/models/manga.dart';
 import '../../../../data/models/tag.dart';
 import '../../../../data/models/creator.dart';
+import '../../../../data/network/upload_api_service.dart';
 import '../../../../providers/manga_provider.dart';
 import '../../../../providers/tag_provider.dart';
 import '../../../../providers/creator_provider.dart';
 import '../admin_dashboard_screen.dart'; // To access AdminColors
+import '../admin_chapter_screen.dart';
 
 class AdminMangaTab extends StatefulWidget {
   const AdminMangaTab({super.key});
@@ -149,6 +152,18 @@ class _AdminMangaTabState extends State<AdminMangaTab> {
                             ),
                           ),
                           // Actions
+                          IconButton(
+                            icon: const Icon(Icons.list_alt, color: AdminColors.green),
+                            tooltip: 'Manage Chapters',
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => AdminChapterScreen(manga: manga),
+                                ),
+                              );
+                            },
+                          ),
                           IconButton(
                             icon: const Icon(Icons.info_outline, color: AdminColors.cyberCyan),
                             onPressed: () => _showMangaDetailDialog(context, manga, creators, tags),
@@ -493,6 +508,35 @@ class _AdminMangaTabState extends State<AdminMangaTab> {
                                   });
                                 },
                               ),
+                            ),
+                            const SizedBox(width: 8),
+                            ElevatedButton(
+                              onPressed: () async {
+                                final picker = ImagePicker();
+                                final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+                                if (image != null) {
+                                  try {
+                                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Uploading image...')));
+                                    final url = await UploadApiService().uploadImage(image);
+                                    setState(() {
+                                      coverUrl = url;
+                                    });
+                                    if (context.mounted) {
+                                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Image uploaded successfully!'), backgroundColor: AdminColors.green));
+                                    }
+                                  } catch (e) {
+                                    if (context.mounted) {
+                                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Upload failed: $e'), backgroundColor: AdminColors.errorRed));
+                                    }
+                                  }
+                                }
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: AdminColors.surfaceHigh,
+                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+                                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 18),
+                              ),
+                              child: const Icon(Icons.upload_file, color: AdminColors.cyberCyan),
                             ),
                             if (coverUrl.isNotEmpty) ...[
                               const SizedBox(width: 10),
