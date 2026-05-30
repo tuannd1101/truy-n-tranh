@@ -16,18 +16,6 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  int _selectedIndex = 0;
-  String _selectedGenre = 'Tất cả';
-  final List<String> _genres = [
-    'Tất cả',
-    'Shounen',
-    'Action',
-    'Romance',
-    'Fantasy',
-    'Sci-fi',
-    'Horror'
-  ];
-
   @override
   void initState() {
     super.initState();
@@ -55,7 +43,6 @@ class _HomeScreenState extends State<HomeScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 _buildSearchBar(),
-                _buildCategories(),
                 const SizedBox(height: 24),
                 _buildSectionHeader('NỔI BẬT HÔM NAY'),
                 const SizedBox(height: 16),
@@ -104,65 +91,6 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ],
         ),
-      ),
-    );
-  }
-
-  Widget _buildCategories() {
-    return SizedBox(
-      height: 40,
-      child: ListView.builder(
-        scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.symmetric(horizontal: 12),
-        itemCount: _genres.length,
-        itemBuilder: (context, index) {
-          final genre = _genres[index];
-          final isSelected = genre == _selectedGenre;
-          return Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 4),
-            child: GestureDetector(
-              onTap: () {
-                setState(() {
-                  _selectedGenre = genre;
-                });
-              },
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                alignment: Alignment.center,
-                decoration: BoxDecoration(
-                  color: isSelected
-                      ? AppColors.primaryContainer
-                      : AppColors.surface,
-                  border: Border.all(
-                    color: isSelected
-                        ? AppColors.primaryContainer
-                        : AppColors.outline,
-                    width: 2,
-                  ),
-                  boxShadow: isSelected
-                      ? [
-                          const BoxShadow(
-                            color: AppColors.tertiary,
-                            offset: Offset(2, 2),
-                          )
-                        ]
-                      : null,
-                ),
-                child: Text(
-                  genre.toUpperCase(),
-                  style: TextStyle(
-                    fontFamily: 'Syne',
-                    color: isSelected
-                        ? AppColors.onPrimaryContainer
-                        : AppColors.onSurface,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 12,
-                  ),
-                ),
-              ),
-            ),
-          );
-        },
       ),
     );
   }

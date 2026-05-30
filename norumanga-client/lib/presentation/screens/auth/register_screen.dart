@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import '../../../providers/auth_provider.dart';
 import '../../../core/constants/app_colors.dart';
+import '../../../core/constants/app_strings_vi.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -53,10 +54,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   // Title
                   Transform.rotate(
                     angle: -0.05,
-                    child: const Text(
-                      'JOIN THE SQUAD',
+                    child: Text(
+                      AppStringsVi.joinTheSquad,
                       textAlign: TextAlign.center,
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontFamily: 'sans-serif',
                         fontSize: 36,
                         fontWeight: FontWeight.w900,
@@ -115,28 +116,28 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
                         _buildMangaField(
-                          label: 'USERNAME',
-                          hint: 'Enter your alias',
+                          label: AppStringsVi.usernameLabel,
+                          hint: AppStringsVi.usernameHint,
                           controller: _usernameController,
                         ),
                         const SizedBox(height: 24),
                         _buildMangaField(
-                          label: 'EMAIL',
-                          hint: 'your@email.com',
+                          label: AppStringsVi.emailLabel,
+                          hint: AppStringsVi.emailHint,
                           controller: _emailController,
                           keyboardType: TextInputType.emailAddress,
                         ),
                         const SizedBox(height: 24),
                         _buildMangaField(
-                          label: 'PASSWORD',
-                          hint: '••••••••',
+                          label: AppStringsVi.passwordLabel,
+                          hint: AppStringsVi.passwordHint,
                           controller: _passwordController,
                           obscureText: true,
                         ),
                         const SizedBox(height: 24),
                         _buildMangaField(
-                          label: 'CONFIRM PASSWORD',
-                          hint: '••••••••',
+                          label: AppStringsVi.confirmPasswordLabel,
+                          hint: AppStringsVi.passwordHint,
                           controller: _confirmPasswordController,
                           obscureText: true,
                         ),
@@ -146,9 +147,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         Center(
                           child: GestureDetector(
                             onTap: () => Navigator.pop(context),
-                            child: const Text(
-                              'ALREADY A MEMBER? SIGN IN',
-                              style: TextStyle(
+                            child: Text(
+                              AppStringsVi.alreadyMemberSignIn,
+                              style: const TextStyle(
                                 fontFamily: 'sans-serif',
                                 color: AppColors.secondaryContainer,
                                 fontSize: 13,
@@ -264,10 +265,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       ),
                     ),
                   )
-                : const Center(
+                : Center(
                     child: Text(
-                      'START CREATING',
-                      style: TextStyle(
+                      AppStringsVi.startCreating,
+                      style: const TextStyle(
                         fontFamily: 'sans-serif',
                         fontSize: 22,
                         fontWeight: FontWeight.w900,
@@ -287,13 +288,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
         _emailController.text.isEmpty ||
         _passwordController.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Vui lòng điền đủ thông tin')),
+        SnackBar(content: Text(AppStringsVi.fillAllFieldsMessage)),
       );
       return;
     }
     if (_passwordController.text != _confirmPasswordController.text) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Mật khẩu xác nhận không khớp')),
+        SnackBar(content: Text(AppStringsVi.validationPasswordMatch)),
       );
       return;
     }
@@ -310,8 +311,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
       if (mounted) {
         setState(() => _isLoading = false);
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Đăng ký thành công! Vui lòng đăng nhập.'),
+          SnackBar(
+            content: Text(AppStringsVi.registerSuccessMessage),
             backgroundColor: Colors.green,
           ),
         );

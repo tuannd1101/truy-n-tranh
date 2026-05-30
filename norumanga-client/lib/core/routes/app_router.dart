@@ -44,7 +44,7 @@ class AppRouter {
 
       case search:
         return MaterialPageRoute(
-          builder: (_) => const PlaceholderScreen(screenName: 'Search'),
+          builder: (_) => const SearchScreen(),
           settings: settings,
         );
 

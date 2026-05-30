@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import '../../../providers/auth_provider.dart';
 import '../../../core/constants/app_colors.dart';
+import '../../../core/constants/app_strings_vi.dart';
 import '../../../core/routes/app_router.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -272,10 +273,10 @@ class _LoginScreenState extends State<LoginScreen>
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         // Title
-                        const Center(
+                        Center(
                           child: Text(
-                            'ENTER THE FLOW',
-                            style: TextStyle(
+                            AppStringsVi.enterTheFlow,
+                            style: const TextStyle(
                               fontSize: 26,
                               fontWeight: FontWeight.w900,
                               color: AppColors.onSurface,
@@ -288,8 +289,8 @@ class _LoginScreenState extends State<LoginScreen>
                         const SizedBox(height: 28),
                         // Email
                         _buildMangaField(
-                          label: 'Email',
-                          hint: 'otaku@mangaflow.com',
+                          label: AppStringsVi.emailLabel,
+                          hint: AppStringsVi.emailHint,
                           controller: _emailController,
                           keyboardType: TextInputType.emailAddress,
                           rotateLabel: -0.035,
@@ -297,8 +298,8 @@ class _LoginScreenState extends State<LoginScreen>
                         const SizedBox(height: 32),
                         // Password
                         _buildMangaField(
-                          label: 'Password',
-                          hint: '••••••••',
+                          label: AppStringsVi.passwordLabel,
+                          hint: AppStringsVi.passwordHint,
                           controller: _passwordController,
                           obscureText: _obscurePassword,
                           rotateLabel: 0.02,
@@ -322,9 +323,9 @@ class _LoginScreenState extends State<LoginScreen>
                         Center(
                           child: GestureDetector(
                             onTap: () {},
-                            child: const Text(
-                              'Forgot Password?',
-                              style: TextStyle(
+                            child: Text(
+                              AppStringsVi.forgotPassword,
+                              style: const TextStyle(
                                 color: AppColors.onSurfaceVariant,
                                 fontSize: 13,
                                 fontWeight: FontWeight.w700,
@@ -376,10 +377,10 @@ class _LoginScreenState extends State<LoginScreen>
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Center(
+                        Center(
                           child: Text(
-                            'ENTER THE FLOW',
-                            style: TextStyle(
+                            AppStringsVi.enterTheFlow,
+                            style: const TextStyle(
                               fontSize: 26,
                               fontWeight: FontWeight.w900,
                               color: AppColors.onSurface,
@@ -391,16 +392,16 @@ class _LoginScreenState extends State<LoginScreen>
                         Container(height: 4, color: Colors.black),
                         const SizedBox(height: 28),
                         _buildMangaField(
-                          label: 'Email',
-                          hint: 'otaku@mangaflow.com',
+                          label: AppStringsVi.emailLabel,
+                          hint: AppStringsVi.emailHint,
                           controller: _emailController,
                           keyboardType: TextInputType.emailAddress,
                           rotateLabel: -0.035,
                         ),
                         const SizedBox(height: 32),
                         _buildMangaField(
-                          label: 'Password',
-                          hint: '••••••••',
+                          label: AppStringsVi.passwordLabel,
+                          hint: AppStringsVi.passwordHint,
                           controller: _passwordController,
                           obscureText: _obscurePassword,
                           rotateLabel: 0.02,
@@ -422,9 +423,9 @@ class _LoginScreenState extends State<LoginScreen>
                         Center(
                           child: GestureDetector(
                             onTap: () {},
-                            child: const Text(
-                              'Forgot Password?',
-                              style: TextStyle(
+                            child: Text(
+                              AppStringsVi.forgotPassword,
+                              style: const TextStyle(
                                 color: AppColors.onSurfaceVariant,
                                 fontSize: 13,
                                 fontWeight: FontWeight.w700,
@@ -588,7 +589,7 @@ class _LoginScreenState extends State<LoginScreen>
                       Icon(Icons.login, color: Colors.white, size: 20),
                       SizedBox(width: 8),
                       Text(
-                        'SIGN IN',
+                        AppStringsVi.signIn,
                         style: TextStyle(
                           fontSize: 22,
                           fontWeight: FontWeight.w900,
@@ -608,15 +609,15 @@ class _LoginScreenState extends State<LoginScreen>
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        const Text(
-          'New creator? ',
-          style: TextStyle(color: AppColors.onSurfaceVariant, fontSize: 15),
+        Text(
+          AppStringsVi.newCreator,
+          style: const TextStyle(color: AppColors.onSurfaceVariant, fontSize: 15),
         ),
         GestureDetector(
           onTap: () => Navigator.pushNamed(context, AppRouter.register),
-          child: const Text(
-            'Start your journey',
-            style: TextStyle(
+          child: Text(
+            AppStringsVi.startJourney,
+            style: const TextStyle(
               color: AppColors.tertiaryContainer,
               fontSize: 15,
               fontWeight: FontWeight.w700,
@@ -676,9 +677,9 @@ class _LoginScreenState extends State<LoginScreen>
                         ),
                       ],
                     ),
-                    child: const Text(
-                      'Okaeri!',
-                      style: TextStyle(
+                    child: Text(
+                      AppStringsVi.okaeri,
+                      style: const TextStyle(
                         color: AppColors.onSurface,
                         fontSize: 14,
                         fontWeight: FontWeight.w700,
@@ -703,7 +704,7 @@ class _LoginScreenState extends State<LoginScreen>
   Future<void> _handleSignIn() async {
     if (_emailController.text.isEmpty || _passwordController.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Vui lòng nhập email và mật khẩu')),
+        SnackBar(content: Text(AppStringsVi.validationEmailPassword)),
       );
       return;
     }
