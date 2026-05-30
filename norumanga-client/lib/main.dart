@@ -13,6 +13,7 @@ import 'providers/tag_provider.dart';
 import 'providers/creator_provider.dart';
 import 'providers/manga_provider.dart';
 import 'providers/chapter_provider.dart';
+import 'providers/search_provider.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -55,6 +56,10 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProxyProvider<MangaApiService, MangaProvider>(
           create: (context) => MangaProvider(MangaApiService(ApiService())),
           update: (_, mangaApi, previous) => previous ?? MangaProvider(mangaApi),
+        ),
+        ChangeNotifierProxyProvider<MangaApiService, SearchProvider>(
+          create: (context) => SearchProvider(MangaApiService(ApiService())),
+          update: (_, mangaApi, previous) => previous ?? SearchProvider(mangaApi),
         ),
         ProxyProvider<ApiService, ChapterApiService>(
           update: (_, api, __) => ChapterApiService(api),
