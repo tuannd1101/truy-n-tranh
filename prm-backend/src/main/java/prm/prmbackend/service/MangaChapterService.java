@@ -28,7 +28,7 @@ public interface MangaChapterService {
     Page<ChapterResponseDTO> findByManga(String mangaId, Pageable pageable);
 
     ChapterDetailResponseDTO findByMangaAndNumber(
-            String mangaId, String language, Double chapterNumber);
+            String mangaId, Double chapterNumber);
 
     ChapterDetailResponseDTO create(String mangaId, MangaChapterRequestDTO request);
 

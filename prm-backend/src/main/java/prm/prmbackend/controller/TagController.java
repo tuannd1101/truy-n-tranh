@@ -22,7 +22,7 @@ public class TagController {
     private final TagService tagService;
 
     /**
-     * GET /api/tags          → all tags
+     * GET /api/tags → all tags
      * GET /api/tags?group=THEME → filtered by group
      */
     @GetMapping

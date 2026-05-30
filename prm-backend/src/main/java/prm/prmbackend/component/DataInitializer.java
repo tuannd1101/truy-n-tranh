@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
+import org.springframework.data.mongodb.core.MongoTemplate;
 import prm.prmbackend.entity.*;
 import prm.prmbackend.entity.enums.*;
 import prm.prmbackend.repository.*;
@@ -28,9 +29,9 @@ import java.util.*;
 public class DataInitializer implements CommandLineRunner {
 
         private final Environment environment;
+        private final MongoTemplate mongoTemplate;
 
         private final RoleRepository roleRepository;
-        private final GenreRepository genreRepository;
         private final TagRepository tagRepository;
         private final CreatorRepository creatorRepository;
         private final MangaRepository mangaRepository;
@@ -40,12 +41,39 @@ public class DataInitializer implements CommandLineRunner {
 
         @Override
         public void run(String... args) {
-                log.info("DataInitializer starting...");
+                // log.info("DataInitializer starting...");
 
-                // Roles always seeded (safe, idempotent)
-                seedRoles();
+                // // Reset database for structural changes (pages: Object -> String, Genre
+                // merged to Tag)
+                // boolean forceReset =
+                // Boolean.parseBoolean(environment.getProperty("FORCE_RESET", "true"));
+                // if (forceReset) {
+                // log.info("FORCE_RESET is true. Clearing old data collections for structure
+                // compatibility...");
+                // try {
+                // chapterRepository.deleteAll();
+                // mangaRepository.deleteAll();
+                // tagRepository.deleteAll();
+                // creatorRepository.deleteAll();
+                // mongoTemplate.dropCollection("genres");
+                // mongoTemplate.dropCollection("genre");
+                // log.info("Database collections cleared successfully.");
+                // } catch (Exception e) {
+                // log.error("Error clearing database: {}", e.getMessage());
+                // }
+                // }
 
-                log.info("DataInitializer completed.");
+                // // Roles always seeded (safe, idempotent)
+                // seedRoles();
+
+                // // Seed tags, creators, and mangas
+                // log.info("Seeding tags, creators, and mangas...");
+                // Map<String, Tag> tags = seedTags();
+                // Map<String, Creator> creators = seedCreators();
+                // seedLicensedMangas(tags, creators);
+                // seedDemoMangas(tags, creators);
+
+                // log.info("DataInitializer completed.");
         }
 
         // ── roles ─────────────────────────────────────────────────────────────────
@@ -67,42 +95,19 @@ public class DataInitializer implements CommandLineRunner {
                 }
         }
 
-        // ── genres ────────────────────────────────────────────────────────────────
-
-        private Map<String, Genre> seedGenres() {
-                record GenreDef(String name, String slug) {
-                }
-                List<GenreDef> defs = List.of(
-                                new GenreDef("Action", "action"),
-                                new GenreDef("Adventure", "adventure"),
-                                new GenreDef("Comedy", "comedy"),
-                                new GenreDef("Fantasy", "fantasy"),
-                                new GenreDef("Mystery", "mystery"),
-                                new GenreDef("Sports", "sports"),
-                                new GenreDef("Supernatural", "supernatural"));
-
-                Map<String, Genre> result = new LinkedHashMap<>();
-                for (GenreDef d : defs) {
-                        Genre genre = genreRepository.findBySlug(d.slug()).orElseGet(() -> {
-                                Instant now = Instant.now();
-                                Genre g = Genre.builder()
-                                                .name(d.name()).slug(d.slug())
-                                                .createdAt(now).updatedAt(now).build();
-                                Genre saved = genreRepository.save(g);
-                                log.info("Seeded genre: {}", d.name());
-                                return saved;
-                        });
-                        result.put(d.slug(), genre);
-                }
-                return result;
-        }
-
         // ── tags ──────────────────────────────────────────────────────────────────
 
         private Map<String, Tag> seedTags() {
                 record TagDef(String name, String slug, TagGroup group) {
                 }
                 List<TagDef> defs = List.of(
+                                new TagDef("Action", "action", TagGroup.GENRE),
+                                new TagDef("Adventure", "adventure", TagGroup.GENRE),
+                                new TagDef("Comedy", "comedy", TagGroup.GENRE),
+                                new TagDef("Fantasy", "fantasy", TagGroup.GENRE),
+                                new TagDef("Mystery", "mystery", TagGroup.GENRE),
+                                new TagDef("Sports", "sports", TagGroup.GENRE),
+                                new TagDef("Supernatural", "supernatural", TagGroup.GENRE),
                                 new TagDef("Pirates", "pirates", TagGroup.THEME),
                                 new TagDef("Ninja", "ninja", TagGroup.THEME),
                                 new TagDef("Detective", "detective", TagGroup.THEME),
@@ -158,7 +163,6 @@ public class DataInitializer implements CommandLineRunner {
         // ── EXTERNAL_LINK_ONLY mangas ─────────────────────────────────────────────
 
         private void seedLicensedMangas(
-                        Map<String, Genre> genres,
                         Map<String, Tag> tags,
                         Map<String, Creator> creators) {
 
@@ -220,48 +224,36 @@ public class DataInitializer implements CommandLineRunner {
                         }
 
                         Creator creator = creators.get(d.creatorSlug());
-                        List<String> authorIds = creator != null ? List.of(creator.getId()) : List.of();
-                        List<String> genreIds = d.genreSlugs().stream()
-                                        .map(genres::get).filter(Objects::nonNull)
-                                        .map(Genre::getId).toList();
-                        List<String> tagIds = d.tagSlugs().stream()
+                        List<String> creatorIds = creator != null ? List.of(creator.getId()) : List.of();
+                        List<String> tagIds = new ArrayList<>();
+                        tagIds.addAll(d.tagSlugs().stream()
                                         .map(tags::get).filter(Objects::nonNull)
-                                        .map(Tag::getId).toList();
+                                        .map(Tag::getId).toList());
+                        tagIds.addAll(d.genreSlugs().stream()
+                                        .map(tags::get).filter(Objects::nonNull)
+                                        .map(Tag::getId).toList());
 
                         Instant now = Instant.now();
                         MangaSeries manga = MangaSeries.builder()
                                         .title(d.title())
                                         .slug(d.slug())
                                         .description(d.description())
-                                        .authorIds(authorIds)
-                                        .artistIds(authorIds)
-                                        .genreIds(genreIds)
+                                        .creatorIds(creatorIds)
                                         .tagIds(tagIds)
                                         .status(MangaStatus.ONGOING)
-                                        .publicationDemographic(PublicationDemographic.SHONEN)
-                                        .contentRating(ContentRating.SAFE)
-                                        .releaseYear(d.releaseYear())
-                                        .licenseStatus(LicenseStatus.EXTERNAL_LINK_ONLY)
-                                        .sourceName(d.sourceName())
-                                        .officialUrl(d.officialUrl())
                                         .isPremium(false)
-                                        .viewCount(0L)
-                                        .favoriteCount(0L)
-                                        .lastUpdatedAt(now)
                                         .createdAt(now)
                                         .updatedAt(now)
                                         .build();
 
                         mangaRepository.save(manga);
-                        log.info("Seeded EXTERNAL_LINK_ONLY manga: {}", d.title());
-                        // No chapters created — EXTERNAL_LINK_ONLY policy
+                        log.info("Seeded licensed manga: {}", d.title());
                 }
         }
 
         // ── DEMO mangas ───────────────────────────────────────────────────────────
 
         private void seedDemoMangas(
-                        Map<String, Genre> genres,
                         Map<String, Tag> tags,
                         Map<String, Creator> creators) {
 
@@ -299,32 +291,24 @@ public class DataInitializer implements CommandLineRunner {
                         }
 
                         Creator creator = creators.get(d.creatorSlug());
-                        List<String> authorIds = creator != null ? List.of(creator.getId()) : List.of();
-                        List<String> genreIds = d.genreSlugs().stream()
-                                        .map(genres::get).filter(Objects::nonNull)
-                                        .map(Genre::getId).toList();
-                        List<String> tagIds = d.tagSlugs().stream()
+                        List<String> creatorIds = creator != null ? List.of(creator.getId()) : List.of();
+                        List<String> tagIds = new ArrayList<>();
+                        tagIds.addAll(d.tagSlugs().stream()
                                         .map(tags::get).filter(Objects::nonNull)
-                                        .map(Tag::getId).toList();
+                                        .map(Tag::getId).toList());
+                        tagIds.addAll(d.genreSlugs().stream()
+                                        .map(tags::get).filter(Objects::nonNull)
+                                        .map(Tag::getId).toList());
 
                         Instant now = Instant.now();
                         MangaSeries manga = MangaSeries.builder()
                                         .title(d.title())
                                         .slug(d.slug())
                                         .description(d.description())
-                                        .authorIds(authorIds)
-                                        .artistIds(authorIds)
-                                        .genreIds(genreIds)
+                                        .creatorIds(creatorIds)
                                         .tagIds(tagIds)
                                         .status(MangaStatus.ONGOING)
-                                        .publicationDemographic(PublicationDemographic.SHONEN)
-                                        .contentRating(ContentRating.SAFE)
-                                        .releaseYear(2024)
-                                        .licenseStatus(LicenseStatus.DEMO)
                                         .isPremium(false)
-                                        .viewCount(0L)
-                                        .favoriteCount(0L)
-                                        .lastUpdatedAt(now)
                                         .createdAt(now)
                                         .updatedAt(now)
                                         .build();
@@ -342,30 +326,19 @@ public class DataInitializer implements CommandLineRunner {
          */
         private void seedDemoChapters(MangaSeries manga) {
                 for (int chNum = 1; chNum <= 5; chNum++) {
-                        List<MangaPage> pages = new ArrayList<>();
+                        List<String> pages = new ArrayList<>();
                         for (int pageIdx = 0; pageIdx < 5; pageIdx++) {
-                                pages.add(MangaPage.builder()
-                                                .pageIndex(pageIdx)
-                                                // Placeholder URL — no binary image stored in MongoDB
-                                                .imageUrl(String.format(
-                                                                "https://placeholder.manga/demo/%s/ch%d/p%d.jpg",
-                                                                manga.getSlug(), chNum, pageIdx + 1))
-                                                .width(800)
-                                                .height(1200)
-                                                .build());
+                                pages.add(String.format(
+                                                "https://placeholder.manga/demo/%s/ch%d/p%d.jpg",
+                                                manga.getSlug(), chNum, pageIdx + 1));
                         }
 
                         Instant now = Instant.now();
                         MangaChapter chapter = MangaChapter.builder()
                                         .mangaId(manga.getId())
                                         .chapterNumber((double) chNum)
-                                        .title("Chapter " + chNum)
-                                        .language("en")
-                                        .sourceType(ChapterSourceType.DEMO)
                                         .isPremium(false)
-                                        .pageCount(pages.size())
                                         .pages(pages)
-                                        .publishedAt(now)
                                         .createdAt(now)
                                         .updatedAt(now)
                                         .build();

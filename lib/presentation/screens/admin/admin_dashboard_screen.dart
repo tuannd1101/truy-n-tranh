@@ -4,6 +4,10 @@ import 'package:provider/provider.dart';
 import '../../../core/routes/app_router.dart';
 import '../../../providers/auth_provider.dart';
 
+import 'tabs/admin_creator_tab.dart';
+import 'tabs/admin_manga_tab.dart';
+import 'tabs/admin_tag_tab.dart';
+
 // ═══════════════════════════════════════════
 // COLORS
 // ═══════════════════════════════════════════
@@ -40,6 +44,9 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
     _AdminDashboardTab(),
     _AdminUsersTab(),
     _AdminContentTab(),
+    AdminMangaTab(),
+    AdminCreatorTab(),
+    AdminTagTab(),
     _AdminSettingsTab(),
   ];
 
@@ -47,6 +54,8 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AdminColors.background,
+      appBar: const _AdminAppBar(),
+      drawer: _buildDrawer(),
       body: Stack(
         children: [
           // Speed-line background
@@ -55,10 +64,62 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
           _screens[_selectedIndex],
         ],
       ),
-      bottomNavigationBar: _AdminBottomNav(
-        selectedIndex: _selectedIndex,
-        onTap: (i) => setState(() => _selectedIndex = i),
+    );
+  }
+
+  Widget _buildDrawer() {
+    return Drawer(
+      backgroundColor: AdminColors.surface,
+      child: ListView(
+        padding: EdgeInsets.zero,
+        children: [
+          DrawerHeader(
+            decoration: const BoxDecoration(
+              color: AdminColors.background,
+              border: Border(bottom: BorderSide(color: AdminColors.sakuraPink, width: 2)),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                const Icon(Icons.shield, color: Colors.red, size: 40),
+                const SizedBox(height: 10),
+                Text('MANGAFLOW ADMIN', style: GoogleFonts.bebasNeue(color: AdminColors.sakuraPink, fontSize: 24, letterSpacing: 2)),
+              ],
+            ),
+          ),
+          _drawerItem(icon: Icons.dashboard, title: 'Dashboard', index: 0),
+          _drawerItem(icon: Icons.group, title: 'Users', index: 1),
+          _drawerItem(icon: Icons.library_books, title: 'Content', index: 2),
+          const Divider(color: AdminColors.outlineVariant),
+          Padding(
+            padding: const EdgeInsets.only(left: 16, top: 8, bottom: 8),
+            child: Text('MANAGEMENT', style: GoogleFonts.spaceGrotesk(fontSize: 12, color: AdminColors.onSurfaceVariant, fontWeight: FontWeight.bold)),
+          ),
+          _drawerItem(icon: Icons.menu_book, title: 'Manga Series', index: 3),
+          _drawerItem(icon: Icons.person, title: 'Creators', index: 4),
+          _drawerItem(icon: Icons.local_offer, title: 'Tags', index: 5),
+          const Divider(color: AdminColors.outlineVariant),
+          _drawerItem(icon: Icons.settings, title: 'Settings', index: 6),
+        ],
       ),
+    );
+  }
+
+  Widget _drawerItem({required IconData icon, required String title, required int index}) {
+    final isSelected = _selectedIndex == index;
+    return ListTile(
+      leading: Icon(icon, color: isSelected ? AdminColors.sakuraPink : AdminColors.onSurfaceVariant),
+      title: Text(
+        title,
+        style: TextStyle(color: isSelected ? AdminColors.sakuraPink : AdminColors.onSurface, fontWeight: isSelected ? FontWeight.bold : FontWeight.normal),
+      ),
+      selected: isSelected,
+      selectedTileColor: AdminColors.sakuraPink.withOpacity(0.1),
+      onTap: () {
+        setState(() => _selectedIndex = index);
+        Navigator.pop(context); // Close drawer
+      },
     );
   }
 }
@@ -106,11 +167,19 @@ class _AdminAppBar extends StatelessWidget implements PreferredSizeWidget {
         ),
         boxShadow: [BoxShadow(color: Colors.black, offset: Offset(4, 4))],
       ),
-      padding: const EdgeInsets.symmetric(horizontal: 16),
+      padding: const EdgeInsets.symmetric(horizontal: 4),
       child: Row(
         children: [
+          // Hamburger Icon that opens drawer
+          Builder(
+            builder: (context) => IconButton(
+              icon: const Icon(Icons.menu, color: AdminColors.sakuraPink, size: 28),
+              onPressed: () => Scaffold.of(context).openDrawer(),
+            ),
+          ),
+          const SizedBox(width: 4),
           // Shield icon + title
-          const Icon(Icons.shield, color: Colors.red, size: 28),
+          const Icon(Icons.shield, color: Colors.red, size: 24),
           const SizedBox(width: 8),
           Text(
             'MANGAFLOW ADMIN',
@@ -159,75 +228,8 @@ class _AdminAppBar extends StatelessWidget implements PreferredSizeWidget {
 }
 
 // ───────────────────────────────────────────
-// BOTTOM NAV BAR
+// BOTTOM NAV BAR REMOVED
 // ───────────────────────────────────────────
-class _AdminBottomNav extends StatelessWidget {
-  final int selectedIndex;
-  final ValueChanged<int> onTap;
-
-  const _AdminBottomNav({required this.selectedIndex, required this.onTap});
-
-  @override
-  Widget build(BuildContext context) {
-    final tabs = [
-      {'icon': Icons.dashboard, 'label': 'DASHBOARD'},
-      {'icon': Icons.group, 'label': 'USERS'},
-      {'icon': Icons.library_books, 'label': 'CONTENT'},
-      {'icon': Icons.settings, 'label': 'SETTINGS'},
-    ];
-
-    return Container(
-      height: 80,
-      decoration: const BoxDecoration(
-        color: Color(0xFF1F1F27),
-        border: Border(top: BorderSide(color: AdminColors.cyberCyan, width: 2)),
-        boxShadow: [BoxShadow(color: Colors.black, offset: Offset(0, -4))],
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: List.generate(tabs.length, (i) {
-          final isActive = i == selectedIndex;
-          return GestureDetector(
-            onTap: () => onTap(i),
-            child: AnimatedContainer(
-              duration: const Duration(milliseconds: 200),
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-              decoration: isActive
-                  ? BoxDecoration(
-                      color: AdminColors.sakuraPink,
-                      borderRadius: BorderRadius.circular(4),
-                      boxShadow: const [
-                        BoxShadow(color: Colors.black, offset: Offset(2, 2)),
-                      ],
-                    )
-                  : null,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(
-                    tabs[i]['icon'] as IconData,
-                    color: isActive ? Colors.black : AdminColors.onSurfaceVariant,
-                    size: 24,
-                  ),
-                  const SizedBox(height: 2),
-                  Text(
-                    tabs[i]['label'] as String,
-                    style: GoogleFonts.spaceGrotesk(
-                      fontSize: 9,
-                      fontWeight: FontWeight.w700,
-                      color: isActive ? Colors.black : AdminColors.onSurfaceVariant.withOpacity(0.7),
-                      letterSpacing: 1,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          );
-        }),
-      ),
-    );
-  }
-}
 
 // ═══════════════════════════════════════════
 // TAB 1: DASHBOARD
@@ -237,10 +239,7 @@ class _AdminDashboardTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.transparent,
-      appBar: const _AdminAppBar(),
-      body: SingleChildScrollView(
+    return SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
@@ -347,8 +346,7 @@ class _AdminDashboardTab extends StatelessWidget {
             ),
           ],
         ),
-      ),
-    );
+      );
   }
 }
 
@@ -735,10 +733,7 @@ class _AdminUsersTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.transparent,
-      appBar: const _AdminAppBar(),
-      body: Column(
+    return Column(
         children: [
           // Page Title
           Padding(
@@ -803,8 +798,7 @@ class _AdminUsersTab extends StatelessWidget {
             ),
           ),
         ],
-      ),
-    );
+      );
   }
 }
 
@@ -928,10 +922,7 @@ class _AdminContentTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.transparent,
-      appBar: const _AdminAppBar(),
-      body: Column(
+    return Column(
         children: [
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
@@ -988,8 +979,7 @@ class _AdminContentTab extends StatelessWidget {
             ),
           ),
         ],
-      ),
-    );
+      );
   }
 }
 
@@ -1190,10 +1180,7 @@ class _AdminSettingsTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.transparent,
-      appBar: const _AdminAppBar(),
-      body: SingleChildScrollView(
+    return SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
@@ -1297,8 +1284,7 @@ class _AdminSettingsTab extends StatelessWidget {
             ),
           ],
         ),
-      ),
-    );
+      );
   }
 }
 

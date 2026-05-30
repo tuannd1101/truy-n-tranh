@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.*;
 import prm.prmbackend.dto.request.MangaRequestDTO;
 import prm.prmbackend.dto.response.BaseApiResponse;
 import prm.prmbackend.dto.response.MangaResponseDTO;
-import prm.prmbackend.entity.enums.LicenseStatus;
 import prm.prmbackend.entity.enums.MangaStatus;
 import prm.prmbackend.service.MangaService;
 
@@ -77,27 +76,25 @@ public class MangaController {
             @RequestParam(defaultValue = "20") int size) {
 
         PageRequest pageable = PageRequest.of(page, size,
-                Sort.by("lastUpdatedAt").descending());
+                Sort.by("updatedAt").descending());
         return ResponseEntity.ok(BaseApiResponse.ok("Success",
                 mangaService.searchMangas(q, pageable)));
     }
 
     /**
-     * GET /api/mangas?genreId=&tagId=&status=&licenseStatus=&page=&size=
+     * GET /api/mangas?tagId=&status=&page=&size=
      */
     @GetMapping
     public ResponseEntity<BaseApiResponse<Page<MangaResponseDTO>>> filter(
-            @RequestParam(required = false) String genreId,
             @RequestParam(required = false) String tagId,
             @RequestParam(required = false) MangaStatus status,
-            @RequestParam(required = false) LicenseStatus licenseStatus,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size) {
 
         PageRequest pageable = PageRequest.of(page, size,
-                Sort.by("lastUpdatedAt").descending());
+                Sort.by("updatedAt").descending());
         return ResponseEntity.ok(BaseApiResponse.ok("Success",
-                mangaService.getMangasByFilter(genreId, tagId, status, licenseStatus, pageable)));
+                mangaService.getMangasByFilter(tagId, status, pageable)));
     }
 
     // ── admin write endpoints ─────────────────────────────────────────────────

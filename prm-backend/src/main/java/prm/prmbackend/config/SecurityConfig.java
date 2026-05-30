@@ -30,29 +30,26 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-            .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-            .csrf(AbstractHttpConfigurer::disable)
-            .sessionManagement(session ->
-                session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-            .authorizeHttpRequests(auth -> auth
-                // Auth endpoints — public
-                .requestMatchers("/api/v1/auth/**").permitAll()
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+                .csrf(AbstractHttpConfigurer::disable)
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .authorizeHttpRequests(auth -> auth
+                        // Auth endpoints — public
+                        .requestMatchers("/api/v1/auth/**").permitAll()
 
-                // Public read-only manga endpoints — /api/v1/* (legacy) + /api/* (current)
-                .requestMatchers(HttpMethod.GET, "/api/v1/mangas/**").permitAll()
-                .requestMatchers(HttpMethod.GET, "/api/v1/genres/**").permitAll()
-                .requestMatchers(HttpMethod.GET, "/api/v1/tags/**").permitAll()
-                .requestMatchers(HttpMethod.GET, "/api/v1/creators/**").permitAll()
-                .requestMatchers(HttpMethod.GET, "/api/mangas/**").permitAll()
-                .requestMatchers(HttpMethod.GET, "/api/chapters/**").permitAll()
-                .requestMatchers(HttpMethod.GET, "/api/genres/**").permitAll()
-                .requestMatchers(HttpMethod.GET, "/api/tags/**").permitAll()
-                .requestMatchers(HttpMethod.GET, "/api/creators/**").permitAll()
+                        // Swagger UI and OpenAPI docs — public
+                        .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
 
-                // Write operations require authentication
-                .anyRequest().authenticated()
-            )
-            .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+                        // Public read-only manga endpoints — /api/v1/* (legacy) + /api/* (current)
+                        .requestMatchers(HttpMethod.GET, "/api/mangas/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/chapters/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/genres/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/tags/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/creators/**").permitAll()
+
+                        // Write operations require authentication
+                        .anyRequest().authenticated())
+                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }

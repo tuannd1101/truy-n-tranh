@@ -2,30 +2,26 @@
 class Manga {
   final String id;
   final String title;
-  final String author;
+  final String slug;
   final String description;
   final String coverUrl;
-  final List<String> genres;
-  final double rating;
+  final List<String> creatorIds;
+  final List<String> tags;
   final String status;
   final bool isFree;
   final DateTime updatedAt;
-  final int totalChapters;
-  final int views;
 
   Manga({
     required this.id,
     required this.title,
-    required this.author,
+    required this.slug,
     required this.description,
     required this.coverUrl,
-    required this.genres,
-    this.rating = 0.0,
+    required this.creatorIds,
+    required this.tags,
     this.status = 'Ongoing',
     required this.isFree,
     required this.updatedAt,
-    required this.totalChapters,
-    this.views = 0,
   });
 
   /// Create Manga from JSON
@@ -33,21 +29,22 @@ class Manga {
     return Manga(
       id: json['id'] as String,
       title: json['title'] as String,
-      author: json['author'] as String,
-      description: json['description'] as String,
-      coverUrl: json['coverUrl'] as String,
-      genres: (json['genres'] as List<dynamic>?)
-              ?.map((e) => e as String)
+      slug: json['slug'] as String? ?? '',
+      description: json['description'] as String? ?? '',
+      coverUrl: json['coverUrl'] as String? ?? '',
+      creatorIds: (json['creators'] as List<dynamic>?)
+              ?.map((e) => e['name'] as String? ?? '')
               .toList() ??
           [],
-      rating: (json['rating'] as num?)?.toDouble() ?? 0.0,
+      tags: (json['tags'] as List<dynamic>?)
+              ?.map((e) => e['name'] as String? ?? '')
+              .toList() ??
+          [],
       status: json['status'] as String? ?? 'Ongoing',
-      isFree: json['isFree'] as bool? ?? false,
+      isFree: !(json['isPremium'] as bool? ?? false),
       updatedAt: json['updatedAt'] != null
           ? DateTime.parse(json['updatedAt'] as String)
           : DateTime.now(),
-      totalChapters: json['totalChapters'] as int? ?? 0,
-      views: json['views'] as int? ?? 0,
     );
   }
 
@@ -56,16 +53,14 @@ class Manga {
     return {
       'id': id,
       'title': title,
-      'author': author,
+      'slug': slug,
       'description': description,
       'coverUrl': coverUrl,
-      'genres': genres,
-      'rating': rating,
+      'creatorIds': creatorIds,
+      'tags': tags,
       'status': status,
-      'isFree': isFree,
+      'isPremium': !isFree,
       'updatedAt': updatedAt.toIso8601String(),
-      'totalChapters': totalChapters,
-      'views': views,
     };
   }
 
@@ -73,30 +68,26 @@ class Manga {
   Manga copyWith({
     String? id,
     String? title,
-    String? author,
+    String? slug,
     String? description,
     String? coverUrl,
-    List<String>? genres,
-    double? rating,
+    List<String>? creatorIds,
+    List<String>? tags,
     String? status,
     bool? isFree,
     DateTime? updatedAt,
-    int? totalChapters,
-    int? views,
   }) {
     return Manga(
       id: id ?? this.id,
       title: title ?? this.title,
-      author: author ?? this.author,
+      slug: slug ?? this.slug,
       description: description ?? this.description,
       coverUrl: coverUrl ?? this.coverUrl,
-      genres: genres ?? this.genres,
-      rating: rating ?? this.rating,
+      creatorIds: creatorIds ?? this.creatorIds,
+      tags: tags ?? this.tags,
       status: status ?? this.status,
       isFree: isFree ?? this.isFree,
       updatedAt: updatedAt ?? this.updatedAt,
-      totalChapters: totalChapters ?? this.totalChapters,
-      views: views ?? this.views,
     );
   }
 
@@ -105,6 +96,12 @@ class Manga {
 
   /// Get content tag text
   String get contentTag => isFree ? 'Free' : 'Premium';
+
+  /// Getter for backward compatibility
+  String get author => creatorIds.isNotEmpty ? creatorIds.first : 'Unknown';
+
+  /// Getter for backward compatibility with Genre
+  List<String> get genres => tags;
 
   @override
   bool operator ==(Object other) {
@@ -118,6 +115,6 @@ class Manga {
 
   @override
   String toString() {
-    return 'Manga(id: $id, title: $title, author: $author, isFree: $isFree)';
+    return 'Manga(id: $id, title: $title, isFree: $isFree)';
   }
 }

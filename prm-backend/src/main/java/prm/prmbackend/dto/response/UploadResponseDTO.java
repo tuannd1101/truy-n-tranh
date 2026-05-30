@@ -9,11 +9,9 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class MangaPageResponseDTO {
-
-    private Integer pageIndex;
-    private String imageUrl;
-    private Integer width;
-    private Integer height;
-    private String contentText;
+public class UploadResponseDTO {
+    private String url;
+    private String publicId;
+    private String format;
+    private long bytes;
 }

@@ -4,6 +4,9 @@ import '../../../core/constants/app_colors.dart';
 import '../../../core/routes/app_router.dart';
 import '../../widgets/main_drawer.dart';
 import '../../widgets/main_app_bar.dart';
+import 'package:provider/provider.dart';
+import '../../../providers/manga_provider.dart';
+import '../../../data/models/manga.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -25,61 +28,6 @@ class _HomeScreenState extends State<HomeScreen> {
     'Horror'
   ];
 
-  // Mock data cho Featured
-  final Map<String, dynamic> _featuredManga = {
-    'title': 'NEON DRIFT',
-    'chapter': 'Chương 14',
-    'tag': 'HOT',
-    'genres': ['ACTION', 'SCI-FI'],
-    'image': 'assets/images/hero_artist.png'
-  };
-
-  // Mock data cho Feed
-  final List<Map<String, dynamic>> _latestManga = [
-    {
-      'id': 1,
-      'title': 'CRIMSON BLADE',
-      'chapter': 'Chương 42',
-      'genres': ['ACTION', 'SEINEN'],
-      'isNew': true,
-    },
-    {
-      'id': 2,
-      'title': 'STARFALL MAGIC',
-      'chapter': 'Chương 5',
-      'genres': ['FANTASY', 'SHOUJO'],
-      'isNew': false,
-    },
-    {
-      'id': 3,
-      'title': 'CYBER SAMURAI',
-      'chapter': 'Chương 10',
-      'genres': ['ACTION', 'SCI-FI'],
-      'isNew': true,
-    },
-    {
-      'id': 4,
-      'title': 'SILENT ECHO',
-      'chapter': 'Chương 22',
-      'genres': ['MYSTERY'],
-      'isNew': false,
-    },
-    {
-      'id': 5,
-      'title': 'TOKYO GHOUL',
-      'chapter': 'Chương 143',
-      'genres': ['HORROR', 'ACTION'],
-      'isNew': false,
-    },
-    {
-      'id': 6,
-      'title': 'SOLO LEVELING',
-      'chapter': 'Chương 179',
-      'genres': ['ACTION', 'FANTASY'],
-      'isNew': true,
-    },
-  ];
-
   @override
   void initState() {
     super.initState();
@@ -87,6 +35,10 @@ class _HomeScreenState extends State<HomeScreen> {
       statusBarColor: Colors.transparent,
       statusBarIconBrightness: Brightness.light,
     ));
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<MangaProvider>().fetchMangas();
+    });
   }
 
   @override
@@ -95,23 +47,27 @@ class _HomeScreenState extends State<HomeScreen> {
       backgroundColor: AppColors.background,
       appBar: const MainAppBar(),
       drawer: const MainDrawer(),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.only(bottom: 20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildSearchBar(),
-            _buildCategories(),
-            const SizedBox(height: 24),
-            _buildSectionHeader('NỔI BẬT HÔM NAY'),
-            const SizedBox(height: 16),
-            _buildFeaturedManga(),
-            const SizedBox(height: 32),
-            _buildSectionHeader('MỚI CẬP NHẬT'),
-            const SizedBox(height: 16),
-            _buildMangaGrid(),
-          ],
-        ),
+      body: Consumer<MangaProvider>(
+        builder: (context, provider, child) {
+          return SingleChildScrollView(
+            padding: const EdgeInsets.only(bottom: 20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildSearchBar(),
+                _buildCategories(),
+                const SizedBox(height: 24),
+                _buildSectionHeader('NỔI BẬT HÔM NAY'),
+                const SizedBox(height: 16),
+                _buildFeaturedManga(provider),
+                const SizedBox(height: 32),
+                _buildSectionHeader('MỚI CẬP NHẬT'),
+                const SizedBox(height: 16),
+                _buildMangaGrid(provider),
+              ],
+            ),
+          );
+        },
       ),
     );
   }
@@ -247,10 +203,20 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildFeaturedManga() {
+  Widget _buildFeaturedManga(MangaProvider provider) {
+    if (provider.isLoading && provider.mangas.isEmpty) {
+      return const Center(child: CircularProgressIndicator(color: AppColors.primaryContainer));
+    }
+    
+    if (provider.mangas.isEmpty) {
+      return const SizedBox(height: 220, child: Center(child: Text('Chưa có truyện nào.', style: TextStyle(color: AppColors.onSurfaceVariant))));
+    }
+
+    final featuredManga = provider.mangas.first;
+
     return GestureDetector(
       onTap: () {
-        Navigator.pushNamed(context, AppRouter.mangaDetail, arguments: 1);
+        Navigator.pushNamed(context, AppRouter.mangaDetail, arguments: featuredManga.id);
       },
       child: Container(
         margin: const EdgeInsets.symmetric(horizontal: 16),
@@ -268,10 +234,15 @@ class _HomeScreenState extends State<HomeScreen> {
         child: Stack(
           fit: StackFit.expand,
           children: [
-            // Cover Image Placeholder
-            const Center(
-              child: Icon(Icons.image, size: 64, color: AppColors.outline),
-            ),
+            // Cover Image
+            featuredManga.coverUrl.isNotEmpty
+                ? Image.network(
+                    featuredManga.coverUrl,
+                    fit: BoxFit.cover,
+                  )
+                : const Center(
+                    child: Icon(Icons.image, size: 64, color: AppColors.outline),
+                  ),
             // Gradient Overlay
             Container(
               decoration: BoxDecoration(
@@ -294,14 +265,14 @@ class _HomeScreenState extends State<HomeScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
-                    children: (_featuredManga['genres'] as List<String>)
+                    children: featuredManga.tags.take(3)
                         .map((genre) => Container(
                               margin: const EdgeInsets.only(right: 8, bottom: 8),
                               padding: const EdgeInsets.symmetric(
                                   horizontal: 6, vertical: 2),
                               color: AppColors.tertiary,
                               child: Text(
-                                genre,
+                                genre.toUpperCase(),
                                 style: const TextStyle(
                                   color: AppColors.onTertiary,
                                   fontSize: 10,
@@ -312,7 +283,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         .toList(),
                   ),
                   Text(
-                    _featuredManga['title'],
+                    featuredManga.title.toUpperCase(),
                     style: const TextStyle(
                       fontFamily: 'Anton',
                       color: Colors.white,
@@ -323,7 +294,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    _featuredManga['chapter'],
+                    featuredManga.contentTag,
                     style: const TextStyle(
                       fontFamily: 'Syne',
                       color: AppColors.primaryContainer,
@@ -361,7 +332,11 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildMangaGrid() {
+  Widget _buildMangaGrid(MangaProvider provider) {
+    if (provider.isLoading && provider.mangas.isEmpty) {
+      return const Center(child: CircularProgressIndicator(color: AppColors.primaryContainer));
+    }
+    
     return GridView.builder(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       shrinkWrap: true,
@@ -372,19 +347,19 @@ class _HomeScreenState extends State<HomeScreen> {
         crossAxisSpacing: 16,
         mainAxisSpacing: 24,
       ),
-      itemCount: _latestManga.length,
+      itemCount: provider.mangas.length,
       itemBuilder: (context, index) {
-        final manga = _latestManga[index];
+        final manga = provider.mangas[index];
         return _buildMangaCard(manga);
       },
     );
   }
 
-  Widget _buildMangaCard(Map<String, dynamic> manga) {
+  Widget _buildMangaCard(Manga manga) {
     return GestureDetector(
       onTap: () {
         Navigator.pushNamed(context, AppRouter.mangaDetail,
-            arguments: manga['id']);
+            arguments: manga.id);
       },
       child: Container(
         decoration: BoxDecoration(
@@ -400,11 +375,16 @@ class _HomeScreenState extends State<HomeScreen> {
         child: Stack(
           fit: StackFit.expand,
           children: [
-            // Image Placeholder
+            // Image
             Container(
               color: AppColors.surfaceVariant,
-              child: const Center(
-                  child: Icon(Icons.image, color: AppColors.outline, size: 40)),
+              child: manga.coverUrl.isNotEmpty
+                  ? Image.network(
+                      manga.coverUrl,
+                      fit: BoxFit.cover,
+                    )
+                  : const Center(
+                      child: Icon(Icons.image, color: AppColors.outline, size: 40)),
             ),
             // Overlay
             Container(
@@ -428,7 +408,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    manga['title'],
+                    manga.title,
                     style: const TextStyle(
                       fontFamily: 'Anton',
                       color: AppColors.onSurface,
@@ -440,7 +420,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    manga['chapter'],
+                    manga.status,
                     style: const TextStyle(
                       fontFamily: 'Syne',
                       color: AppColors.primaryContainer,
@@ -450,7 +430,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   const SizedBox(height: 4),
                   Row(
-                    children: (manga['genres'] as List<String>)
+                    children: manga.tags
                         .take(2)
                         .map((genre) => Container(
                               margin: const EdgeInsets.only(right: 4),
@@ -460,7 +440,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 border: Border.all(color: AppColors.outline),
                               ),
                               child: Text(
-                                genre,
+                                genre.toUpperCase(),
                                 style: const TextStyle(
                                   color: AppColors.onSurfaceVariant,
                                   fontSize: 8,
@@ -473,8 +453,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 ],
               ),
             ),
-            // NEW badge
-            if (manga['isNew'] == true)
+            // NEW badge (Placeholder logic based on isFree)
+            if (manga.isFree)
               Positioned(
                 top: 8,
                 left: -8,
