@@ -67,7 +67,7 @@ class AppRouter {
         );
 
       case mangaDetail:
-        final mangaId = args is int ? args : 0;
+        final mangaId = args is String ? args : '';
         return MaterialPageRoute(
           builder: (_) => MangaDetailScreen(mangaId: mangaId),
           settings: settings,
@@ -75,11 +75,11 @@ class AppRouter {
 
       case reading:
         final readingArgs = args as Map<String, dynamic>?;
-        final mangaId = readingArgs?['mangaId'] as int? ?? 0;
-        final chapterId = readingArgs?['chapterId'] as int? ?? 0;
+        final mangaId = readingArgs?['mangaId'] as String? ?? '';
+        final chapterNumber = (readingArgs?['chapterNumber'] as num?)?.toDouble() ?? 1.0;
         return MaterialPageRoute(
           builder: (_) =>
-              MangaReadingScreen(mangaId: mangaId, chapterId: chapterId),
+              MangaReadingScreen(mangaId: mangaId, chapterNumber: chapterNumber),
           settings: settings,
         );
 

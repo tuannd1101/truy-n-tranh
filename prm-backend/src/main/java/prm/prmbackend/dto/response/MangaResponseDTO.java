@@ -20,11 +20,11 @@ public class MangaResponseDTO {
     private String description;
     private String coverUrl;
 
-    /** List of creator IDs */
-    private List<String> creatorIds;
+    /** List of creators */
+    private List<CreatorResponseDTO> creators;
 
-    /** List of tag IDs */
-    private List<String> tags;
+    /** List of tags */
+    private List<TagResponseDTO> tags;
 
     private MangaStatus status;
     private Boolean isPremium;

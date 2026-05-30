@@ -32,12 +32,12 @@ class Manga {
       slug: json['slug'] as String? ?? '',
       description: json['description'] as String? ?? '',
       coverUrl: json['coverUrl'] as String? ?? '',
-      creatorIds: (json['creatorIds'] as List<dynamic>?)
-              ?.map((e) => e as String)
+      creatorIds: (json['creators'] as List<dynamic>?)
+              ?.map((e) => e['name'] as String? ?? '')
               .toList() ??
           [],
       tags: (json['tags'] as List<dynamic>?)
-              ?.map((e) => e as String)
+              ?.map((e) => e['name'] as String? ?? '')
               .toList() ??
           [],
       status: json['status'] as String? ?? 'Ongoing',

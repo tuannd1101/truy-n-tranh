@@ -12,6 +12,10 @@ import prm.prmbackend.exception.AppException;
 import prm.prmbackend.exception.ErrorCode;
 import prm.prmbackend.repository.MangaChapterRepository;
 import prm.prmbackend.repository.MangaRepository;
+import prm.prmbackend.repository.CreatorRepository;
+import prm.prmbackend.repository.TagRepository;
+import prm.prmbackend.dto.response.CreatorResponseDTO;
+import prm.prmbackend.dto.response.TagResponseDTO;
 import prm.prmbackend.service.MangaService;
 
 import java.time.Instant;
@@ -23,6 +27,8 @@ public class MangaServiceImpl implements MangaService {
 
     private final MangaRepository mangaRepository;
     private final MangaChapterRepository chapterRepository;
+    private final CreatorRepository creatorRepository;
+    private final TagRepository tagRepository;
 
     // ── spec methods ──────────────────────────────────────────────────────────
 
@@ -135,14 +141,24 @@ public class MangaServiceImpl implements MangaService {
     }
 
     private MangaResponseDTO toResponse(MangaSeries m) {
+        List<CreatorResponseDTO> creators = m.getCreatorIds() == null || m.getCreatorIds().isEmpty() 
+            ? List.of()
+            : creatorRepository.findAllById(m.getCreatorIds()).stream()
+                .map(c -> CreatorResponseDTO.builder().id(c.getId()).name(c.getName()).slug(c.getSlug()).build()).toList();
+
+        List<TagResponseDTO> tags = m.getTagIds() == null || m.getTagIds().isEmpty()
+            ? List.of()
+            : tagRepository.findAllById(m.getTagIds()).stream()
+                .map(t -> TagResponseDTO.builder().id(t.getId()).name(t.getName()).slug(t.getSlug()).build()).toList();
+
         return MangaResponseDTO.builder()
                 .id(m.getId())
                 .title(m.getTitle())
                 .slug(m.getSlug())
                 .description(m.getDescription())
                 .coverUrl(m.getCoverUrl())
-                .creatorIds(m.getCreatorIds())
-                .tags(m.getTagIds())
+                .creators(creators)
+                .tags(tags)
                 .status(m.getStatus())
                 .isPremium(m.getIsPremium())
                 .build();

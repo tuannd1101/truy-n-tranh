@@ -69,6 +69,19 @@ class MangaApiService {
     );
   }
 
+  Future<Manga> getMangaById(String id) async {
+    final response = await _apiService.dio.get(
+      '${_apiService.dio.options.baseUrl.replaceAll('/api/v1', '/api/mangas')}/$id',
+    );
+
+    final baseResponse = BaseApiResponse<Manga>.fromJson(
+      response.data,
+      (json) => Manga.fromJson(json as Map<String, dynamic>),
+    );
+
+    return baseResponse.data!;
+  }
+
   Future<Manga> createManga(Map<String, dynamic> mangaData) async {
     final response = await _apiService.dio.post(
       _apiService.dio.options.baseUrl.replaceAll('/api/v1', '/api/mangas'),

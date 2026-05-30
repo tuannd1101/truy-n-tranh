@@ -9,8 +9,8 @@ class UploadApiService {
   Future<String> uploadImage(XFile imageFile, {String folder = 'prm_manga_covers'}) async {
     try {
       final formData = FormData.fromMap({
-        'file': await MultipartFile.fromFile(
-          imageFile.path,
+        'file': MultipartFile.fromBytes(
+          await imageFile.readAsBytes(),
           filename: imageFile.name,
         ),
         'folder': folder,
@@ -44,8 +44,8 @@ class UploadApiService {
       for (var file in imageFiles) {
         formData.files.add(MapEntry(
           'files',
-          await MultipartFile.fromFile(
-            file.path,
+          MultipartFile.fromBytes(
+            await file.readAsBytes(),
             filename: file.name,
           ),
         ));

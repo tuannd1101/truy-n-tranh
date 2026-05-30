@@ -1,10 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/routes/app_router.dart';
+import '../../../data/models/manga.dart';
+import '../../../data/models/chapter.dart';
+import '../../../providers/manga_provider.dart';
+import '../../../providers/chapter_provider.dart';
+import '../../../providers/auth_provider.dart';
 
 class MangaDetailScreen extends StatefulWidget {
-  final int mangaId;
+  final String mangaId;
 
   const MangaDetailScreen({super.key, required this.mangaId});
 
@@ -13,21 +19,9 @@ class MangaDetailScreen extends StatefulWidget {
 }
 
 class _MangaDetailScreenState extends State<MangaDetailScreen> {
-  // Mock data
-  final Map<String, dynamic> mangaData = {
-    'title': 'CRIMSON BLADE',
-    'author': 'By M. Shinkai',
-    'status': 'ONGOING',
-    'rating': '4.8',
-    'genres': ['ACTION', 'SEINEN', 'HISTORICAL'],
-    'description': 'A masterless samurai seeks vengeance across the Edo period. Blood will flow and blades will clash in this epic tale of honor and betrayal.',
-    'chapters': List.generate(24, (index) => {
-      'id': 24 - index,
-      'title': 'Chương ${24 - index}',
-      'date': '12/05/2026',
-      'views': '12K',
-    })
-  };
+  Manga? _manga;
+  List<Chapter> _chapters = [];
+  bool _isLoading = true;
 
   @override
   void initState() {
@@ -36,10 +30,73 @@ class _MangaDetailScreenState extends State<MangaDetailScreen> {
       statusBarColor: Colors.transparent,
       statusBarIconBrightness: Brightness.light,
     ));
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _fetchData();
+    });
+  }
+
+  Future<void> _fetchData() async {
+    final mangaProvider = context.read<MangaProvider>();
+    final chapterProvider = context.read<ChapterProvider>();
+
+    final manga = await mangaProvider.getMangaDetail(widget.mangaId);
+    if (manga != null) {
+      await chapterProvider.fetchChapters(widget.mangaId);
+      if (mounted) {
+        setState(() {
+          _manga = manga;
+          _chapters = chapterProvider.chapters;
+          _isLoading = false;
+        });
+      }
+    } else {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
+  }
+
+  void _onTapChapter(Chapter chapter) {
+    if (_manga == null) return;
+    
+    // Logic khóa Premium: Khóa nếu Chapter là Premium HOẶC Truyện là Premium
+    final isPremium = chapter.isPremium || _manga!.isPremium;
+    final auth = context.read<AuthProvider>();
+    
+    if (isPremium && !auth.isPremium && !auth.isAdminOrManager) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content: Text('Chương này yêu cầu tài khoản Premium. Vui lòng nâng cấp!'),
+        backgroundColor: AppColors.error,
+      ));
+      return;
+    }
+    
+    Navigator.pushNamed(context, AppRouter.reading, arguments: {
+      'mangaId': widget.mangaId,
+      'chapterNumber': chapter.chapterNumber,
+    });
   }
 
   @override
   Widget build(BuildContext context) {
+    if (_isLoading) {
+      return const Scaffold(
+        backgroundColor: AppColors.background,
+        body: Center(child: CircularProgressIndicator(color: AppColors.primaryContainer)),
+      );
+    }
+
+    if (_manga == null) {
+      return Scaffold(
+        backgroundColor: AppColors.background,
+        appBar: AppBar(backgroundColor: Colors.transparent),
+        body: const Center(child: Text('Không tìm thấy truyện', style: TextStyle(color: AppColors.onSurfaceVariant))),
+      );
+    }
+
     return Scaffold(
       backgroundColor: AppColors.background,
       body: CustomScrollView(
@@ -85,12 +142,14 @@ class _MangaDetailScreenState extends State<MangaDetailScreen> {
           fit: StackFit.expand,
           children: [
             // Image
-            Image.asset(
-              'assets/images/hero_artist.png',
-              fit: BoxFit.cover,
-              colorBlendMode: BlendMode.saturation,
-              color: Colors.grey,
-            ),
+            _manga!.coverUrl.isNotEmpty
+                ? Image.network(
+                    _manga!.coverUrl,
+                    fit: BoxFit.cover,
+                    colorBlendMode: BlendMode.saturation,
+                    color: Colors.grey,
+                  )
+                : const Center(child: Icon(Icons.image, size: 64, color: AppColors.outline)),
             // Gradient Overlay
             Container(
               decoration: BoxDecoration(
@@ -116,7 +175,7 @@ class _MangaDetailScreenState extends State<MangaDetailScreen> {
                   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
                   color: AppColors.secondaryContainer,
                   child: Text(
-                    mangaData['status'],
+                    _manga!.status.toUpperCase(),
                     style: const TextStyle(
                       fontFamily: 'Anton',
                       color: AppColors.onSecondaryContainer,
@@ -144,7 +203,7 @@ class _MangaDetailScreenState extends State<MangaDetailScreen> {
             children: [
               Expanded(
                 child: Text(
-                  mangaData['title'],
+                  _manga!.title.toUpperCase(),
                   style: const TextStyle(
                     fontFamily: 'Anton',
                     color: AppColors.onSurface,
@@ -167,7 +226,7 @@ class _MangaDetailScreenState extends State<MangaDetailScreen> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                mangaData['author'],
+                'By ${_manga!.author}',
                 style: const TextStyle(
                   fontFamily: 'Syne',
                   color: AppColors.onSurfaceVariant,
@@ -175,13 +234,13 @@ class _MangaDetailScreenState extends State<MangaDetailScreen> {
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              Row(
+              const Row(
                 children: [
-                  const Icon(Icons.star, color: AppColors.tertiary, size: 16),
-                  const SizedBox(width: 4),
+                  Icon(Icons.star, color: AppColors.tertiary, size: 16),
+                  SizedBox(width: 4),
                   Text(
-                    mangaData['rating'],
-                    style: const TextStyle(
+                    '4.8', // Giả lập rating
+                    style: TextStyle(
                       fontFamily: 'Syne',
                       color: AppColors.tertiary,
                       fontSize: 14,
@@ -196,7 +255,7 @@ class _MangaDetailScreenState extends State<MangaDetailScreen> {
           Wrap(
             spacing: 8,
             runSpacing: 8,
-            children: (mangaData['genres'] as List<String>).map((genre) {
+            children: _manga!.tags.map((genre) {
               return Container(
                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                 decoration: BoxDecoration(
@@ -204,7 +263,7 @@ class _MangaDetailScreenState extends State<MangaDetailScreen> {
                   color: AppColors.surfaceContainerHigh,
                 ),
                 child: Text(
-                  genre,
+                  genre.toUpperCase(),
                   style: const TextStyle(
                     color: AppColors.onSurfaceVariant,
                     fontSize: 10,
@@ -228,8 +287,9 @@ class _MangaDetailScreenState extends State<MangaDetailScreen> {
             flex: 2,
             child: GestureDetector(
               onTap: () {
-                // Đọc chương đầu tiên
-                Navigator.pushNamed(context, AppRouter.reading);
+                if (_chapters.isNotEmpty) {
+                  _onTapChapter(_chapters.first);
+                }
               },
               child: Container(
                 padding: const EdgeInsets.symmetric(vertical: 16),
@@ -308,7 +368,7 @@ class _MangaDetailScreenState extends State<MangaDetailScreen> {
           ),
           const SizedBox(height: 8),
           Text(
-            mangaData['description'],
+            _manga!.description,
             style: const TextStyle(
               color: AppColors.onSurface,
               fontSize: 14,
@@ -343,15 +403,28 @@ class _MangaDetailScreenState extends State<MangaDetailScreen> {
   }
 
   Widget _buildChapterList() {
-    final chapters = mangaData['chapters'] as List<dynamic>;
+    if (_chapters.isEmpty) {
+      return SliverToBoxAdapter(
+        child: Padding(
+          padding: const EdgeInsets.all(32),
+          child: Center(
+            child: Text(
+              'Chưa có chương nào.',
+              style: TextStyle(color: AppColors.onSurfaceVariant.withOpacity(0.5)),
+            ),
+          ),
+        ),
+      );
+    }
+
     return SliverList(
       delegate: SliverChildBuilderDelegate(
         (context, index) {
-          final chapter = chapters[index];
+          final chapter = _chapters[index];
+          final isPremium = chapter.isPremium || _manga!.isPremium;
+
           return InkWell(
-            onTap: () {
-              Navigator.pushNamed(context, AppRouter.reading);
-            },
+            onTap: () => _onTapChapter(chapter),
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
               decoration: const BoxDecoration(
@@ -365,18 +438,27 @@ class _MangaDetailScreenState extends State<MangaDetailScreen> {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        chapter['title'],
-                        style: const TextStyle(
-                          fontFamily: 'Syne',
-                          color: AppColors.onSurface,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
-                        ),
+                      Row(
+                        children: [
+                          if (isPremium)
+                            const Padding(
+                              padding: EdgeInsets.only(right: 8.0),
+                              child: Icon(Icons.lock, color: AppColors.error, size: 16),
+                            ),
+                          Text(
+                            chapter.displayTitle,
+                            style: TextStyle(
+                              fontFamily: 'Syne',
+                              color: isPremium ? AppColors.error : AppColors.onSurface,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                            ),
+                          ),
+                        ],
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        chapter['date'],
+                        '${chapter.totalPages} pages',
                         style: const TextStyle(
                           color: AppColors.onSurfaceVariant,
                           fontSize: 12,
@@ -384,13 +466,13 @@ class _MangaDetailScreenState extends State<MangaDetailScreen> {
                       ),
                     ],
                   ),
-                  Row(
+                  const Row(
                     children: [
-                      const Icon(Icons.visibility, color: AppColors.onSurfaceVariant, size: 14),
-                      const SizedBox(width: 4),
+                      Icon(Icons.visibility, color: AppColors.onSurfaceVariant, size: 14),
+                      SizedBox(width: 4),
                       Text(
-                        chapter['views'],
-                        style: const TextStyle(
+                        '0',
+                        style: TextStyle(
                           color: AppColors.onSurfaceVariant,
                           fontSize: 12,
                         ),
@@ -402,7 +484,7 @@ class _MangaDetailScreenState extends State<MangaDetailScreen> {
             ),
           );
         },
-        childCount: chapters.length,
+        childCount: _chapters.length,
       ),
     );
   }

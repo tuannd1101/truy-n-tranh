@@ -61,6 +61,29 @@ class MangaProvider extends ChangeNotifier {
     }
   }
 
+  Future<Manga?> getMangaDetail(String id) async {
+    _isLoading = true;
+    _errorMessage = null;
+    notifyListeners();
+
+    try {
+      final manga = await _apiService.getMangaById(id);
+      _isLoading = false;
+      notifyListeners();
+      return manga;
+    } on ApiException catch (e) {
+      _errorMessage = e.message;
+      _isLoading = false;
+      notifyListeners();
+      return null;
+    } catch (e) {
+      _errorMessage = 'Failed to load manga detail: $e';
+      _isLoading = false;
+      notifyListeners();
+      return null;
+    }
+  }
+
   Future<void> setPage(int page) async {
     if (page >= 1 && page <= _totalPages) {
       await fetchMangas(page: page - 1);
