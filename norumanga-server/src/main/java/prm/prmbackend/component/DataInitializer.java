@@ -36,12 +36,15 @@ public class DataInitializer implements CommandLineRunner {
         private final CreatorRepository creatorRepository;
         private final MangaRepository mangaRepository;
         private final MangaChapterRepository chapterRepository;
+        private final BundleRepository bundleRepository;
 
         // ── entry point ───────────────────────────────────────────────────────────
 
         @Override
         public void run(String... args) {
-                // log.info("DataInitializer starting...");
+                // Roles and subscription bundle are always seeded (idempotent, additive).
+                seedRoles();
+                seedBundles();
 
                 // // Reset database for structural changes (pages: Object -> String, Genre
                 // merged to Tag)
@@ -74,6 +77,32 @@ public class DataInitializer implements CommandLineRunner {
                 // seedDemoMangas(tags, creators);
 
                 // log.info("DataInitializer completed.");
+        }
+
+        // ── bundles ─────────────────────────────────────────────────────────────────
+
+        private void seedBundles() {
+                if (bundleRepository.existsByName("Premium 1 Tháng")) {
+                        return;
+                }
+                Instant now = Instant.now();
+                Bundle premiumMonthly = Bundle.builder()
+                                .name("Premium 1 Tháng")
+                                .description("Truy cập không giới hạn. Trải nghiệm tối thượng.")
+                                .price(49000)
+                                .billingCycle(BillingCycle.MONTHLY)
+                                .roleName("Premium")
+                                .features(List.of(
+                                                "Không quảng cáo",
+                                                "Đọc chương mới trước 7 ngày",
+                                                "Tải truyện đọc Offline",
+                                                "Ủng hộ trực tiếp tác giả"))
+                                .active(true)
+                                .createdAt(now)
+                                .updatedAt(now)
+                                .build();
+                bundleRepository.save(premiumMonthly);
+                log.info("Seeded bundle: Premium 1 Tháng");
         }
 
         // ── roles ─────────────────────────────────────────────────────────────────

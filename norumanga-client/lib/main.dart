@@ -9,11 +9,15 @@ import 'data/network/tag_api_service.dart';
 import 'data/network/creator_api_service.dart';
 import 'data/network/manga_api_service.dart';
 import 'data/network/chapter_api_service.dart';
+import 'data/network/bundle_api_service.dart';
+import 'data/network/payment_api_service.dart';
 import 'providers/tag_provider.dart';
 import 'providers/creator_provider.dart';
 import 'providers/manga_provider.dart';
 import 'providers/chapter_provider.dart';
 import 'providers/search_provider.dart';
+import 'providers/bundle_provider.dart';
+import 'providers/payment_provider.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -67,6 +71,20 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProxyProvider<ChapterApiService, ChapterProvider>(
           create: (context) => ChapterProvider(ChapterApiService(ApiService())),
           update: (_, chapterApi, previous) => previous ?? ChapterProvider(chapterApi),
+        ),
+        ProxyProvider<ApiService, BundleApiService>(
+          update: (_, api, __) => BundleApiService(api),
+        ),
+        ChangeNotifierProxyProvider<BundleApiService, BundleProvider>(
+          create: (context) => BundleProvider(BundleApiService(ApiService())),
+          update: (_, bundleApi, previous) => previous ?? BundleProvider(bundleApi),
+        ),
+        ProxyProvider<ApiService, PaymentApiService>(
+          update: (_, api, __) => PaymentApiService(api),
+        ),
+        ChangeNotifierProxyProvider<PaymentApiService, PaymentProvider>(
+          create: (context) => PaymentProvider(PaymentApiService(ApiService())),
+          update: (_, paymentApi, previous) => previous ?? PaymentProvider(paymentApi),
         ),
       ],
       child: MaterialApp(

@@ -5,11 +5,13 @@ import '../../../core/routes/app_router.dart';
 class PaymentResultScreen extends StatelessWidget {
   final bool success;
   final String method;
+  final String? message;
 
   const PaymentResultScreen({
     super.key,
     this.success = true,
     this.method = 'momo',
+    this.message,
   });
 
   @override
@@ -42,7 +44,7 @@ class PaymentResultScreen extends StatelessWidget {
               Text(
                 success 
                   ? 'Chúc mừng! Bạn đã nâng cấp Premium thành công. Tận hưởng các đặc quyền VIP ngay thôi!' 
-                  : 'Rất tiếc, đã có lỗi xảy ra trong quá trình giao dịch. Vui lòng thử lại sau.',
+                  : (message ?? 'Rất tiếc, đã có lỗi xảy ra trong quá trình giao dịch. Vui lòng thử lại sau.'),
                 style: const TextStyle(
                   color: Colors.white,
                   fontSize: 16,

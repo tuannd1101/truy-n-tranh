@@ -26,7 +26,15 @@ public enum ErrorCode {
     GENRE_ALREADY_EXISTS("Genre đã tồn tại", HttpStatus.CONFLICT),
     TAG_NOT_FOUND("Tag không tồn tại", HttpStatus.NOT_FOUND),
     TAG_ALREADY_EXISTS("Tag đã tồn tại", HttpStatus.CONFLICT),
-    CREATOR_NOT_FOUND("Creator không tồn tại", HttpStatus.NOT_FOUND);
+    CREATOR_NOT_FOUND("Creator không tồn tại", HttpStatus.NOT_FOUND),
+
+    // Bundle / Payment
+    BUNDLE_NOT_FOUND("Gói đăng ký không tồn tại", HttpStatus.NOT_FOUND),
+    BUNDLE_ALREADY_EXISTS("Gói đăng ký đã tồn tại", HttpStatus.CONFLICT),
+    BUNDLE_INACTIVE("Gói đăng ký hiện không khả dụng", HttpStatus.BAD_REQUEST),
+    PAYMENT_NOT_FOUND("Giao dịch không tồn tại", HttpStatus.NOT_FOUND),
+    PAYMENT_ALREADY_PROCESSED("Giao dịch đã được xử lý", HttpStatus.BAD_REQUEST),
+    ROLE_NOT_FOUND("Vai trò không tồn tại", HttpStatus.NOT_FOUND);
 
     private final String message;
     private final HttpStatus statusCode;

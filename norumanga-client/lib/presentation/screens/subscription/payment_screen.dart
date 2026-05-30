@@ -1,13 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/routes/app_router.dart';
+import '../../../providers/auth_provider.dart';
+import '../../../providers/payment_provider.dart';
 
 class PaymentScreen extends StatefulWidget {
+  final String? bundleId;
   final String planName;
   final int price;
 
   const PaymentScreen({
     super.key,
+    this.bundleId,
     this.planName = 'Premium 1 Tháng',
     this.price = 49000,
   });
@@ -17,9 +22,24 @@ class PaymentScreen extends StatefulWidget {
 }
 
 class _PaymentScreenState extends State<PaymentScreen> {
-  String _selectedMethod = 'momo';
+  // Currently MoMo is the only supported method.
+  final String _selectedMethod = 'momo';
 
-  void _handlePayment() {
+  Future<void> _handlePayment() async {
+    final bundleId = widget.bundleId;
+    if (bundleId == null || bundleId.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Không xác định được gói đăng ký.'),
+          backgroundColor: AppColors.error,
+        ),
+      );
+      return;
+    }
+
+    final paymentProvider = context.read<PaymentProvider>();
+    final authProvider = context.read<AuthProvider>();
+
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -28,16 +48,35 @@ class _PaymentScreenState extends State<PaymentScreen> {
       ),
     );
 
-    Future.delayed(const Duration(seconds: 2), () {
-      if (mounted) {
-        Navigator.pop(context); // close loading
-        Navigator.pushReplacementNamed(
-          context,
-          AppRouter.paymentResult,
-          arguments: {'success': true, 'method': _selectedMethod},
+    final payment = await paymentProvider.purchase(
+      bundleId: bundleId,
+      method: 'MOMO',
+    );
+
+    // Refresh the user so the upgraded role is reflected app-wide.
+    if (payment != null) {
+      await authProvider.fetchCurrentUser();
+    }
+
+    if (!mounted) return;
+    Navigator.pop(context); // close loading
+
+    Navigator.pushReplacementNamed(
+      context,
+      AppRouter.paymentResult,
+      arguments: {
+        'success': payment != null,
+        'method': _selectedMethod,
+        'message': payment == null ? paymentProvider.errorMessage : null,
+      },
+    );
+  }
+
+  String _formatPrice(int price) {
+    return price.toString().replaceAllMapped(
+          RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
+          (Match m) => '${m[1]}.',
         );
-      }
-    });
   }
 
   @override
@@ -98,11 +137,14 @@ class _PaymentScreenState extends State<PaymentScreen> {
                         'Gói đăng ký',
                         style: TextStyle(color: AppColors.textSecondary),
                       ),
-                      Text(
-                        widget.planName,
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
+                      Flexible(
+                        child: Text(
+                          widget.planName,
+                          textAlign: TextAlign.right,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
                     ],
@@ -116,7 +158,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                         style: TextStyle(color: AppColors.textSecondary),
                       ),
                       Text(
-                        '${widget.price.toString().replaceAllMapped(RegExp(r'(\\d{1,3})(?=(\\d{3})+(?!\\d))'), (Match m) => '${m[1]}.')} VNĐ',
+                        '${_formatPrice(widget.price)} VNĐ',
                         style: const TextStyle(
                           fontFamily: 'Anton',
                           color: AppColors.gold,
@@ -146,12 +188,6 @@ class _PaymentScreenState extends State<PaymentScreen> {
               name: 'Ví MoMo',
               color: const Color(0xFFA50064),
               icon: Icons.account_balance_wallet,
-            ),
-            _buildPaymentMethod(
-              id: 'vnpay',
-              name: 'VNPay',
-              color: const Color(0xFF005BAA),
-              icon: Icons.qr_code_scanner,
             ),
           ],
         ),
@@ -200,51 +236,44 @@ class _PaymentScreenState extends State<PaymentScreen> {
   }) {
     final isSelected = _selectedMethod == id;
 
-    return GestureDetector(
-      onTap: () {
-        setState(() {
-          _selectedMethod = id;
-        });
-      },
-      child: Container(
-        margin: const EdgeInsets.only(bottom: 16),
-        decoration: BoxDecoration(
-          color: isSelected ? color.withValues(alpha: 0.1) : const Color(0xFF1B1B23),
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: isSelected ? color : AppColors.outline,
-            width: isSelected ? 2 : 1,
+    return Container(
+      margin: const EdgeInsets.only(bottom: 16),
+      decoration: BoxDecoration(
+        color: isSelected ? color.withValues(alpha: 0.1) : const Color(0xFF1B1B23),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: isSelected ? color : AppColors.outline,
+          width: isSelected ? 2 : 1,
+        ),
+      ),
+      padding: const EdgeInsets.all(16),
+      child: Row(
+        children: [
+          Container(
+            width: 48,
+            height: 48,
+            decoration: BoxDecoration(
+              color: color,
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Icon(icon, color: Colors.white),
           ),
-        ),
-        padding: const EdgeInsets.all(16),
-        child: Row(
-          children: [
-            Container(
-              width: 48,
-              height: 48,
-              decoration: BoxDecoration(
-                color: color,
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Icon(icon, color: Colors.white),
-            ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: Text(
-                name,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                ),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Text(
+              name,
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
               ),
             ),
-            Icon(
-              isSelected ? Icons.radio_button_checked : Icons.radio_button_unchecked,
-              color: isSelected ? color : AppColors.textSecondary,
-            ),
-          ],
-        ),
+          ),
+          Icon(
+            isSelected ? Icons.radio_button_checked : Icons.radio_button_unchecked,
+            color: isSelected ? color : AppColors.textSecondary,
+          ),
+        ],
       ),
     );
   }

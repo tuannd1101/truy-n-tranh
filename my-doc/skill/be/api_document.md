@@ -699,3 +699,158 @@ Every API response follows a unified JSON format defined by `BaseApiResponse<T>`
 - `THEME`
 - `GENRE`
 - `FORMAT`
+
+### BillingCycle
+- `MONTHLY` (30 days)
+- `QUARTERLY` (90 days)
+- `YEARLY` (365 days)
+
+### PaymentMethod
+- `MOMO`
+
+### PaymentStatus
+- `PENDING`
+- `SUCCESS`
+- `FAILED`
+
+---
+
+## 9. Bundle Controller (`BundleController`)
+**Base Path:** `/api/bundles`
+
+A bundle is a subscription package a user can purchase to upgrade their account
+role (e.g. "Premium 1 Tháng"). Price is in VND (integer, no decimals).
+
+### 9.1 Get Bundles
+- **Method:** `GET`
+- **Path:** `/`
+- **Query Params:**
+  - `all` (boolean, default = false): when `true`, returns all bundles
+    (admin view, includes inactive). Default returns active bundles only.
+- **Auth Required:** No (public read)
+- **Output (JSON Response):**
+  ```json
+  {
+    "data": [
+      {
+        "id": "bundle-1-id",
+        "name": "Premium 1 Tháng",
+        "description": "Truy cập không giới hạn...",
+        "price": 49000,
+        "billingCycle": "MONTHLY",
+        "durationDays": 30,
+        "roleName": "Premium",
+        "features": ["Không quảng cáo", "Đọc chương mới trước 7 ngày"],
+        "active": true,
+        "createdAt": "2026-05-30T18:08:55.289Z",
+        "updatedAt": "2026-05-30T18:08:55.289Z"
+      }
+    ],
+    "message": "Success",
+    "error": null
+  }
+  ```
+
+### 9.2 Get Bundle by ID
+- **Method:** `GET`
+- **Path:** `/{id}`
+- **Auth Required:** No
+- **Output:** Single `BundleResponseDTO` inside the envelope.
+
+### 9.3 Create Bundle
+- **Method:** `POST`
+- **Path:** `/`
+- **Auth Required:** Yes (Admin or Manager)
+- **Input (JSON Request Body):**
+  ```json
+  {
+    "name": "Premium 3 Tháng",
+    "description": "Tiết kiệm hơn với gói quý",
+    "price": 129000,
+    "billingCycle": "QUARTERLY",
+    "roleName": "Premium",
+    "features": ["Không quảng cáo", "Tải offline"],
+    "active": true
+  }
+  ```
+- **Output:** Created `BundleResponseDTO`.
+
+### 9.4 Update Bundle
+- **Method:** `PUT`
+- **Path:** `/{id}`
+- **Auth Required:** Yes (Admin or Manager)
+- **Input:** Same format as Create Bundle.
+- **Output:** Updated `BundleResponseDTO`.
+
+### 9.5 Delete Bundle
+- **Method:** `DELETE`
+- **Path:** `/{id}`
+- **Auth Required:** Yes (Admin or Manager)
+- **Output:** `{ "data": null, "message": "Bundle deleted", "error": null }`
+
+---
+
+## 10. Payment Controller (`PaymentController`)
+**Base Path:** `/api/payments`
+
+Records subscription purchases. On a successful payment the transaction is
+persisted (the user's transaction history) and the user's role is upgraded to
+the bundle's `roleName`. Currently only MoMo is supported and is treated as
+immediately successful.
+
+### 10.1 Purchase a Bundle
+- **Method:** `POST`
+- **Path:** `/`
+- **Auth Required:** Yes (any authenticated user)
+- **Input (JSON Request Body):**
+  ```json
+  {
+    "bundleId": "bundle-1-id",
+    "method": "MOMO",
+    "transactionRef": "optional-external-ref"
+  }
+  ```
+- **Functionality:** Creates a SUCCESS payment, saves it to history, and
+  upgrades the caller's role to the bundle's `roleName`.
+- **Output (JSON Response):**
+  ```json
+  {
+    "data": {
+      "id": "payment-1-id",
+      "accountId": "account-1-id",
+      "bundleId": "bundle-1-id",
+      "bundleName": "Premium 1 Tháng",
+      "amount": 49000,
+      "method": "MOMO",
+      "status": "SUCCESS",
+      "transactionRef": "MOMO-1780164684687",
+      "expiresAt": "2026-06-29T18:11:24.687Z",
+      "createdAt": "2026-05-30T18:11:24.687Z",
+      "updatedAt": "2026-05-30T18:11:24.687Z"
+    },
+    "message": "Thanh toán thành công",
+    "error": null
+  }
+  ```
+
+### 10.2 My Transaction History
+- **Method:** `GET`
+- **Path:** `/me`
+- **Auth Required:** Yes (any authenticated user)
+- **Functionality:** Returns the caller's transactions, newest first (READ-only).
+- **Output:** `List<PaymentResponseDTO>` inside the envelope.
+
+### 10.3 All Transactions (Admin)
+- **Method:** `GET`
+- **Path:** `/`
+- **Query Params:** `page` (default 0), `size` (default 20)
+- **Auth Required:** Yes (Admin or Manager)
+- **Functionality:** READ-only paginated list of all transactions.
+- **Output:** Spring `Page<PaymentResponseDTO>` inside the envelope.
+
+### 10.4 Transactions by Account (Admin)
+- **Method:** `GET`
+- **Path:** `/account/{accountId}`
+- **Query Params:** `page` (default 0), `size` (default 20)
+- **Auth Required:** Yes (Admin or Manager)
+- **Output:** Spring `Page<PaymentResponseDTO>` inside the envelope.

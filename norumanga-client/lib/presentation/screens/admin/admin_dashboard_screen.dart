@@ -7,6 +7,8 @@ import '../../../providers/auth_provider.dart';
 import 'tabs/admin_creator_tab.dart';
 import 'tabs/admin_manga_tab.dart';
 import 'tabs/admin_tag_tab.dart';
+import 'tabs/admin_bundle_tab.dart';
+import 'tabs/admin_transaction_tab.dart';
 
 // ═══════════════════════════════════════════
 // COLORS
@@ -47,6 +49,8 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
     AdminMangaTab(),
     AdminCreatorTab(),
     AdminTagTab(),
+    AdminBundleTab(),
+    AdminTransactionTab(),
     _AdminSettingsTab(),
   ];
 
@@ -99,8 +103,10 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
           _drawerItem(icon: Icons.menu_book, title: 'Manga Series', index: 3),
           _drawerItem(icon: Icons.person, title: 'Creators', index: 4),
           _drawerItem(icon: Icons.local_offer, title: 'Tags', index: 5),
+          _drawerItem(icon: Icons.workspace_premium, title: 'Bundles', index: 6),
+          _drawerItem(icon: Icons.receipt_long, title: 'Transactions', index: 7),
           const Divider(color: AdminColors.outlineVariant),
-          _drawerItem(icon: Icons.settings, title: 'Settings', index: 6),
+          _drawerItem(icon: Icons.settings, title: 'Settings', index: 8),
         ],
       ),
     );

@@ -127,10 +127,15 @@ class AppRouter {
 
       case payment:
         final planArgs = args as Map<String, dynamic>? ?? {};
+        final bundleId = planArgs['bundle_id'] as String?;
         final planName = planArgs['plan_name'] as String? ?? 'Premium 1 Tháng';
         final price = planArgs['price'] as int? ?? 49000;
         return MaterialPageRoute(
-          builder: (_) => PaymentScreen(planName: planName, price: price),
+          builder: (_) => PaymentScreen(
+            bundleId: bundleId,
+            planName: planName,
+            price: price,
+          ),
           settings: settings,
         );
 
@@ -147,8 +152,13 @@ class AppRouter {
         final resultArgs = args as Map<String, dynamic>?;
         final success = resultArgs?['success'] as bool? ?? false;
         final method = resultArgs?['method'] as String? ?? 'momo';
+        final message = resultArgs?['message'] as String?;
         return MaterialPageRoute(
-          builder: (_) => PaymentResultScreen(success: success, method: method),
+          builder: (_) => PaymentResultScreen(
+            success: success,
+            method: method,
+            message: message,
+          ),
           settings: settings,
         );
 
