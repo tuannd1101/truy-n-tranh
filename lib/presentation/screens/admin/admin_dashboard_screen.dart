@@ -5,7 +5,6 @@ import '../../../core/routes/app_router.dart';
 import '../../../providers/auth_provider.dart';
 
 import 'tabs/admin_creator_tab.dart';
-import 'tabs/admin_genre_tab.dart';
 import 'tabs/admin_manga_tab.dart';
 import 'tabs/admin_tag_tab.dart';
 
@@ -47,7 +46,6 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
     _AdminContentTab(),
     AdminMangaTab(),
     AdminCreatorTab(),
-    AdminGenreTab(),
     AdminTagTab(),
     _AdminSettingsTab(),
   ];
@@ -100,10 +98,9 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
           ),
           _drawerItem(icon: Icons.menu_book, title: 'Manga Series', index: 3),
           _drawerItem(icon: Icons.person, title: 'Creators', index: 4),
-          _drawerItem(icon: Icons.category, title: 'Genres', index: 5),
-          _drawerItem(icon: Icons.local_offer, title: 'Tags', index: 6),
+          _drawerItem(icon: Icons.local_offer, title: 'Tags', index: 5),
           const Divider(color: AdminColors.outlineVariant),
-          _drawerItem(icon: Icons.settings, title: 'Settings', index: 7),
+          _drawerItem(icon: Icons.settings, title: 'Settings', index: 6),
         ],
       ),
     );

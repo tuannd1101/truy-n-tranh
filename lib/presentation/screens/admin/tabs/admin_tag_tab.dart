@@ -240,7 +240,7 @@ class _AdminTagTabState extends State<AdminTagTab> {
                         ),
                         dropdownColor: AdminColors.surfaceHigh,
                         style: const TextStyle(color: AdminColors.onSurface),
-                        items: ['THEME', 'GENRE', 'FORMAT'].map((String value) {
+                        items: ['THEME', 'GENRE', 'FORMAT', 'CONTENT', 'STYLE'].map((String value) {
                           return DropdownMenuItem<String>(
                             value: value,
                             child: Text(value),

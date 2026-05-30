@@ -60,16 +60,15 @@ public class MangaChapterController {
     }
 
     /**
-     * GET /api/mangas/{mangaId}/chapters/number/{chapterNumber}?lang=vi
-     * Fetch a specific chapter by number + language (returns full pages).
+     * GET /api/mangas/{mangaId}/chapters/number/{chapterNumber}
+     * Fetch a specific chapter by number (returns full pages).
      */
     @GetMapping("/number/{chapterNumber}")
     public ResponseEntity<BaseApiResponse<ChapterDetailResponseDTO>> getByNumber(
             @PathVariable String mangaId,
-            @PathVariable Double chapterNumber,
-            @RequestParam(defaultValue = "en") String lang) {
+            @PathVariable Double chapterNumber) {
         return ResponseEntity.ok(BaseApiResponse.ok("Success",
-                chapterService.findByMangaAndNumber(mangaId, lang, chapterNumber)));
+                chapterService.findByMangaAndNumber(mangaId, chapterNumber)));
     }
 
     // ── admin write endpoints ─────────────────────────────────────────────────

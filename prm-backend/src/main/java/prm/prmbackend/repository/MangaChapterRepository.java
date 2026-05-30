@@ -22,11 +22,8 @@ public interface MangaChapterRepository extends MongoRepository<MangaChapter, St
 
     Page<MangaChapter> findByMangaId(String mangaId, Pageable pageable);
 
-    Optional<MangaChapter> findByMangaIdAndLanguageAndChapterNumber(
-            String mangaId, String language, Double chapterNumber);
-
-    boolean existsByMangaIdAndLanguageAndChapterNumber(
-            String mangaId, String language, Double chapterNumber);
+    boolean existsByMangaIdAndChapterNumber(
+            String mangaId, Double chapterNumber);
 
     void deleteAllByMangaId(String mangaId);
 

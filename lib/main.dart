@@ -6,11 +6,11 @@ import 'core/routes/app_router.dart';
 import 'providers/auth_provider.dart';
 import 'data/network/api_service.dart';
 import 'data/network/tag_api_service.dart';
-import 'data/network/genre_api_service.dart';
 import 'data/network/creator_api_service.dart';
+import 'data/network/manga_api_service.dart';
 import 'providers/tag_provider.dart';
-import 'providers/genre_provider.dart';
 import 'providers/creator_provider.dart';
+import 'providers/manga_provider.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -40,19 +40,19 @@ class MyApp extends StatelessWidget {
           create: (context) => TagProvider(TagApiService(ApiService())),
           update: (_, tagApi, previous) => previous ?? TagProvider(tagApi),
         ),
-        ProxyProvider<ApiService, GenreApiService>(
-          update: (_, api, __) => GenreApiService(api),
-        ),
-        ChangeNotifierProxyProvider<GenreApiService, GenreProvider>(
-          create: (context) => GenreProvider(GenreApiService(ApiService())),
-          update: (_, genreApi, previous) => previous ?? GenreProvider(genreApi),
-        ),
         ProxyProvider<ApiService, CreatorApiService>(
           update: (_, api, __) => CreatorApiService(api),
         ),
         ChangeNotifierProxyProvider<CreatorApiService, CreatorProvider>(
           create: (context) => CreatorProvider(CreatorApiService(ApiService())),
           update: (_, creatorApi, previous) => previous ?? CreatorProvider(creatorApi),
+        ),
+        ProxyProvider<ApiService, MangaApiService>(
+          update: (_, api, __) => MangaApiService(api),
+        ),
+        ChangeNotifierProxyProvider<MangaApiService, MangaProvider>(
+          create: (context) => MangaProvider(MangaApiService(ApiService())),
+          update: (_, mangaApi, previous) => previous ?? MangaProvider(mangaApi),
         ),
       ],
       child: MaterialApp(

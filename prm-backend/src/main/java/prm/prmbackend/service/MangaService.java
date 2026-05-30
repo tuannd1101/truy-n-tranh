@@ -4,7 +4,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import prm.prmbackend.dto.request.MangaRequestDTO;
 import prm.prmbackend.dto.response.MangaResponseDTO;
-import prm.prmbackend.entity.enums.LicenseStatus;
 import prm.prmbackend.entity.enums.MangaStatus;
 
 import java.util.List;
@@ -26,19 +25,17 @@ public interface MangaService {
     /** Full-text / title search */
     Page<MangaResponseDTO> searchMangas(String query, Pageable pageable);
 
-    /** Multi-filter: any combination of genreId, tagId, status, licenseStatus */
+    /** Multi-filter: any combination of tagId, status */
     Page<MangaResponseDTO> getMangasByFilter(
-            String genreId,
             String tagId,
             MangaStatus status,
-            LicenseStatus licenseStatus,
             Pageable pageable);
 
     // ── admin / write methods ─────────────────────────────────────────────────
 
     Page<MangaResponseDTO> findAll(Pageable pageable);
 
-    Page<MangaResponseDTO> findByAuthor(String authorId, Pageable pageable);
+    Page<MangaResponseDTO> findByCreator(String creatorId, Pageable pageable);
 
     MangaResponseDTO create(MangaRequestDTO request);
 
