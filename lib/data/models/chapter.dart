@@ -5,6 +5,7 @@ class Chapter {
   final double chapterNumber;
   final List<String> pages;
   final bool isPremium;
+  final int? _serverTotalPages;
 
   Chapter({
     required this.id,
@@ -12,7 +13,8 @@ class Chapter {
     required this.chapterNumber,
     required this.pages,
     this.isPremium = false,
-  });
+    int? serverTotalPages,
+  }) : _serverTotalPages = serverTotalPages;
 
   /// Create Chapter from JSON
   factory Chapter.fromJson(Map<String, dynamic> json) {
@@ -25,6 +27,7 @@ class Chapter {
               .toList() ??
           [],
       isPremium: json['isPremium'] as bool? ?? false,
+      serverTotalPages: json['totalPages'] as int?,
     );
   }
 
@@ -53,11 +56,12 @@ class Chapter {
       chapterNumber: chapterNumber ?? this.chapterNumber,
       pages: pages ?? this.pages,
       isPremium: isPremium ?? this.isPremium,
+      serverTotalPages: _serverTotalPages,
     );
   }
 
   /// Get total number of pages
-  int get totalPages => pages.length;
+  int get totalPages => pages.isNotEmpty ? pages.length : (_serverTotalPages ?? 0);
 
   /// Get display title with chapter number
   String get displayTitle => 'Chapter $chapterNumber';

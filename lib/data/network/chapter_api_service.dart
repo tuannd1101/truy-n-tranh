@@ -18,6 +18,25 @@ class ChapterApiService {
       );
 
       if (baseResponse.data != null) {
+        return baseResponse.data as List<Chapter>;
+      }
+      return [];
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<Chapter> getChapterDetail(String mangaId, double chapterNumber) async {
+    try {
+      final baseUrl = _apiService.dio.options.baseUrl.replaceAll('/api/v1', '');
+      final response = await _apiService.dio.get('$baseUrl/api/mangas/$mangaId/chapters/number/$chapterNumber');
+      
+      final baseResponse = BaseApiResponse.fromJson(
+        response.data,
+        (data) => Chapter.fromJson(data as Map<String, dynamic>),
+      );
+
+      if (baseResponse.data != null) {
         return baseResponse.data!;
       }
       throw Exception(baseResponse.getErrorMessage());
@@ -31,6 +50,28 @@ class ChapterApiService {
       final baseUrl = _apiService.dio.options.baseUrl.replaceAll('/api/v1', '');
       final response = await _apiService.dio.post(
         '$baseUrl/api/mangas/$mangaId/chapters',
+        data: data,
+      );
+      
+      final baseResponse = BaseApiResponse.fromJson(
+        response.data,
+        (data) => Chapter.fromJson(data as Map<String, dynamic>),
+      );
+
+      if (baseResponse.data != null) {
+        return baseResponse.data!;
+      }
+      throw Exception(baseResponse.getErrorMessage());
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<Chapter> updateChapter(String mangaId, String chapterId, Map<String, dynamic> data) async {
+    try {
+      final baseUrl = _apiService.dio.options.baseUrl.replaceAll('/api/v1', '');
+      final response = await _apiService.dio.put(
+        '$baseUrl/api/mangas/$mangaId/chapters/$chapterId',
         data: data,
       );
       

@@ -33,6 +33,24 @@ class ChapterProvider with ChangeNotifier {
     }
   }
 
+  Future<Chapter?> getChapterDetail(String mangaId, double chapterNumber) async {
+    _isLoading = true;
+    _errorMessage = null;
+    notifyListeners();
+
+    try {
+      final chapter = await _apiService.getChapterDetail(mangaId, chapterNumber);
+      _isLoading = false;
+      notifyListeners();
+      return chapter;
+    } catch (e) {
+      _errorMessage = e.toString();
+      _isLoading = false;
+      notifyListeners();
+      return null;
+    }
+  }
+
   Future<bool> createChapter(String mangaId, Map<String, dynamic> data) async {
     _isLoading = true;
     _errorMessage = null;
@@ -42,6 +60,29 @@ class ChapterProvider with ChangeNotifier {
       final newChapter = await _apiService.createChapter(mangaId, data);
       _chapters.add(newChapter);
       _chapters.sort((a, b) => a.chapterNumber.compareTo(b.chapterNumber));
+      _isLoading = false;
+      notifyListeners();
+      return true;
+    } catch (e) {
+      _errorMessage = e.toString();
+      _isLoading = false;
+      notifyListeners();
+      return false;
+    }
+  }
+
+  Future<bool> updateChapter(String mangaId, String chapterId, Map<String, dynamic> data) async {
+    _isLoading = true;
+    _errorMessage = null;
+    notifyListeners();
+
+    try {
+      final updatedChapter = await _apiService.updateChapter(mangaId, chapterId, data);
+      final index = _chapters.indexWhere((c) => c.id == chapterId);
+      if (index != -1) {
+        _chapters[index] = updatedChapter;
+        _chapters.sort((a, b) => a.chapterNumber.compareTo(b.chapterNumber));
+      }
       _isLoading = false;
       notifyListeners();
       return true;

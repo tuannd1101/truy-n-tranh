@@ -122,13 +122,13 @@ public class MangaChapterServiceImpl implements MangaChapterService {
                 .orElseThrow(() -> new AppException(ErrorCode.CHAPTER_NOT_FOUND));
     }
 
-    /** Lightweight — no pages */
     private ChapterResponseDTO toChapterResponse(MangaChapter c) {
         return ChapterResponseDTO.builder()
                 .id(c.getId())
                 .mangaId(c.getMangaId())
                 .chapterNumber(c.getChapterNumber())
                 .isPremium(c.getIsPremium())
+                .totalPages(c.getPages() != null ? c.getPages().size() : 0)
                 .build();
     }
 

@@ -21,4 +21,5 @@ public class ChapterResponseDTO {
     private String mangaId;
     private Double chapterNumber;
     private Boolean isPremium;
+    private Integer totalPages;
 }

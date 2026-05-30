@@ -41,36 +41,39 @@ public class DataInitializer implements CommandLineRunner {
 
         @Override
         public void run(String... args) {
-                log.info("DataInitializer starting...");
+                // log.info("DataInitializer starting...");
 
-                // Reset database for structural changes (pages: Object -> String, Genre merged to Tag)
-                boolean forceReset = Boolean.parseBoolean(environment.getProperty("FORCE_RESET", "true"));
-                if (forceReset) {
-                        log.info("FORCE_RESET is true. Clearing old data collections for structure compatibility...");
-                        try {
-                                chapterRepository.deleteAll();
-                                mangaRepository.deleteAll();
-                                tagRepository.deleteAll();
-                                creatorRepository.deleteAll();
-                                mongoTemplate.dropCollection("genres");
-                                mongoTemplate.dropCollection("genre");
-                                log.info("Database collections cleared successfully.");
-                        } catch (Exception e) {
-                                log.error("Error clearing database: {}", e.getMessage());
-                        }
-                }
+                // // Reset database for structural changes (pages: Object -> String, Genre
+                // merged to Tag)
+                // boolean forceReset =
+                // Boolean.parseBoolean(environment.getProperty("FORCE_RESET", "true"));
+                // if (forceReset) {
+                // log.info("FORCE_RESET is true. Clearing old data collections for structure
+                // compatibility...");
+                // try {
+                // chapterRepository.deleteAll();
+                // mangaRepository.deleteAll();
+                // tagRepository.deleteAll();
+                // creatorRepository.deleteAll();
+                // mongoTemplate.dropCollection("genres");
+                // mongoTemplate.dropCollection("genre");
+                // log.info("Database collections cleared successfully.");
+                // } catch (Exception e) {
+                // log.error("Error clearing database: {}", e.getMessage());
+                // }
+                // }
 
-                // Roles always seeded (safe, idempotent)
-                seedRoles();
+                // // Roles always seeded (safe, idempotent)
+                // seedRoles();
 
-                // Seed tags, creators, and mangas
-                log.info("Seeding tags, creators, and mangas...");
-                Map<String, Tag> tags = seedTags();
-                Map<String, Creator> creators = seedCreators();
-                seedLicensedMangas(tags, creators);
-                seedDemoMangas(tags, creators);
+                // // Seed tags, creators, and mangas
+                // log.info("Seeding tags, creators, and mangas...");
+                // Map<String, Tag> tags = seedTags();
+                // Map<String, Creator> creators = seedCreators();
+                // seedLicensedMangas(tags, creators);
+                // seedDemoMangas(tags, creators);
 
-                log.info("DataInitializer completed.");
+                // log.info("DataInitializer completed.");
         }
 
         // ── roles ─────────────────────────────────────────────────────────────────

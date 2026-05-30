@@ -37,18 +37,19 @@ class UploadApiService {
 
   Future<List<String>> uploadImages(List<XFile> imageFiles, {String folder = 'prm_manga_pages'}) async {
     try {
-      final List<MultipartFile> multipartFiles = [];
-      for (var file in imageFiles) {
-        multipartFiles.add(await MultipartFile.fromFile(
-          file.path,
-          filename: file.name,
-        ));
-      }
-
       final formData = FormData.fromMap({
-        'files': multipartFiles,
         'folder': folder,
       });
+
+      for (var file in imageFiles) {
+        formData.files.add(MapEntry(
+          'files',
+          await MultipartFile.fromFile(
+            file.path,
+            filename: file.name,
+          ),
+        ));
+      }
 
       final response = await _apiService.dio.post(
         '/uploads/images',
