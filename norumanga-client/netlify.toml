@@ -11,7 +11,7 @@
     git clone https://github.com/flutter/flutter.git -b stable --depth 1 _flutter && \
     export PATH="$PATH:`pwd`/_flutter/bin" && \
     flutter pub get && \
-    flutter build web --release --dart-define=API_BASE=https://CHANGE_ME.onrender.com
+    flutter build web --release --dart-define=API_BASE=https://truy-n-tranh-awei.onrender.com
   """
 
 # Flutter web dùng client-side routing → mọi đường dẫn trả về index.html
