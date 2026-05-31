@@ -356,7 +356,7 @@ class _SpeedLinesPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = AppColors.primaryContainer.withOpacity(0.04)
+      ..color = AppColors.primaryContainer.withValues(alpha: 0.04)
       ..strokeWidth = 1;
     const count = 30;
     final cx = size.width * 0.5;
@@ -382,7 +382,7 @@ class _SpeedLinesPainter extends CustomPainter {
 class _HalftonePainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
-    final paint = Paint()..color = Colors.white.withOpacity(0.04);
+    final paint = Paint()..color = Colors.white.withValues(alpha: 0.04);
     const spacing = 8.0;
     for (double x = 0; x < size.width; x += spacing) {
       for (double y = 0; y < size.height; y += spacing) {

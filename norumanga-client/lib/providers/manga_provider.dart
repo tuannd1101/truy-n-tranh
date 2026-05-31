@@ -26,6 +26,12 @@ class MangaProvider extends ChangeNotifier {
   bool get isLoading => _isLoading;
   String? get errorMessage => _errorMessage;
 
+  // Featured (most viewed) and latest sections for the home screen.
+  List<Manga> _recommendedMangas = [];
+  List<Manga> _latestMangas = [];
+  List<Manga> get recommendedMangas => _recommendedMangas;
+  List<Manga> get latestMangas => _latestMangas;
+
   int get currentPage => _currentPage + 1; // Expose 1-indexed to UI
   int get totalPages => _totalPages;
   int get totalElements => _totalElements;
@@ -58,6 +64,23 @@ class MangaProvider extends ChangeNotifier {
     } finally {
       _isLoading = false;
       notifyListeners();
+    }
+  }
+
+  /// Loads the recommended (most viewed) and latest manga used by the home
+  /// screen's featured and "recently updated" sections. Falls back silently to
+  /// the paginated list if these endpoints fail.
+  Future<void> fetchHomeSections() async {
+    try {
+      final results = await Future.wait([
+        _apiService.getRecommendedMangas(),
+        _apiService.getLatestMangas(),
+      ]);
+      _recommendedMangas = results[0];
+      _latestMangas = results[1];
+      notifyListeners();
+    } catch (_) {
+      // Non-fatal: the home screen still shows the generic paginated list.
     }
   }
 

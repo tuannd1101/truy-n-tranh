@@ -4,11 +4,7 @@ import 'package:prm393_project/data/models/user.dart';
 import 'package:prm393_project/data/repositories/auth_repository.dart';
 import 'package:prm393_project/data/network/api_exception.dart';
 
-enum AuthStatus {
-  authenticated,
-  unauthenticated,
-  loading,
-}
+enum AuthStatus { authenticated, unauthenticated, loading }
 
 class AuthProvider extends ChangeNotifier {
   final AuthRepository _authRepository = AuthRepository();
@@ -25,7 +21,8 @@ class AuthProvider extends ChangeNotifier {
   bool get isGuest => _currentUser == null;
   bool get isPremium => _currentUser?.isPremium ?? false;
   bool get isFree => _currentUser?.isFree ?? false;
-  bool get isAdminOrManager => (_currentUser?.isAdmin ?? false) || (_currentUser?.isManager ?? false);
+  bool get isAdminOrManager =>
+      (_currentUser?.isAdmin ?? false) || (_currentUser?.isManager ?? false);
 
   void _setLoading() {
     _status = AuthStatus.loading;
@@ -38,13 +35,12 @@ class AuthProvider extends ChangeNotifier {
 
     try {
       final token = await _authRepository.login(email, password);
-      
+
       // Save token
       await _storage.write(key: 'jwt_token', value: token);
-      
+
       // Fetch user info
       await fetchCurrentUser();
-      
     } catch (e) {
       _status = AuthStatus.unauthenticated;
       if (e is ApiException) {
@@ -62,7 +58,7 @@ class AuthProvider extends ChangeNotifier {
 
     try {
       await _authRepository.register(name, email, password);
-      
+
       _status = AuthStatus.unauthenticated;
       _errorMessage = null;
       notifyListeners();
@@ -76,6 +72,17 @@ class AuthProvider extends ChangeNotifier {
       notifyListeners();
       rethrow;
     }
+  }
+
+  /// Requests a password reset email. Returns the server message on success,
+  /// throws ApiException on failure.
+  Future<String> forgotPassword(String email) async {
+    return _authRepository.forgotPassword(email);
+  }
+
+  /// Resets the password with the emailed token. Returns the server message.
+  Future<String> resetPassword(String token, String newPassword) async {
+    return _authRepository.resetPassword(token, newPassword);
   }
 
   Future<void> fetchCurrentUser() async {

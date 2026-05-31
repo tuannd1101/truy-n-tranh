@@ -12,19 +12,19 @@ class AuthRepository {
     try {
       final response = await _apiService.dio.post(
         ApiConstants.login,
-        data: {
-          'email': email,
-          'password': password,
-        },
+        data: {'email': email, 'password': password},
       );
 
-      final baseResponse = BaseApiResponse.fromJson(response.data, (json) => json as Map<String, dynamic>);
-      
+      final baseResponse = BaseApiResponse.fromJson(
+        response.data,
+        (json) => json as Map<String, dynamic>,
+      );
+
       final data = baseResponse.data;
       if (data != null && data.containsKey('token')) {
         return data['token'] as String;
       }
-      
+
       throw ApiException(message: "Không lấy được token đăng nhập.");
     } on DioException catch (e) {
       if (e.error is ApiException) {
@@ -34,18 +34,21 @@ class AuthRepository {
     }
   }
 
-  Future<String> register(String fullName, String email, String password) async {
+  Future<String> register(
+    String fullName,
+    String email,
+    String password,
+  ) async {
     try {
       final response = await _apiService.dio.post(
         ApiConstants.register,
-        data: {
-          'fullName': fullName,
-          'email': email,
-          'password': password,
-        },
+        data: {'fullName': fullName, 'email': email, 'password': password},
       );
 
-      final baseResponse = BaseApiResponse.fromJson(response.data, (json) => json as String?);
+      final baseResponse = BaseApiResponse.fromJson(
+        response.data,
+        (json) => json as String?,
+      );
       return baseResponse.message;
     } on DioException catch (e) {
       if (e.error is ApiException) {
@@ -55,19 +58,60 @@ class AuthRepository {
     }
   }
 
+  /// Requests a password reset. Backend emails reset instructions and returns
+  /// a confirmation message.
+  Future<String> forgotPassword(String email) async {
+    try {
+      final response = await _apiService.dio.post(
+        ApiConstants.forgotPassword,
+        data: {'email': email},
+      );
+      final baseResponse = BaseApiResponse.fromJson(
+        response.data,
+        (json) => json as String?,
+      );
+      return baseResponse.message;
+    } on DioException catch (e) {
+      if (e.error is ApiException) {
+        throw e.error as ApiException;
+      }
+      throw ApiException(message: "Lỗi gửi yêu cầu đặt lại mật khẩu.");
+    }
+  }
+
+  /// Resets the password using the token sent to the user's email.
+  Future<String> resetPassword(String token, String newPassword) async {
+    try {
+      final response = await _apiService.dio.post(
+        ApiConstants.resetPassword,
+        data: {'token': token, 'newPassword': newPassword},
+      );
+      final baseResponse = BaseApiResponse.fromJson(
+        response.data,
+        (json) => json as String?,
+      );
+      return baseResponse.message;
+    } on DioException catch (e) {
+      if (e.error is ApiException) {
+        throw e.error as ApiException;
+      }
+      throw ApiException(message: "Lỗi đặt lại mật khẩu.");
+    }
+  }
+
   Future<User> getCurrentUser() async {
     try {
       final response = await _apiService.dio.get(ApiConstants.getMe);
-      
+
       final baseResponse = BaseApiResponse.fromJson(
-        response.data, 
-        (json) => User.fromJson(json as Map<String, dynamic>)
+        response.data,
+        (json) => User.fromJson(json as Map<String, dynamic>),
       );
 
       if (baseResponse.data != null) {
         return baseResponse.data!;
       }
-      
+
       throw ApiException(message: "Không thể lấy thông tin người dùng.");
     } on DioException catch (e) {
       if (e.error is ApiException) {

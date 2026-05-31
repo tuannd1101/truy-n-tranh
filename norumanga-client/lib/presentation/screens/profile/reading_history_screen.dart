@@ -30,7 +30,10 @@ class _ReadingHistoryScreenState extends State<ReadingHistoryScreen> {
         builder: (context, provider, child) {
           if (provider.isLoading && provider.history.isEmpty) {
             return const Center(
-                child: CircularProgressIndicator(color: AppColors.primaryContainer));
+              child: CircularProgressIndicator(
+                color: AppColors.primaryContainer,
+              ),
+            );
           }
           if (provider.errorMessage != null && provider.history.isEmpty) {
             return _buildError(provider);
@@ -73,7 +76,10 @@ class _ReadingHistoryScreenState extends State<ReadingHistoryScreen> {
       ),
       actions: [
         IconButton(
-          icon: const Icon(Icons.delete_sweep, color: AppColors.primaryContainer),
+          icon: const Icon(
+            Icons.delete_sweep,
+            color: AppColors.primaryContainer,
+          ),
           onPressed: _showClearAllDialog,
         ),
       ],
@@ -98,8 +104,11 @@ class _ReadingHistoryScreenState extends State<ReadingHistoryScreen> {
         child: InkWell(
           onTap: () {
             if (manga != null) {
-              Navigator.pushNamed(context, AppRouter.mangaDetail,
-                  arguments: manga.id);
+              Navigator.pushNamed(
+                context,
+                AppRouter.mangaDetail,
+                arguments: manga.id,
+              );
             }
           },
           child: Padding(
@@ -114,9 +123,15 @@ class _ReadingHistoryScreenState extends State<ReadingHistoryScreen> {
                     border: Border.all(color: AppColors.border, width: 2),
                   ),
                   child: coverUrl.isNotEmpty
-                      ? Image.network(coverUrl, fit: BoxFit.cover,
-                          errorBuilder: (_, __, ___) => const Icon(Icons.broken_image,
-                              color: AppColors.outline))
+                      ? Image.network(
+                          coverUrl,
+                          fit: BoxFit.cover,
+                          filterQuality: FilterQuality.high,
+                          errorBuilder: (_, __, ___) => const Icon(
+                            Icons.broken_image,
+                            color: AppColors.outline,
+                          ),
+                        )
                       : const Icon(Icons.image, color: AppColors.outline),
                 ),
                 const SizedBox(width: 16),
@@ -140,8 +155,12 @@ class _ReadingHistoryScreenState extends State<ReadingHistoryScreen> {
                       if (chapterLabel.isNotEmpty)
                         Container(
                           padding: const EdgeInsets.symmetric(
-                              horizontal: 8, vertical: 4),
-                          color: AppColors.secondaryContainer.withValues(alpha: 0.2),
+                            horizontal: 8,
+                            vertical: 4,
+                          ),
+                          color: AppColors.secondaryContainer.withValues(
+                            alpha: 0.2,
+                          ),
                           child: Text(
                             chapterLabel,
                             style: const TextStyle(
@@ -154,8 +173,11 @@ class _ReadingHistoryScreenState extends State<ReadingHistoryScreen> {
                       const SizedBox(height: 8),
                       Row(
                         children: [
-                          const Icon(Icons.access_time,
-                              color: AppColors.onSurfaceVariant, size: 14),
+                          const Icon(
+                            Icons.access_time,
+                            color: AppColors.onSurfaceVariant,
+                            size: 14,
+                          ),
                           const SizedBox(width: 4),
                           Text(
                             _relativeTime(entry.lastReadAt),
@@ -186,14 +208,17 @@ class _ReadingHistoryScreenState extends State<ReadingHistoryScreen> {
           children: [
             const Icon(Icons.error_outline, size: 56, color: AppColors.error),
             const SizedBox(height: 16),
-            Text(provider.errorMessage ?? 'Đã xảy ra lỗi',
-                textAlign: TextAlign.center,
-                style: const TextStyle(color: AppColors.onSurface)),
+            Text(
+              provider.errorMessage ?? 'Đã xảy ra lỗi',
+              textAlign: TextAlign.center,
+              style: const TextStyle(color: AppColors.onSurface),
+            ),
             const SizedBox(height: 16),
             ElevatedButton(
               onPressed: () => provider.fetchHistory(),
               style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.primaryContainer),
+                backgroundColor: AppColors.primaryContainer,
+              ),
               child: const Text('THỬ LẠI'),
             ),
           ],
@@ -269,10 +294,13 @@ class _ReadingHistoryScreenState extends State<ReadingHistoryScreen> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(dialogContext),
-            child: const Text('HỦY',
-                style: TextStyle(
-                    color: AppColors.onSurfaceVariant,
-                    fontWeight: FontWeight.bold)),
+            child: const Text(
+              'HỦY',
+              style: TextStyle(
+                color: AppColors.onSurfaceVariant,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
           ),
           ElevatedButton(
             onPressed: () async {
@@ -282,7 +310,9 @@ class _ReadingHistoryScreenState extends State<ReadingHistoryScreen> {
             style: ElevatedButton.styleFrom(
               backgroundColor: AppColors.errorContainer,
               foregroundColor: AppColors.error,
-              shape: const RoundedRectangleBorder(borderRadius: BorderRadius.zero),
+              shape: const RoundedRectangleBorder(
+                borderRadius: BorderRadius.zero,
+              ),
             ),
             child: const Text('XÓA'),
           ),

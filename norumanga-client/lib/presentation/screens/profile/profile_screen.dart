@@ -19,10 +19,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   void initState() {
     super.initState();
-    SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-      statusBarColor: Colors.transparent,
-      statusBarIconBrightness: Brightness.light,
-    ));
+    SystemChrome.setSystemUIOverlayStyle(
+      const SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: Brightness.light,
+      ),
+    );
     // Refresh profile from /api/v1/auth/me
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<AuthProvider>().fetchCurrentUser();
@@ -39,7 +41,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
         builder: (context, auth, child) {
           if (auth.status == AuthStatus.loading && auth.currentUser == null) {
             return const Center(
-                child: CircularProgressIndicator(color: AppColors.primaryContainer));
+              child: CircularProgressIndicator(
+                color: AppColors.primaryContainer,
+              ),
+            );
           }
 
           final user = auth.currentUser;
@@ -80,14 +85,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
         children: [
           const Icon(Icons.person_off, size: 64, color: AppColors.outline),
           const SizedBox(height: 16),
-          const Text('Bạn chưa đăng nhập',
-              style: TextStyle(color: AppColors.onSurfaceVariant)),
+          const Text(
+            'Bạn chưa đăng nhập',
+            style: TextStyle(color: AppColors.onSurfaceVariant),
+          ),
           const SizedBox(height: 16),
           ElevatedButton(
             onPressed: () => Navigator.pushNamedAndRemoveUntil(
-                context, AppRouter.login, (r) => false),
-            style:
-                ElevatedButton.styleFrom(backgroundColor: AppColors.primaryContainer),
+              context,
+              AppRouter.login,
+              (r) => false,
+            ),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.primaryContainer,
+            ),
             child: const Text('ĐĂNG NHẬP'),
           ),
         ],
@@ -117,8 +128,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
               child: user.avatarUrl != null && user.avatarUrl!.isNotEmpty
                   ? ClipOval(
-                      child: Image.network(user.avatarUrl!, fit: BoxFit.cover,
-                          errorBuilder: (_, __, ___) => _avatarFallback(user)),
+                      child: Image.network(
+                        user.avatarUrl!,
+                        fit: BoxFit.cover,
+                        filterQuality: FilterQuality.high,
+                        errorBuilder: (_, __, ___) => _avatarFallback(user),
+                      ),
                     )
                   : _avatarFallback(user),
             ),
@@ -160,8 +175,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Widget _avatarFallback(User user) {
-    final initial =
-        user.name.trim().isNotEmpty ? user.name.trim()[0].toUpperCase() : '?';
+    final initial = user.name.trim().isNotEmpty
+        ? user.name.trim()[0].toUpperCase()
+        : '?';
     return Center(
       child: Text(
         initial,
@@ -176,7 +192,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   Widget _buildPremiumStatus(User user) {
     final expiry = user.premiumExpiryDate;
-    final isActivePremium = user.isPremium && expiry != null && expiry.isAfter(DateTime.now());
+    final isActivePremium =
+        user.isPremium && expiry != null && expiry.isAfter(DateTime.now());
 
     if (isActivePremium) {
       final remaining = expiry.difference(DateTime.now());
@@ -192,7 +209,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
         decoration: BoxDecoration(
           color: const Color(0xFF1B1B23),
           border: Border.all(color: AppColors.gold, width: 2),
-          boxShadow: const [BoxShadow(color: AppColors.gold, offset: Offset(4, 4))],
+          boxShadow: const [
+            BoxShadow(color: AppColors.gold, offset: Offset(4, 4)),
+          ],
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -215,7 +234,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
             const SizedBox(height: 12),
             Row(
               children: [
-                const Icon(Icons.timer, color: AppColors.onSurfaceVariant, size: 16),
+                const Icon(
+                  Icons.timer,
+                  color: AppColors.onSurfaceVariant,
+                  size: 16,
+                ),
                 const SizedBox(width: 8),
                 Text(
                   remainingText,
@@ -230,7 +253,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
             const SizedBox(height: 4),
             Text(
               'Hết hạn: ${_formatDate(expiry)}',
-              style: const TextStyle(color: AppColors.onSurfaceVariant, fontSize: 12),
+              style: const TextStyle(
+                color: AppColors.onSurfaceVariant,
+                fontSize: 12,
+              ),
             ),
           ],
         ),
@@ -243,7 +269,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
       decoration: BoxDecoration(
         color: const Color(0xFF1B1B23),
         border: Border.all(color: AppColors.gold, width: 2),
-        boxShadow: const [BoxShadow(color: AppColors.gold, offset: Offset(4, 4))],
+        boxShadow: const [
+          BoxShadow(color: AppColors.gold, offset: Offset(4, 4)),
+        ],
       ),
       child: MaterialButton(
         onPressed: () async {
@@ -287,6 +315,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
           _buildMenuItem(Icons.favorite_border, 'TRUYỆN YÊU THÍCH', () {
             Navigator.pushNamed(context, AppRouter.favorites);
           }),
+          Divider(color: Colors.white.withValues(alpha: 0.1), height: 1),
+          _buildMenuItem(Icons.receipt_long, 'LỊCH SỬ GIAO DỊCH', () {
+            Navigator.pushNamed(context, AppRouter.paymentHistory);
+          }),
         ],
       ),
     );
@@ -329,14 +361,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
       decoration: BoxDecoration(
         color: const Color(0xFF1B1B23),
         border: Border.all(color: Colors.redAccent, width: 2),
-        boxShadow: const [BoxShadow(color: Colors.redAccent, offset: Offset(4, 4))],
+        boxShadow: const [
+          BoxShadow(color: Colors.redAccent, offset: Offset(4, 4)),
+        ],
       ),
       child: MaterialButton(
         onPressed: () async {
           await auth.logout();
           if (context.mounted) {
             Navigator.pushNamedAndRemoveUntil(
-                context, AppRouter.login, (route) => false);
+              context,
+              AppRouter.login,
+              (route) => false,
+            );
           }
         },
         padding: const EdgeInsets.symmetric(vertical: 16),

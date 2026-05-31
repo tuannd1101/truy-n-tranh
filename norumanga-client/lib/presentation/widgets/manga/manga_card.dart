@@ -38,6 +38,7 @@ class MangaCard extends StatelessWidget {
                       coverUrl,
                       width: double.infinity,
                       fit: BoxFit.cover,
+                      filterQuality: FilterQuality.high,
                       errorBuilder: (context, error, stackTrace) {
                         return Container(
                           color: AppColors.greyLight,
@@ -77,13 +78,13 @@ class MangaCard extends StatelessWidget {
                         color: isPremium
                             ? AppColors.tagPremium
                             : AppColors.tagFree,
-                        borderRadius: BorderRadius.circular(AppDimensions.radiusS),
+                        borderRadius: BorderRadius.circular(
+                          AppDimensions.radiusS,
+                        ),
                       ),
                       child: Text(
                         isPremium ? 'Premium' : 'Free',
-                        style: AppTextStyles.tag.copyWith(
-                          fontSize: 10,
-                        ),
+                        style: AppTextStyles.tag.copyWith(fontSize: 10),
                       ),
                     ),
                   ),

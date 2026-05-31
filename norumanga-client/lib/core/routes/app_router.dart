@@ -12,6 +12,7 @@ class AppRouter {
   static const String profile = '/profile';
   static const String login = '/login';
   static const String register = '/register';
+  static const String forgotPassword = '/forgot-password';
   static const String subscription = '/subscription';
   static const String payment = '/payment';
   static const String paymentWebView = '/payment-webview';
@@ -20,6 +21,7 @@ class AppRouter {
   static const String adminDashboard = '/admin';
   static const String readingHistory = '/reading-history';
   static const String favorites = '/favorites';
+  static const String paymentHistory = '/payment-history';
 
   /// Generate routes based on route settings
   static Route<dynamic> generateRoute(RouteSettings settings) {
@@ -68,10 +70,13 @@ class AppRouter {
       case reading:
         final readingArgs = args as Map<String, dynamic>?;
         final mangaId = readingArgs?['mangaId'] as String? ?? '';
-        final chapterNumber = (readingArgs?['chapterNumber'] as num?)?.toDouble() ?? 1.0;
+        final chapterNumber =
+            (readingArgs?['chapterNumber'] as num?)?.toDouble() ?? 1.0;
         return MaterialPageRoute(
-          builder: (_) =>
-              MangaReadingScreen(mangaId: mangaId, chapterNumber: chapterNumber),
+          builder: (_) => MangaReadingScreen(
+            mangaId: mangaId,
+            chapterNumber: chapterNumber,
+          ),
           settings: settings,
         );
 
@@ -93,6 +98,12 @@ class AppRouter {
           settings: settings,
         );
 
+      case paymentHistory:
+        return MaterialPageRoute(
+          builder: (_) => const PaymentHistoryScreen(),
+          settings: settings,
+        );
+
       case login:
         return MaterialPageRoute(
           builder: (_) => const LoginScreen(),
@@ -102,6 +113,12 @@ class AppRouter {
       case register:
         return MaterialPageRoute(
           builder: (_) => const RegisterScreen(),
+          settings: settings,
+        );
+
+      case forgotPassword:
+        return MaterialPageRoute(
+          builder: (_) => const ForgotPasswordScreen(),
           settings: settings,
         );
 
@@ -126,11 +143,9 @@ class AppRouter {
         );
 
       case paymentWebView:
-        final webViewArgs = args as Map<String, dynamic>?;
-        final url = webViewArgs?['url'] as String? ?? '';
-        final method = webViewArgs?['method'];
         return MaterialPageRoute(
-          builder: (_) => const PlaceholderScreen(screenName: 'Payment WebView'),
+          builder: (_) =>
+              const PlaceholderScreen(screenName: 'Payment WebView'),
           settings: settings,
         );
 

@@ -24,7 +24,7 @@ class MangaReadingScreen extends StatefulWidget {
 class _MangaReadingScreenState extends State<MangaReadingScreen> {
   final ScrollController _scrollController = ScrollController();
   bool _isUIVisible = false;
-  
+
   Chapter? _chapter;
   bool _isLoading = true;
 
@@ -33,20 +33,23 @@ class _MangaReadingScreenState extends State<MangaReadingScreen> {
     super.initState();
     // Bật chế độ Fullscreen
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
-    
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _fetchChapter();
       // Record reading history (fire-and-forget).
       context.read<ReadingHistoryProvider>().record(
-            mangaId: widget.mangaId,
-            chapterNumber: widget.chapterNumber,
-          );
+        mangaId: widget.mangaId,
+        chapterNumber: widget.chapterNumber,
+      );
     });
   }
 
   Future<void> _fetchChapter() async {
     final chapterProvider = context.read<ChapterProvider>();
-    final chapter = await chapterProvider.getChapterDetail(widget.mangaId, widget.chapterNumber);
+    final chapter = await chapterProvider.getChapterDetail(
+      widget.mangaId,
+      widget.chapterNumber,
+    );
     if (mounted) {
       setState(() {
         _chapter = chapter;
@@ -73,12 +76,14 @@ class _MangaReadingScreenState extends State<MangaReadingScreen> {
   Widget build(BuildContext context) {
     final chapterProvider = context.watch<ChapterProvider>();
     final chapters = chapterProvider.chapters;
-    
-    final currentIndex = chapters.indexWhere((c) => c.chapterNumber == widget.chapterNumber);
-    
+
+    final currentIndex = chapters.indexWhere(
+      (c) => c.chapterNumber == widget.chapterNumber,
+    );
+
     double? prevChapterNum;
     double? nextChapterNum;
-    
+
     if (currentIndex > 0) {
       prevChapterNum = chapters[currentIndex - 1].chapterNumber;
     }
@@ -89,7 +94,9 @@ class _MangaReadingScreenState extends State<MangaReadingScreen> {
     if (_isLoading) {
       return const Scaffold(
         backgroundColor: Colors.black,
-        body: Center(child: CircularProgressIndicator(color: AppColors.primaryContainer)),
+        body: Center(
+          child: CircularProgressIndicator(color: AppColors.primaryContainer),
+        ),
       );
     }
 
@@ -100,14 +107,21 @@ class _MangaReadingScreenState extends State<MangaReadingScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(Icons.broken_image, color: AppColors.outline, size: 64),
+              const Icon(
+                Icons.broken_image,
+                color: AppColors.outline,
+                size: 64,
+              ),
               const SizedBox(height: 16),
-              const Text('Chương này không có nội dung', style: TextStyle(color: AppColors.onSurfaceVariant)),
+              const Text(
+                'Chương này không có nội dung',
+                style: TextStyle(color: AppColors.onSurfaceVariant),
+              ),
               const SizedBox(height: 16),
               ElevatedButton(
                 onPressed: () => Navigator.pop(context),
                 child: const Text('Quay lại'),
-              )
+              ),
             ],
           ),
         ),
@@ -132,19 +146,28 @@ class _MangaReadingScreenState extends State<MangaReadingScreen> {
                   _chapter!.pages[index],
                   fit: BoxFit.fitWidth, // Webtoon style fits width
                   width: double.infinity,
+                  filterQuality: FilterQuality.high,
                   loadingBuilder: (context, child, loadingProgress) {
                     if (loadingProgress == null) return child;
                     return Container(
                       height: MediaQuery.of(context).size.height * 0.4,
                       color: Colors.black,
-                      child: const Center(child: CircularProgressIndicator(color: AppColors.primaryContainer)),
+                      child: const Center(
+                        child: CircularProgressIndicator(
+                          color: AppColors.primaryContainer,
+                        ),
+                      ),
                     );
                   },
                   errorBuilder: (context, error, stackTrace) => Container(
                     height: MediaQuery.of(context).size.height * 0.4,
                     color: Colors.black,
                     child: const Center(
-                      child: Icon(Icons.broken_image, color: AppColors.error, size: 64),
+                      child: Icon(
+                        Icons.broken_image,
+                        color: AppColors.error,
+                        size: 64,
+                      ),
                     ),
                   ),
                 );
@@ -156,7 +179,8 @@ class _MangaReadingScreenState extends State<MangaReadingScreen> {
           if (_isUIVisible) _buildTopOverlay(),
 
           // Bottom Overlay (Page Indicator & Slider)
-          if (_isUIVisible) _buildBottomOverlay(totalPages, prevChapterNum, nextChapterNum),
+          if (_isUIVisible)
+            _buildBottomOverlay(totalPages, prevChapterNum, nextChapterNum),
         ],
       ),
     );
@@ -173,10 +197,7 @@ class _MangaReadingScreenState extends State<MangaReadingScreen> {
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: [
-              Colors.black.withOpacity(0.9),
-              Colors.transparent,
-            ],
+            colors: [Colors.black.withValues(alpha: 0.9), Colors.transparent],
           ),
         ),
         child: SafeArea(
@@ -190,7 +211,7 @@ class _MangaReadingScreenState extends State<MangaReadingScreen> {
                 child: Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: AppColors.background.withOpacity(0.8),
+                    color: AppColors.background.withValues(alpha: 0.8),
                     border: Border.all(color: AppColors.outline),
                   ),
                   child: const Icon(
@@ -220,11 +241,12 @@ class _MangaReadingScreenState extends State<MangaReadingScreen> {
               ),
               // Settings Button
               GestureDetector(
-                onTap: () {}, // Mở popup cài đặt đọc truyện (độ sáng, chiều cuộn)
+                onTap:
+                    () {}, // Mở popup cài đặt đọc truyện (độ sáng, chiều cuộn)
                 child: Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: AppColors.background.withOpacity(0.8),
+                    color: AppColors.background.withValues(alpha: 0.8),
                     border: Border.all(color: AppColors.outline),
                   ),
                   child: const Icon(
@@ -241,7 +263,11 @@ class _MangaReadingScreenState extends State<MangaReadingScreen> {
     );
   }
 
-  Widget _buildBottomOverlay(int totalPages, double? prevChapterNum, double? nextChapterNum) {
+  Widget _buildBottomOverlay(
+    int totalPages,
+    double? prevChapterNum,
+    double? nextChapterNum,
+  ) {
     return Positioned(
       bottom: 0,
       left: 0,
@@ -252,42 +278,71 @@ class _MangaReadingScreenState extends State<MangaReadingScreen> {
           gradient: LinearGradient(
             begin: Alignment.bottomCenter,
             end: Alignment.topCenter,
-            colors: [
-              Colors.black.withOpacity(0.95),
-              Colors.transparent,
-            ],
+            colors: [Colors.black.withValues(alpha: 0.95), Colors.transparent],
           ),
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             TextButton.icon(
-              onPressed: prevChapterNum == null ? null : () {
-                Navigator.pushReplacementNamed(
-                  context,
-                  AppRouter.reading,
-                  arguments: {
-                    'mangaId': widget.mangaId,
-                    'chapterNumber': prevChapterNum,
-                  },
-                );
-              },
-              icon: Icon(Icons.skip_previous, color: prevChapterNum == null ? AppColors.outline : AppColors.onSurfaceVariant),
-              label: Text('CHƯƠNG TRƯỚC', style: TextStyle(color: prevChapterNum == null ? AppColors.outline : AppColors.onSurfaceVariant, fontFamily: 'Syne', fontWeight: FontWeight.bold)),
+              onPressed: prevChapterNum == null
+                  ? null
+                  : () {
+                      Navigator.pushReplacementNamed(
+                        context,
+                        AppRouter.reading,
+                        arguments: {
+                          'mangaId': widget.mangaId,
+                          'chapterNumber': prevChapterNum,
+                        },
+                      );
+                    },
+              icon: Icon(
+                Icons.skip_previous,
+                color: prevChapterNum == null
+                    ? AppColors.outline
+                    : AppColors.onSurfaceVariant,
+              ),
+              label: Text(
+                'CHƯƠNG TRƯỚC',
+                style: TextStyle(
+                  color: prevChapterNum == null
+                      ? AppColors.outline
+                      : AppColors.onSurfaceVariant,
+                  fontFamily: 'Syne',
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
             ),
             TextButton.icon(
-              onPressed: nextChapterNum == null ? null : () {
-                Navigator.pushReplacementNamed(
-                  context,
-                  AppRouter.reading,
-                  arguments: {
-                    'mangaId': widget.mangaId,
-                    'chapterNumber': nextChapterNum,
-                  },
-                );
-              },
-              icon: Icon(Icons.skip_next, color: nextChapterNum == null ? AppColors.outline : AppColors.primaryContainer),
-              label: Text('CHƯƠNG TIẾP', style: TextStyle(color: nextChapterNum == null ? AppColors.outline : AppColors.primaryContainer, fontFamily: 'Syne', fontWeight: FontWeight.bold)),
+              onPressed: nextChapterNum == null
+                  ? null
+                  : () {
+                      Navigator.pushReplacementNamed(
+                        context,
+                        AppRouter.reading,
+                        arguments: {
+                          'mangaId': widget.mangaId,
+                          'chapterNumber': nextChapterNum,
+                        },
+                      );
+                    },
+              icon: Icon(
+                Icons.skip_next,
+                color: nextChapterNum == null
+                    ? AppColors.outline
+                    : AppColors.primaryContainer,
+              ),
+              label: Text(
+                'CHƯƠNG TIẾP',
+                style: TextStyle(
+                  color: nextChapterNum == null
+                      ? AppColors.outline
+                      : AppColors.primaryContainer,
+                  fontFamily: 'Syne',
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
             ),
           ],
         ),

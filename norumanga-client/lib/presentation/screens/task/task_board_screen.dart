@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../../core/constants/app_colors.dart';
-import '../../../core/routes/app_router.dart';
 import '../../widgets/main_drawer.dart';
 import '../../widgets/main_app_bar.dart';
 
@@ -16,10 +15,12 @@ class _TaskBoardScreenState extends State<TaskBoardScreen> {
   @override
   void initState() {
     super.initState();
-    SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-      statusBarColor: Colors.transparent,
-      statusBarIconBrightness: Brightness.light,
-    ));
+    SystemChrome.setSystemUIOverlayStyle(
+      const SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: Brightness.light,
+      ),
+    );
   }
 
   @override
@@ -39,14 +40,16 @@ class _TaskBoardScreenState extends State<TaskBoardScreen> {
             const SizedBox(height: 16),
             _buildTaskCard(
               title: 'Character Design: Rival',
-              description: 'Initial concepts for the main rival\'s final form armor.',
+              description:
+                  'Initial concepts for the main rival\'s final form armor.',
               tags: ['LOW', 'SKETCH'],
               tagColors: [Colors.grey, Colors.grey.shade300],
             ),
             const SizedBox(height: 16),
             _buildTaskCard(
               title: 'Pacing for Chapter 45',
-              description: 'Review the transition between the flashback and the current battle.',
+              description:
+                  'Review the transition between the flashback and the current battle.',
               tags: ['MID', 'STORY'],
               tagColors: [Colors.yellow, Colors.blueAccent],
               isMid: true,
@@ -74,9 +77,7 @@ class _TaskBoardScreenState extends State<TaskBoardScreen> {
       children: [
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-          decoration: const BoxDecoration(
-            color: AppColors.primaryContainer,
-          ),
+          decoration: const BoxDecoration(color: AppColors.primaryContainer),
           child: const Text(
             '進行中 - IN PROGRESS',
             style: TextStyle(
@@ -99,9 +100,7 @@ class _TaskBoardScreenState extends State<TaskBoardScreen> {
                 fontWeight: FontWeight.w900,
                 color: Colors.cyanAccent,
                 letterSpacing: 1,
-                shadows: [
-                  Shadow(color: Colors.cyanAccent, blurRadius: 10),
-                ],
+                shadows: [Shadow(color: Colors.cyanAccent, blurRadius: 10)],
               ),
             ),
             Container(
@@ -160,9 +159,7 @@ class _TaskBoardScreenState extends State<TaskBoardScreen> {
         const Spacer(),
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-          decoration: BoxDecoration(
-            color: Colors.grey.shade800,
-          ),
+          decoration: BoxDecoration(color: Colors.grey.shade800),
           child: Text(
             count,
             style: const TextStyle(
@@ -187,7 +184,10 @@ class _TaskBoardScreenState extends State<TaskBoardScreen> {
       width: double.infinity,
       decoration: BoxDecoration(
         color: const Color(0xFF1B1B23),
-        border: Border.all(color: isMid ? Colors.yellow : Colors.white, width: 2),
+        border: Border.all(
+          color: isMid ? Colors.yellow : Colors.white,
+          width: 2,
+        ),
       ),
       child: Stack(
         children: [
@@ -204,7 +204,10 @@ class _TaskBoardScreenState extends State<TaskBoardScreen> {
                   children: List.generate(tags.length, (index) {
                     return Container(
                       margin: const EdgeInsets.only(right: 8),
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 4,
+                      ),
                       color: tagColors[index],
                       child: Text(
                         tags[index],
@@ -212,8 +215,8 @@ class _TaskBoardScreenState extends State<TaskBoardScreen> {
                           color: index == 0 && tagColors[index] != Colors.grey
                               ? Colors.black
                               : (tagColors[index] == Colors.grey.shade300
-                                  ? Colors.black
-                                  : Colors.white),
+                                    ? Colors.black
+                                    : Colors.white),
                           fontSize: 9,
                           fontWeight: FontWeight.w900,
                         ),
@@ -243,7 +246,11 @@ class _TaskBoardScreenState extends State<TaskBoardScreen> {
                 const SizedBox(height: 16),
                 const Row(
                   children: [
-                    Icon(Icons.chat_bubble_outline, color: Colors.grey, size: 16),
+                    Icon(
+                      Icons.chat_bubble_outline,
+                      color: Colors.grey,
+                      size: 16,
+                    ),
                     Spacer(),
                     CircleAvatar(
                       radius: 10,
@@ -267,10 +274,7 @@ class _TaskBoardScreenState extends State<TaskBoardScreen> {
         color: const Color(0xFF1B1B23),
         border: Border.all(color: AppColors.primaryContainer, width: 2),
         boxShadow: const [
-          BoxShadow(
-            color: AppColors.primaryContainer,
-            offset: Offset(-4, 4),
-          ),
+          BoxShadow(color: AppColors.primaryContainer, offset: Offset(-4, 4)),
         ],
       ),
       child: Stack(
@@ -284,7 +288,10 @@ class _TaskBoardScreenState extends State<TaskBoardScreen> {
                 Row(
                   children: [
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 4,
+                      ),
                       color: AppColors.primaryContainer,
                       child: const Text(
                         'HIGH',
@@ -297,7 +304,10 @@ class _TaskBoardScreenState extends State<TaskBoardScreen> {
                     ),
                     const SizedBox(width: 8),
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 4,
+                      ),
                       color: Colors.blueAccent,
                       child: const Text(
                         'INKING',
@@ -355,7 +365,9 @@ class _TaskBoardScreenState extends State<TaskBoardScreen> {
                 LinearProgressIndicator(
                   value: 0.6,
                   backgroundColor: Colors.grey.shade800,
-                  valueColor: const AlwaysStoppedAnimation<Color>(AppColors.primaryContainer),
+                  valueColor: const AlwaysStoppedAnimation<Color>(
+                    AppColors.primaryContainer,
+                  ),
                   minHeight: 4,
                 ),
               ],
@@ -448,7 +460,10 @@ class _TaskBoardScreenState extends State<TaskBoardScreen> {
             child: Transform.rotate(
               angle: -0.1,
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 4,
+                ),
                 color: Colors.orangeAccent,
                 child: const Row(
                   children: [
@@ -492,10 +507,7 @@ class _TaskBoardScreenState extends State<TaskBoardScreen> {
             ),
             child: const Text(
               'Nothing here yet!',
-              style: TextStyle(
-                color: Colors.grey,
-                fontSize: 12,
-              ),
+              style: TextStyle(color: Colors.grey, fontSize: 12),
             ),
           ),
         ],
@@ -503,11 +515,12 @@ class _TaskBoardScreenState extends State<TaskBoardScreen> {
     );
   }
 }
+
 class _DiagonalStripesPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = Colors.white.withOpacity(0.02)
+      ..color = Colors.white.withValues(alpha: 0.02)
       ..strokeWidth = 2;
 
     for (double i = -size.height; i < size.width; i += 10) {

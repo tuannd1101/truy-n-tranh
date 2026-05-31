@@ -141,7 +141,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
         style: TextStyle(color: isSelected ? AdminColors.sakuraPink : AdminColors.onSurface, fontWeight: isSelected ? FontWeight.bold : FontWeight.normal),
       ),
       selected: isSelected,
-      selectedTileColor: AdminColors.sakuraPink.withOpacity(0.1),
+      selectedTileColor: AdminColors.sakuraPink.withValues(alpha: 0.1),
       onTap: () {
         setState(() => _selectedIndex = index);
         Navigator.pop(context); // Close drawer

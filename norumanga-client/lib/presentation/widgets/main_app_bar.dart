@@ -24,7 +24,7 @@ class MainAppBar extends StatelessWidget implements PreferredSizeWidget {
           ),
           boxShadow: [
             BoxShadow(
-              color: AppColors.primaryContainer.withOpacity(0.2),
+              color: AppColors.primaryContainer.withValues(alpha: 0.2),
               blurRadius: 10,
               offset: const Offset(0, 4),
             )
@@ -65,7 +65,7 @@ class MainAppBar extends StatelessWidget implements PreferredSizeWidget {
                             color: AppColors.background,
                             border: Border.all(color: AppColors.primaryContainer, width: 2),
                             boxShadow: [
-                              BoxShadow(color: AppColors.primaryContainer.withOpacity(0.5), blurRadius: 8)
+                              BoxShadow(color: AppColors.primaryContainer.withValues(alpha: 0.5), blurRadius: 8)
                             ],
                           ),
                           child: ClipOval(

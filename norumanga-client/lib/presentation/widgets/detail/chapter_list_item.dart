@@ -23,7 +23,7 @@ class ChapterListItem extends StatelessWidget {
       onTap: onTap,
       child: Container(
         color: isAlternate
-            ? AppColors.greyLight.withOpacity(0.3)
+            ? AppColors.greyLight.withValues(alpha: 0.3)
             : AppColors.surface,
         padding: const EdgeInsets.symmetric(
           horizontal: AppDimensions.paddingM,
@@ -55,7 +55,7 @@ class ChapterListItem extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: AppColors.primary.withOpacity(0.1),
+                  color: AppColors.primary.withValues(alpha: 0.1),
                   shape: BoxShape.circle,
                 ),
                 child: const Icon(

@@ -114,8 +114,10 @@ class _SearchScreenState extends State<SearchScreen> {
             decoration: InputDecoration(
               hintText: AppStringsVi.searchByTitleHint,
               hintStyle: const TextStyle(color: AppColors.onSurfaceVariant),
-              prefixIcon:
-                  const Icon(Icons.search, color: AppColors.onSurfaceVariant),
+              prefixIcon: const Icon(
+                Icons.search,
+                color: AppColors.onSurfaceVariant,
+              ),
               filled: true,
               fillColor: AppColors.surfaceContainerHigh,
               enabledBorder: const OutlineInputBorder(
@@ -124,8 +126,10 @@ class _SearchScreenState extends State<SearchScreen> {
               ),
               focusedBorder: const OutlineInputBorder(
                 borderRadius: BorderRadius.zero,
-                borderSide:
-                    BorderSide(color: AppColors.primaryContainer, width: 2),
+                borderSide: BorderSide(
+                  color: AppColors.primaryContainer,
+                  width: 2,
+                ),
               ),
             ),
           ),
@@ -135,10 +139,7 @@ class _SearchScreenState extends State<SearchScreen> {
             onChanged: provider.setCreator,
           ),
           const SizedBox(height: 12),
-          TagSelector(
-            selected: provider.tags,
-            onChanged: provider.setTags,
-          ),
+          TagSelector(selected: provider.tags, onChanged: provider.setTags),
           const SizedBox(height: 16),
           Row(
             children: [
@@ -331,8 +332,11 @@ class _SearchMangaCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        Navigator.pushNamed(context, AppRouter.mangaDetail,
-            arguments: manga.id);
+        Navigator.pushNamed(
+          context,
+          AppRouter.mangaDetail,
+          arguments: manga.id,
+        );
       },
       child: Container(
         decoration: BoxDecoration(
@@ -348,21 +352,35 @@ class _SearchMangaCard extends StatelessWidget {
             Container(
               color: AppColors.surfaceVariant,
               child: manga.coverUrl.isNotEmpty
-                  ? Image.network(manga.coverUrl, fit: BoxFit.cover,
+                  ? Image.network(
+                      manga.coverUrl,
+                      fit: BoxFit.cover,
+                      filterQuality: FilterQuality.high,
                       errorBuilder: (_, error, stackTrace) => const Center(
-                            child: Icon(Icons.broken_image,
-                                color: AppColors.outline, size: 40),
-                          ))
+                        child: Icon(
+                          Icons.broken_image,
+                          color: AppColors.outline,
+                          size: 40,
+                        ),
+                      ),
+                    )
                   : const Center(
-                      child: Icon(Icons.image,
-                          color: AppColors.outline, size: 40)),
+                      child: Icon(
+                        Icons.image,
+                        color: AppColors.outline,
+                        size: 40,
+                      ),
+                    ),
             ),
             Container(
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
-                  colors: [Colors.transparent, Colors.black.withValues(alpha: 0.8)],
+                  colors: [
+                    Colors.transparent,
+                    Colors.black.withValues(alpha: 0.8),
+                  ],
                   stops: const [0.4, 1.0],
                 ),
               ),

@@ -6,7 +6,7 @@ import '../constants/app_colors.dart';
 /// Provides helpers for loading network images with caching, placeholders, and error handling
 class ImageHelper {
   /// Loads a network image with caching
-  /// 
+  ///
   /// Parameters:
   /// - [imageUrl]: The URL of the image to load
   /// - [width]: Optional width constraint
@@ -25,6 +25,7 @@ class ImageHelper {
       width: width,
       height: height,
       fit: fit,
+      filterQuality: FilterQuality.high,
       placeholder: (context, url) => _buildPlaceholder(width, height),
       errorWidget: (context, url, error) => _buildErrorWidget(width, height),
       fadeInDuration: const Duration(milliseconds: 300),
@@ -32,17 +33,14 @@ class ImageHelper {
     );
 
     if (borderRadius != null) {
-      return ClipRRect(
-        borderRadius: borderRadius,
-        child: imageWidget,
-      );
+      return ClipRRect(borderRadius: borderRadius, child: imageWidget);
     }
 
     return imageWidget;
   }
 
   /// Loads a manga cover image with standard styling
-  /// 
+  ///
   /// Parameters:
   /// - [imageUrl]: The URL of the cover image
   /// - [width]: Width of the cover (default: 120)
@@ -62,20 +60,18 @@ class ImageHelper {
   }
 
   /// Loads a circular avatar image
-  /// 
+  ///
   /// Parameters:
   /// - [imageUrl]: The URL of the avatar image
   /// - [radius]: Radius of the circular avatar (default: 24)
-  static Widget loadAvatar({
-    required String imageUrl,
-    double radius = 24.0,
-  }) {
+  static Widget loadAvatar({required String imageUrl, double radius = 24.0}) {
     return ClipOval(
       child: CachedNetworkImage(
         imageUrl: imageUrl,
         width: radius * 2,
         height: radius * 2,
         fit: BoxFit.cover,
+        filterQuality: FilterQuality.high,
         placeholder: (context, url) => _buildAvatarPlaceholder(radius),
         errorWidget: (context, url, error) => _buildAvatarPlaceholder(radius),
         fadeInDuration: const Duration(milliseconds: 300),
@@ -84,7 +80,7 @@ class ImageHelper {
   }
 
   /// Loads a banner image with aspect ratio
-  /// 
+  ///
   /// Parameters:
   /// - [imageUrl]: The URL of the banner image
   /// - [aspectRatio]: Aspect ratio of the banner (default: 16/9)
@@ -103,7 +99,7 @@ class ImageHelper {
   }
 
   /// Loads a chapter page image for reading
-  /// 
+  ///
   /// Parameters:
   /// - [imageUrl]: The URL of the page image
   /// - [onTap]: Optional callback when image is tapped
@@ -114,46 +110,45 @@ class ImageHelper {
     final imageWidget = CachedNetworkImage(
       imageUrl: imageUrl,
       fit: BoxFit.fitWidth,
+      filterQuality: FilterQuality.high,
       placeholder: (context, url) => _buildPagePlaceholder(),
       errorWidget: (context, url, error) => _buildPageErrorWidget(),
       fadeInDuration: const Duration(milliseconds: 200),
     );
 
     if (onTap != null) {
-      return GestureDetector(
-        onTap: onTap,
-        child: imageWidget,
-      );
+      return GestureDetector(onTap: onTap, child: imageWidget);
     }
 
     return imageWidget;
   }
 
   /// Preloads an image into cache
-  /// 
+  ///
   /// Parameters:
   /// - [context]: Build context
   /// - [imageUrl]: The URL of the image to preload
-  static Future<void> preloadImage(BuildContext context, String imageUrl) async {
+  static Future<void> preloadImage(
+    BuildContext context,
+    String imageUrl,
+  ) async {
     try {
-      await precacheImage(
-        CachedNetworkImageProvider(imageUrl),
-        context,
-      );
+      await precacheImage(CachedNetworkImageProvider(imageUrl), context);
     } catch (e) {
       debugPrint('Failed to preload image: $imageUrl');
     }
   }
 
   /// Preloads multiple images into cache
-  /// 
+  ///
   /// Parameters:
   /// - [context]: Build context
   /// - [imageUrls]: List of image URLs to preload
-  static Future<void> preloadImages(BuildContext context, List<String> imageUrls) async {
-    await Future.wait(
-      imageUrls.map((url) => preloadImage(context, url)),
-    );
+  static Future<void> preloadImages(
+    BuildContext context,
+    List<String> imageUrls,
+  ) async {
+    await Future.wait(imageUrls.map((url) => preloadImage(context, url)));
   }
 
   /// Clears the image cache
@@ -185,18 +180,11 @@ class ImageHelper {
       child: const Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(
-            Icons.broken_image_outlined,
-            color: AppColors.grey,
-            size: 32.0,
-          ),
+          Icon(Icons.broken_image_outlined, color: AppColors.grey, size: 32.0),
           SizedBox(height: 4.0),
           Text(
             'Failed to load',
-            style: TextStyle(
-              color: AppColors.grey,
-              fontSize: 10.0,
-            ),
+            style: TextStyle(color: AppColors.grey, fontSize: 10.0),
           ),
         ],
       ),
@@ -212,11 +200,7 @@ class ImageHelper {
         color: AppColors.greyLight,
         shape: BoxShape.circle,
       ),
-      child: Icon(
-        Icons.person_outline,
-        color: AppColors.grey,
-        size: radius,
-      ),
+      child: Icon(Icons.person_outline, color: AppColors.grey, size: radius),
     );
   }
 
@@ -236,10 +220,7 @@ class ImageHelper {
             SizedBox(height: 16.0),
             Text(
               'Loading page...',
-              style: TextStyle(
-                color: AppColors.grey,
-                fontSize: 14.0,
-              ),
+              style: TextStyle(color: AppColors.grey, fontSize: 14.0),
             ),
           ],
         ),
@@ -256,11 +237,7 @@ class ImageHelper {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Icon(
-            Icons.error_outline,
-            color: AppColors.error,
-            size: 48.0,
-          ),
+          const Icon(Icons.error_outline, color: AppColors.error, size: 48.0),
           const SizedBox(height: 16.0),
           const Text(
             'Failed to load page',
@@ -299,15 +276,15 @@ class ImageHelper {
   /// Checks if a URL is a valid image URL
   static bool isValidImageUrl(String? url) {
     if (url == null || url.isEmpty) return false;
-    
+
     final uri = Uri.tryParse(url);
     if (uri == null) return false;
-    
+
     final validExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.bmp'];
     final path = uri.path.toLowerCase();
-    
+
     return validExtensions.any((ext) => path.endsWith(ext)) ||
-           url.contains('image') ||
-           url.contains('img');
+        url.contains('image') ||
+        url.contains('img');
   }
 }

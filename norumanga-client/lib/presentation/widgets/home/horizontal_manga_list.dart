@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import '../../../core/constants/app_colors.dart';
-import '../../../core/constants/app_text_styles.dart';
 import '../../../core/constants/app_dimensions.dart';
 import '../manga/manga_card.dart';
 
@@ -15,7 +13,8 @@ class HorizontalMangaList extends StatelessWidget {
       (index) => {
         'id': index,
         'title': 'Tên Truyện ${index + 1}',
-        'coverUrl': 'https://via.placeholder.com/150x200/FFC107/000000?text=Manga+${index + 1}',
+        'coverUrl':
+            'https://via.placeholder.com/150x200/FFC107/000000?text=Manga+${index + 1}',
         'isPremium': index % 3 == 0,
       },
     );
@@ -24,9 +23,7 @@ class HorizontalMangaList extends StatelessWidget {
       height: 240,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.symmetric(
-          horizontal: AppDimensions.paddingM,
-        ),
+        padding: const EdgeInsets.symmetric(horizontal: AppDimensions.paddingM),
         itemCount: mangaList.length,
         itemBuilder: (context, index) {
           final manga = mangaList[index];

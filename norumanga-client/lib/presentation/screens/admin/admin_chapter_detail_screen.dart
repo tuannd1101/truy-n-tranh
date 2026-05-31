@@ -14,7 +14,10 @@ class AdminChapterDetailScreen extends StatelessWidget {
       backgroundColor: AdminColors.background,
       appBar: AppBar(
         backgroundColor: AdminColors.surface,
-        title: Text(chapter.displayTitle, style: const TextStyle(color: AdminColors.cyberCyan)),
+        title: Text(
+          chapter.displayTitle,
+          style: const TextStyle(color: AdminColors.cyberCyan),
+        ),
         iconTheme: const IconThemeData(color: AdminColors.cyberCyan),
       ),
       body: chapter.pages.isEmpty
@@ -33,23 +36,35 @@ class AdminChapterDetailScreen extends StatelessWidget {
                   children: [
                     Text(
                       'Page ${index + 1}',
-                      style: const TextStyle(color: AdminColors.onSurfaceVariant, fontWeight: FontWeight.bold),
+                      style: const TextStyle(
+                        color: AdminColors.onSurfaceVariant,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                     const SizedBox(height: 8),
                     CachedNetworkImage(
                       imageUrl: url,
                       width: double.infinity,
                       fit: BoxFit.contain,
+                      filterQuality: FilterQuality.high,
                       placeholder: (context, url) => Container(
                         height: 300,
                         color: AdminColors.surfaceHigh,
-                        child: const Center(child: CircularProgressIndicator(color: AdminColors.cyberCyan)),
+                        child: const Center(
+                          child: CircularProgressIndicator(
+                            color: AdminColors.cyberCyan,
+                          ),
+                        ),
                       ),
                       errorWidget: (context, url, error) => Container(
                         height: 300,
-                        color: AdminColors.errorRed.withOpacity(0.1),
+                        color: AdminColors.errorRed.withValues(alpha: 0.1),
                         child: const Center(
-                          child: Icon(Icons.broken_image, color: AdminColors.errorRed, size: 64),
+                          child: Icon(
+                            Icons.broken_image,
+                            color: AdminColors.errorRed,
+                            size: 64,
+                          ),
                         ),
                       ),
                     ),

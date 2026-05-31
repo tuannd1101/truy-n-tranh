@@ -29,10 +29,12 @@ class _MangaDetailScreenState extends State<MangaDetailScreen> {
   @override
   void initState() {
     super.initState();
-    SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-      statusBarColor: Colors.transparent,
-      statusBarIconBrightness: Brightness.light,
-    ));
+    SystemChrome.setSystemUIOverlayStyle(
+      const SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: Brightness.light,
+      ),
+    );
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _fetchData();
@@ -75,10 +77,12 @@ class _MangaDetailScreenState extends State<MangaDetailScreen> {
     final auth = context.read<AuthProvider>();
 
     if (!auth.isAuthenticated) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-        content: Text('Vui lòng đăng nhập để lưu truyện yêu thích.'),
-        backgroundColor: AppColors.error,
-      ));
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Vui lòng đăng nhập để lưu truyện yêu thích.'),
+          backgroundColor: AppColors.error,
+        ),
+      );
       setState(() => _favBusy = false);
       return;
     }
@@ -97,33 +101,45 @@ class _MangaDetailScreenState extends State<MangaDetailScreen> {
       _favBusy = false;
     });
 
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      content: Text(ok
-          ? (newState ? 'Đã thêm vào yêu thích' : 'Đã bỏ yêu thích')
-          : (favProvider.errorMessage ?? 'Thao tác thất bại')),
-      backgroundColor: ok ? AppColors.tertiaryContainer : AppColors.error,
-    ));
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          ok
+              ? (newState ? 'Đã thêm vào yêu thích' : 'Đã bỏ yêu thích')
+              : (favProvider.errorMessage ?? 'Thao tác thất bại'),
+        ),
+        backgroundColor: ok ? AppColors.tertiaryContainer : AppColors.error,
+      ),
+    );
   }
 
   void _onTapChapter(Chapter chapter) {
     if (_manga == null) return;
-    
+
     // Logic khóa Premium: Khóa nếu Chapter là Premium HOẶC Truyện là Premium
     final isPremium = chapter.isPremium || _manga!.isPremium;
     final auth = context.read<AuthProvider>();
-    
+
     if (isPremium && !auth.isPremium && !auth.isAdminOrManager) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-        content: Text('Chương này yêu cầu tài khoản Premium. Vui lòng nâng cấp!'),
-        backgroundColor: AppColors.error,
-      ));
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            'Chương này yêu cầu tài khoản Premium. Vui lòng nâng cấp!',
+          ),
+          backgroundColor: AppColors.error,
+        ),
+      );
       return;
     }
-    
-    Navigator.pushNamed(context, AppRouter.reading, arguments: {
-      'mangaId': widget.mangaId,
-      'chapterNumber': chapter.chapterNumber,
-    });
+
+    Navigator.pushNamed(
+      context,
+      AppRouter.reading,
+      arguments: {
+        'mangaId': widget.mangaId,
+        'chapterNumber': chapter.chapterNumber,
+      },
+    );
   }
 
   @override
@@ -131,7 +147,9 @@ class _MangaDetailScreenState extends State<MangaDetailScreen> {
     if (_isLoading) {
       return const Scaffold(
         backgroundColor: AppColors.background,
-        body: Center(child: CircularProgressIndicator(color: AppColors.primaryContainer)),
+        body: Center(
+          child: CircularProgressIndicator(color: AppColors.primaryContainer),
+        ),
       );
     }
 
@@ -139,7 +157,12 @@ class _MangaDetailScreenState extends State<MangaDetailScreen> {
       return Scaffold(
         backgroundColor: AppColors.background,
         appBar: AppBar(backgroundColor: Colors.transparent),
-        body: const Center(child: Text('Không tìm thấy truyện', style: TextStyle(color: AppColors.onSurfaceVariant))),
+        body: const Center(
+          child: Text(
+            'Không tìm thấy truyện',
+            style: TextStyle(color: AppColors.onSurfaceVariant),
+          ),
+        ),
       );
     }
 
@@ -148,18 +171,10 @@ class _MangaDetailScreenState extends State<MangaDetailScreen> {
       body: CustomScrollView(
         slivers: [
           _buildSliverAppBar(),
-          SliverToBoxAdapter(
-            child: _buildMangaInfo(),
-          ),
-          SliverToBoxAdapter(
-            child: _buildActionButtons(),
-          ),
-          SliverToBoxAdapter(
-            child: _buildDescription(),
-          ),
-          SliverToBoxAdapter(
-            child: _buildChapterHeader(),
-          ),
+          SliverToBoxAdapter(child: _buildMangaInfo()),
+          SliverToBoxAdapter(child: _buildActionButtons()),
+          SliverToBoxAdapter(child: _buildDescription()),
+          SliverToBoxAdapter(child: _buildChapterHeader()),
           _buildChapterList(),
           const SliverPadding(padding: EdgeInsets.only(bottom: 40)),
         ],
@@ -176,10 +191,14 @@ class _MangaDetailScreenState extends State<MangaDetailScreen> {
         icon: Container(
           padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
-            color: AppColors.background.withOpacity(0.8),
+            color: AppColors.background.withValues(alpha: 0.8),
             border: Border.all(color: AppColors.outline),
           ),
-          child: const Icon(Icons.arrow_back, color: AppColors.onSurface, size: 20),
+          child: const Icon(
+            Icons.arrow_back,
+            color: AppColors.onSurface,
+            size: 20,
+          ),
         ),
         onPressed: () => Navigator.pop(context),
       ),
@@ -192,10 +211,15 @@ class _MangaDetailScreenState extends State<MangaDetailScreen> {
                 ? Image.network(
                     _manga!.coverUrl,
                     fit: BoxFit.cover,
-                    colorBlendMode: BlendMode.saturation,
-                    color: Colors.grey,
+                    filterQuality: FilterQuality.high,
                   )
-                : const Center(child: Icon(Icons.image, size: 64, color: AppColors.outline)),
+                : const Center(
+                    child: Icon(
+                      Icons.image,
+                      size: 64,
+                      color: AppColors.outline,
+                    ),
+                  ),
             // Gradient Overlay
             Container(
               decoration: BoxDecoration(
@@ -204,7 +228,7 @@ class _MangaDetailScreenState extends State<MangaDetailScreen> {
                   end: Alignment.bottomCenter,
                   colors: [
                     Colors.transparent,
-                    AppColors.background.withOpacity(0.5),
+                    AppColors.background.withValues(alpha: 0.5),
                     AppColors.background,
                   ],
                   stops: const [0.3, 0.7, 1.0],
@@ -218,7 +242,10 @@ class _MangaDetailScreenState extends State<MangaDetailScreen> {
               child: Transform.rotate(
                 angle: 0.1,
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 4,
+                  ),
                   color: AppColors.secondaryContainer,
                   child: Text(
                     _manga!.status.toUpperCase(),
@@ -303,7 +330,10 @@ class _MangaDetailScreenState extends State<MangaDetailScreen> {
             runSpacing: 8,
             children: _manga!.tags.map((genre) {
               return Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 4,
+                ),
                 decoration: BoxDecoration(
                   border: Border.all(color: AppColors.outline),
                   color: AppColors.surfaceContainerHigh,
@@ -343,10 +373,7 @@ class _MangaDetailScreenState extends State<MangaDetailScreen> {
                   color: AppColors.primaryContainer,
                   border: Border.all(color: AppColors.outline, width: 2),
                   boxShadow: const [
-                    BoxShadow(
-                      color: AppColors.onSurface,
-                      offset: Offset(4, 4),
-                    ),
+                    BoxShadow(color: AppColors.onSurface, offset: Offset(4, 4)),
                   ],
                 ),
                 child: const Row(
@@ -459,7 +486,9 @@ class _MangaDetailScreenState extends State<MangaDetailScreen> {
           child: Center(
             child: Text(
               'Chưa có chương nào.',
-              style: TextStyle(color: AppColors.onSurfaceVariant.withOpacity(0.5)),
+              style: TextStyle(
+                color: AppColors.onSurfaceVariant.withValues(alpha: 0.5),
+              ),
             ),
           ),
         ),
@@ -467,74 +496,79 @@ class _MangaDetailScreenState extends State<MangaDetailScreen> {
     }
 
     return SliverList(
-      delegate: SliverChildBuilderDelegate(
-        (context, index) {
-          final chapter = _chapters[index];
-          final isPremium = chapter.isPremium || _manga!.isPremium;
+      delegate: SliverChildBuilderDelegate((context, index) {
+        final chapter = _chapters[index];
+        final isPremium = chapter.isPremium || _manga!.isPremium;
 
-          return InkWell(
-            onTap: () => _onTapChapter(chapter),
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-              decoration: const BoxDecoration(
-                border: Border(
-                  bottom: BorderSide(color: AppColors.border),
-                ),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          if (isPremium)
-                            const Padding(
-                              padding: EdgeInsets.only(right: 8.0),
-                              child: Icon(Icons.lock, color: AppColors.error, size: 16),
-                            ),
-                          Text(
-                            chapter.displayTitle,
-                            style: TextStyle(
-                              fontFamily: 'Syne',
-                              color: isPremium ? AppColors.error : AppColors.onSurface,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16,
+        return InkWell(
+          onTap: () => _onTapChapter(chapter),
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+            decoration: const BoxDecoration(
+              border: Border(bottom: BorderSide(color: AppColors.border)),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        if (isPremium)
+                          const Padding(
+                            padding: EdgeInsets.only(right: 8.0),
+                            child: Icon(
+                              Icons.lock,
+                              color: AppColors.error,
+                              size: 16,
                             ),
                           ),
-                        ],
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        '${chapter.totalPages} pages',
-                        style: const TextStyle(
-                          color: AppColors.onSurfaceVariant,
-                          fontSize: 12,
+                        Text(
+                          chapter.displayTitle,
+                          style: TextStyle(
+                            fontFamily: 'Syne',
+                            color: isPremium
+                                ? AppColors.error
+                                : AppColors.onSurface,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                          ),
                         ),
+                      ],
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      '${chapter.totalPages} pages',
+                      style: const TextStyle(
+                        color: AppColors.onSurfaceVariant,
+                        fontSize: 12,
                       ),
-                    ],
-                  ),
-                  const Row(
-                    children: [
-                      Icon(Icons.visibility, color: AppColors.onSurfaceVariant, size: 14),
-                      SizedBox(width: 4),
-                      Text(
-                        '0',
-                        style: TextStyle(
-                          color: AppColors.onSurfaceVariant,
-                          fontSize: 12,
-                        ),
+                    ),
+                  ],
+                ),
+                const Row(
+                  children: [
+                    Icon(
+                      Icons.visibility,
+                      color: AppColors.onSurfaceVariant,
+                      size: 14,
+                    ),
+                    SizedBox(width: 4),
+                    Text(
+                      '0',
+                      style: TextStyle(
+                        color: AppColors.onSurfaceVariant,
+                        fontSize: 12,
                       ),
-                    ],
-                  ),
-                ],
-              ),
+                    ),
+                  ],
+                ),
+              ],
             ),
-          );
-        },
-        childCount: _chapters.length,
-      ),
+          ),
+        );
+      }, childCount: _chapters.length),
     );
   }
 }

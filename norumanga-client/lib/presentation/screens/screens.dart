@@ -6,12 +6,14 @@ export 'reading/manga_reading_screen.dart';
 export 'profile/profile_screen.dart';
 export 'profile/reading_history_screen.dart';
 export 'profile/favorites_screen.dart';
+export 'profile/payment_history_screen.dart';
 // Subscription
 export 'subscription/subscription_screen.dart';
 export 'subscription/payment_screen.dart';
 export 'subscription/payment_result_screen.dart';
 export 'auth/login_screen.dart';
 export 'auth/register_screen.dart';
+export 'auth/forgot_password_screen.dart';
 export 'task/task_board_screen.dart';
 export 'splash/splash_screen.dart';
 export 'admin/admin_dashboard_screen.dart';

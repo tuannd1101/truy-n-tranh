@@ -131,7 +131,7 @@ class _LoginScreenState extends State<LoginScreen>
                   begin: Alignment.bottomCenter,
                   end: Alignment.topCenter,
                   colors: [
-                    AppColors.background.withOpacity(0.85),
+                    AppColors.background.withValues(alpha: 0.85),
                     Colors.transparent,
                   ],
                 ),
@@ -151,7 +151,7 @@ class _LoginScreenState extends State<LoginScreen>
                     decoration: BoxDecoration(
                       boxShadow: [
                         BoxShadow(
-                          color: AppColors.primaryContainer.withOpacity(0.9),
+                          color: AppColors.primaryContainer.withValues(alpha: 0.9),
                           blurRadius: 20,
                           spreadRadius: 4,
                         ),
@@ -322,7 +322,7 @@ class _LoginScreenState extends State<LoginScreen>
                         // Forgot password
                         Center(
                           child: GestureDetector(
-                            onTap: () {},
+                            onTap: () => Navigator.pushNamed(context, AppRouter.forgotPassword),
                             child: Text(
                               AppStringsVi.forgotPassword,
                               style: const TextStyle(
@@ -422,7 +422,7 @@ class _LoginScreenState extends State<LoginScreen>
                         const SizedBox(height: 16),
                         Center(
                           child: GestureDetector(
-                            onTap: () {},
+                            onTap: () => Navigator.pushNamed(context, AppRouter.forgotPassword),
                             child: Text(
                               AppStringsVi.forgotPassword,
                               style: const TextStyle(
@@ -788,7 +788,7 @@ class _SpeedLinesPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = AppColors.primaryContainer.withOpacity(opacity)
+      ..color = AppColors.primaryContainer.withValues(alpha: opacity)
       ..strokeWidth = 1;
     const count = 30;
     final cx = size.width * 0.8;
@@ -816,7 +816,7 @@ class _SpeedLinesPainter extends CustomPainter {
 class _HalftonePainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
-    final paint = Paint()..color = Colors.white.withOpacity(0.04);
+    final paint = Paint()..color = Colors.white.withValues(alpha: 0.04);
     const spacing = 8.0;
     for (double x = 0; x < size.width; x += spacing) {
       for (double y = 0; y < size.height; y += spacing) {

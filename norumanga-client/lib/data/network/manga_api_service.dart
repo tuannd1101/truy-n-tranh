@@ -27,10 +27,7 @@ class MangaApiService {
     String? tagId,
     String? status,
   }) async {
-    final Map<String, dynamic> queryParams = {
-      'page': page,
-      'size': size,
-    };
+    final Map<String, dynamic> queryParams = {'page': page, 'size': size};
     if (tagId != null && tagId.isNotEmpty) {
       queryParams['tagId'] = tagId;
     }
@@ -59,7 +56,9 @@ class MangaApiService {
     }
 
     final contentList = dataMap['content'] as List<dynamic>? ?? [];
-    final mangas = contentList.map((item) => Manga.fromJson(item as Map<String, dynamic>)).toList();
+    final mangas = contentList
+        .map((item) => Manga.fromJson(item as Map<String, dynamic>))
+        .toList();
 
     return PaginatedManga(
       mangas: mangas,
@@ -89,10 +88,7 @@ class MangaApiService {
     final hasKeyword = keyword != null && keyword.trim().isNotEmpty;
 
     final String url;
-    final Map<String, dynamic> queryParams = {
-      'page': page,
-      'size': size,
-    };
+    final Map<String, dynamic> queryParams = {'page': page, 'size': size};
 
     if (hasKeyword) {
       // Dedicated keyword search endpoint: /api/mangas/search
@@ -101,9 +97,13 @@ class MangaApiService {
       queryParams['q'] = keyword.trim();
     } else {
       // Filter endpoint: /api/mangas/
-      url = _apiService.dio.options.baseUrl.replaceAll('/api/v1', '/api/mangas');
+      url = _apiService.dio.options.baseUrl.replaceAll(
+        '/api/v1',
+        '/api/mangas',
+      );
       if (tagIds != null && tagIds.isNotEmpty) {
-        queryParams['tagId'] = tagIds; // Dio serializes a list as repeated params
+        queryParams['tagId'] =
+            tagIds; // Dio serializes a list as repeated params
       }
     }
 
@@ -151,6 +151,34 @@ class MangaApiService {
     );
 
     return baseResponse.data!;
+  }
+
+  /// Top 10 most recently updated manga (`GET /api/mangas/latest`).
+  Future<List<Manga>> getLatestMangas() async {
+    final response = await _apiService.dio.get(
+      '${_apiService.dio.options.baseUrl.replaceAll('/api/v1', '/api/mangas')}/latest',
+    );
+    final baseResponse = BaseApiResponse<List<Manga>>.fromJson(
+      response.data,
+      (json) => (json as List)
+          .map((item) => Manga.fromJson(item as Map<String, dynamic>))
+          .toList(),
+    );
+    return baseResponse.data ?? [];
+  }
+
+  /// Top 10 most viewed manga (`GET /api/mangas/recommended`).
+  Future<List<Manga>> getRecommendedMangas() async {
+    final response = await _apiService.dio.get(
+      '${_apiService.dio.options.baseUrl.replaceAll('/api/v1', '/api/mangas')}/recommended',
+    );
+    final baseResponse = BaseApiResponse<List<Manga>>.fromJson(
+      response.data,
+      (json) => (json as List)
+          .map((item) => Manga.fromJson(item as Map<String, dynamic>))
+          .toList(),
+    );
+    return baseResponse.data ?? [];
   }
 
   Future<Manga> createManga(Map<String, dynamic> mangaData) async {

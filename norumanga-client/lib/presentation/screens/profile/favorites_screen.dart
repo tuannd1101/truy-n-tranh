@@ -30,7 +30,10 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
         builder: (context, provider, child) {
           if (provider.isLoading && provider.favorites.isEmpty) {
             return const Center(
-                child: CircularProgressIndicator(color: AppColors.primaryContainer));
+              child: CircularProgressIndicator(
+                color: AppColors.primaryContainer,
+              ),
+            );
           }
           if (provider.errorMessage != null && provider.favorites.isEmpty) {
             return _buildError(provider);
@@ -111,7 +114,11 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
     return GestureDetector(
       onTap: () {
         if (manga != null) {
-          Navigator.pushNamed(context, AppRouter.mangaDetail, arguments: manga.id);
+          Navigator.pushNamed(
+            context,
+            AppRouter.mangaDetail,
+            arguments: manga.id,
+          );
         }
       },
       onLongPress: () => _showItemMenu(provider, fav),
@@ -126,19 +133,35 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
             Container(
               color: AppColors.surfaceVariant,
               child: coverUrl.isNotEmpty
-                  ? Image.network(coverUrl, fit: BoxFit.cover,
+                  ? Image.network(
+                      coverUrl,
+                      fit: BoxFit.cover,
+                      filterQuality: FilterQuality.high,
                       errorBuilder: (_, __, ___) => const Center(
-                          child: Icon(Icons.broken_image,
-                              color: AppColors.outline, size: 40)))
+                        child: Icon(
+                          Icons.broken_image,
+                          color: AppColors.outline,
+                          size: 40,
+                        ),
+                      ),
+                    )
                   : const Center(
-                      child: Icon(Icons.image, color: AppColors.outline, size: 40)),
+                      child: Icon(
+                        Icons.image,
+                        color: AppColors.outline,
+                        size: 40,
+                      ),
+                    ),
             ),
             Container(
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
-                  colors: [Colors.transparent, Colors.black.withValues(alpha: 0.8)],
+                  colors: [
+                    Colors.transparent,
+                    Colors.black.withValues(alpha: 0.8),
+                  ],
                   stops: const [0.4, 1.0],
                 ),
               ),
@@ -175,8 +198,11 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                     shape: BoxShape.circle,
                     border: Border.all(color: AppColors.border),
                   ),
-                  child: const Icon(Icons.favorite,
-                      color: AppColors.primaryContainer, size: 16),
+                  child: const Icon(
+                    Icons.favorite,
+                    color: AppColors.primaryContainer,
+                    size: 16,
+                  ),
                 ),
               ),
             ),
@@ -193,7 +219,9 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
       builder: (context) => Container(
         decoration: const BoxDecoration(
           color: AppColors.surfaceContainer,
-          border: Border(top: BorderSide(color: AppColors.primaryContainer, width: 2)),
+          border: Border(
+            top: BorderSide(color: AppColors.primaryContainer, width: 2),
+          ),
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -205,7 +233,10 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
               color: AppColors.outline,
             ),
             ListTile(
-              leading: const Icon(Icons.favorite_border, color: AppColors.error),
+              leading: const Icon(
+                Icons.favorite_border,
+                color: AppColors.error,
+              ),
               title: const Text(
                 'BỎ YÊU THÍCH',
                 style: TextStyle(
@@ -235,14 +266,17 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
           children: [
             const Icon(Icons.error_outline, size: 56, color: AppColors.error),
             const SizedBox(height: 16),
-            Text(provider.errorMessage ?? 'Đã xảy ra lỗi',
-                textAlign: TextAlign.center,
-                style: const TextStyle(color: AppColors.onSurface)),
+            Text(
+              provider.errorMessage ?? 'Đã xảy ra lỗi',
+              textAlign: TextAlign.center,
+              style: const TextStyle(color: AppColors.onSurface),
+            ),
             const SizedBox(height: 16),
             ElevatedButton(
               onPressed: () => provider.fetchFavorites(),
               style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.primaryContainer),
+                backgroundColor: AppColors.primaryContainer,
+              ),
               child: const Text('THỬ LẠI'),
             ),
           ],
