@@ -5,6 +5,7 @@ import '../../../core/constants/app_colors.dart';
 import '../../../core/routes/app_router.dart';
 import '../../../data/models/chapter.dart';
 import '../../../providers/chapter_provider.dart';
+import '../../../providers/reading_history_provider.dart';
 
 class MangaReadingScreen extends StatefulWidget {
   final String mangaId;
@@ -35,6 +36,11 @@ class _MangaReadingScreenState extends State<MangaReadingScreen> {
     
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _fetchChapter();
+      // Record reading history (fire-and-forget).
+      context.read<ReadingHistoryProvider>().record(
+            mangaId: widget.mangaId,
+            chapterNumber: widget.chapterNumber,
+          );
     });
   }
 

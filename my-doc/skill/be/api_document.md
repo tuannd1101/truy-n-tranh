@@ -954,3 +954,89 @@ deletion are intentionally NOT exposed.
   }
   ```
 - **Output:** Updated `UserDetailResponseDTO`.
+
+
+---
+
+## 13. Favorite Controller (`FavoriteController`)
+**Base Path:** `/api/favorites`
+
+Favorite (saved) manga for the authenticated user.
+
+### 13.1 Get My Favorites
+- **Method:** `GET`
+- **Path:** `/`
+- **Auth Required:** Yes
+- **Output:** `List<FavoriteResponseDTO>` (each embeds a `manga` summary), newest first.
+
+### 13.2 Add Favorite
+- **Method:** `POST`
+- **Path:** `/{mangaId}`
+- **Auth Required:** Yes
+- **Functionality:** Adds the manga to favorites (idempotent).
+- **Output:** Created `FavoriteResponseDTO`.
+
+### 13.3 Remove Favorite
+- **Method:** `DELETE`
+- **Path:** `/{mangaId}`
+- **Auth Required:** Yes
+- **Output:** `{ "data": null, "message": "Đã bỏ yêu thích", "error": null }`
+
+### 13.4 Favorite Status
+- **Method:** `GET`
+- **Path:** `/{mangaId}/status`
+- **Auth Required:** Yes
+- **Output:** `{ "data": { "favorite": true|false }, ... }`
+
+---
+
+## 14. Reading History Controller (`ReadingHistoryController`)
+**Base Path:** `/api/reading-history`
+
+Per-user reading history. One entry per (user, manga): the last chapter read.
+
+### 14.1 Get My History
+- **Method:** `GET`
+- **Path:** `/`
+- **Auth Required:** Yes
+- **Output:** `List<ReadingHistoryResponseDTO>` (each embeds a `manga` summary), most recently read first.
+
+### 14.2 Record Reading
+- **Method:** `POST`
+- **Path:** `/`
+- **Auth Required:** Yes
+- **Input (JSON Request Body):**
+  ```json
+  { "mangaId": "manga-1-id", "chapterNumber": 14.0 }
+  ```
+- **Functionality:** Upserts the history entry for that manga with the given chapter.
+- **Output:** `ReadingHistoryResponseDTO`.
+
+### 14.3 Clear History
+- **Method:** `DELETE`
+- **Path:** `/`
+- **Auth Required:** Yes
+- **Output:** `{ "data": null, "message": "Đã xóa lịch sử đọc", "error": null }`
+
+---
+
+## 15. Auth `/me` premium info (update)
+
+`GET /api/v1/auth/me` (Section 2) now also returns `premiumExpiresAt` in the
+`UserResponseDTO`. It is the expiry instant of the user's latest successful
+payment while they hold the Premium role and the expiry is still in the future;
+otherwise `null`.
+
+```json
+{
+  "data": {
+    "id": "account-1-id",
+    "fullName": "Nguyen Van A",
+    "email": "a@example.com",
+    "role": "Premium",
+    "premiumExpiresAt": "2026-06-29T18:11:24.687Z"
+  },
+  "message": "Thành công",
+  "error": null
+}
+```

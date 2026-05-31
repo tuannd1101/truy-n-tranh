@@ -33,10 +33,18 @@ class User {
         (e) => e.toString().toLowerCase() == 'userrole.${json['role']?.toString().toLowerCase()}',
         orElse: () => UserRole.guest,
       ),
-      premiumExpiryDate: json['premiumExpiryDate'] != null
-          ? DateTime.parse(json['premiumExpiryDate'] as String)
-          : null,
+      premiumExpiryDate: _parseExpiry(json),
     );
+  }
+
+  static DateTime? _parseExpiry(Map<String, dynamic> json) {
+    final raw = json['premiumExpiresAt'] ?? json['premiumExpiryDate'];
+    if (raw == null) return null;
+    try {
+      return DateTime.parse(raw.toString()).toLocal();
+    } catch (_) {
+      return null;
+    }
   }
 
   /// Convert User to JSON

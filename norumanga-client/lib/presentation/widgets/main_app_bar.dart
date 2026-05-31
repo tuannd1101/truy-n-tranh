@@ -57,29 +57,37 @@ class MainAppBar extends StatelessWidget implements PreferredSizeWidget {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Container(
-                          width: 32,
-                          height: 32,
+                          width: 38,
+                          height: 38,
+                          padding: const EdgeInsets.all(2),
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
+                            color: AppColors.background,
                             border: Border.all(color: AppColors.primaryContainer, width: 2),
                             boxShadow: [
                               BoxShadow(color: AppColors.primaryContainer.withOpacity(0.5), blurRadius: 8)
                             ],
                           ),
-                          child: const Center(
-                            child: Text(
-                              'MH',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.w900,
-                                fontSize: 14,
+                          child: ClipOval(
+                            child: Image.asset(
+                              'assets/images/logo.png',
+                              fit: BoxFit.cover,
+                              errorBuilder: (context, error, stackTrace) => const Center(
+                                child: Text(
+                                  'N',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w900,
+                                    fontSize: 16,
+                                  ),
+                                ),
                               ),
                             ),
                           ),
                         ),
                         const SizedBox(width: 12),
                         const Text(
-                          'MinHoiManga',
+                          'NoruManga',
                           style: TextStyle(
                             fontFamily: 'Anton',
                             fontSize: 22,

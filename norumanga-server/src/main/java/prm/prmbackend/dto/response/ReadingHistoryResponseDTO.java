@@ -11,12 +11,13 @@ import java.time.Instant;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserResponseDTO {
-    private String id;
-    private String fullName;
-    private String email;
-    private String role;
+public class ReadingHistoryResponseDTO {
 
-    /** When the user's premium access expires (null if not premium / no active sub). */
-    private Instant premiumExpiresAt;
+    private String id;
+    private String mangaId;
+    private Double chapterNumber;
+    private Instant lastReadAt;
+
+    /** Embedded manga summary so the client can render a card directly. */
+    private MangaResponseDTO manga;
 }

@@ -48,13 +48,11 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
     _AdminDashboardTab(),
     AdminUserTab(),
     AdminRoleTab(),
-    _AdminContentTab(),
     AdminMangaTab(),
     AdminCreatorTab(),
     AdminTagTab(),
     AdminBundleTab(),
     AdminTransactionTab(),
-    _AdminSettingsTab(),
   ];
 
   @override
@@ -98,22 +96,40 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
           _drawerItem(icon: Icons.dashboard, title: 'Dashboard', index: 0),
           _drawerItem(icon: Icons.group, title: 'Users', index: 1),
           _drawerItem(icon: Icons.badge, title: 'Roles', index: 2),
-          _drawerItem(icon: Icons.library_books, title: 'Content', index: 3),
           const Divider(color: AdminColors.outlineVariant),
           Padding(
             padding: const EdgeInsets.only(left: 16, top: 8, bottom: 8),
             child: Text('MANAGEMENT', style: GoogleFonts.spaceGrotesk(fontSize: 12, color: AdminColors.onSurfaceVariant, fontWeight: FontWeight.bold)),
           ),
-          _drawerItem(icon: Icons.menu_book, title: 'Manga Series', index: 4),
-          _drawerItem(icon: Icons.person, title: 'Creators', index: 5),
-          _drawerItem(icon: Icons.local_offer, title: 'Tags', index: 6),
-          _drawerItem(icon: Icons.workspace_premium, title: 'Bundles', index: 7),
-          _drawerItem(icon: Icons.receipt_long, title: 'Transactions', index: 8),
+          _drawerItem(icon: Icons.menu_book, title: 'Manga Series', index: 3),
+          _drawerItem(icon: Icons.person, title: 'Creators', index: 4),
+          _drawerItem(icon: Icons.local_offer, title: 'Tags', index: 5),
+          _drawerItem(icon: Icons.workspace_premium, title: 'Bundles', index: 6),
+          _drawerItem(icon: Icons.receipt_long, title: 'Transactions', index: 7),
           const Divider(color: AdminColors.outlineVariant),
-          _drawerItem(icon: Icons.settings, title: 'Settings', index: 9),
+          _buildLogoutDrawerItem(),
         ],
       ),
     );
+  }
+
+  Widget _buildLogoutDrawerItem() {
+    return ListTile(
+      leading: const Icon(Icons.logout, color: AdminColors.errorRed),
+      title: const Text(
+        'Logout',
+        style: TextStyle(color: AdminColors.errorRed, fontWeight: FontWeight.bold),
+      ),
+      onTap: () => _handleLogout(),
+    );
+  }
+
+  Future<void> _handleLogout() async {
+    Navigator.pop(context); // close drawer
+    await context.read<AuthProvider>().logout();
+    if (mounted) {
+      Navigator.pushNamedAndRemoveUntil(context, AppRouter.login, (route) => false);
+    }
   }
 
   Widget _drawerItem({required IconData icon, required String title, required int index}) {
@@ -708,482 +724,6 @@ class _ActivityRow extends StatelessWidget {
               color: AdminColors.onSurfaceVariant,
             ),
           ),
-        ],
-      ),
-    );
-  }
-}
-
-// ═══════════════════════════════════════════
-// TAB 3: CONTENT MODERATION
-// ═══════════════════════════════════════════
-class _AdminContentTab extends StatelessWidget {
-  const _AdminContentTab();
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
-            child: _SectionDivider(label: 'CONTENT — MODERATION'),
-          ),
-          // Filter tabs
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Row(
-              children: [
-                _ContentFilterTab(label: 'ALL', isActive: false),
-                const SizedBox(width: 8),
-                _ContentFilterTab(label: 'PENDING', isActive: true, badge: '17'),
-                const SizedBox(width: 8),
-                _ContentFilterTab(label: 'APPROVED', isActive: false),
-                const SizedBox(width: 8),
-                _ContentFilterTab(label: 'REJECTED', isActive: false),
-              ],
-            ),
-          ),
-          const SizedBox(height: 12),
-          // Content list
-          Expanded(
-            child: ListView(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              children: const [
-                _ContentCard(
-                  title: 'NEON TOKYO DRIFT',
-                  author: 'by A. Kurosawa',
-                  genres: ['ACTION', 'SCI-FI'],
-                  status: 'PENDING',
-                  statusColor: AdminColors.warningYellow,
-                  uploadTime: 'Uploaded 2h ago',
-                ),
-                SizedBox(height: 12),
-                _ContentCard(
-                  title: 'SILENT HEARTS',
-                  author: 'by M. Shinkai',
-                  genres: ['ROMANCE', 'DRAMA'],
-                  status: 'PENDING',
-                  statusColor: AdminColors.warningYellow,
-                  uploadTime: 'Uploaded 5h ago',
-                ),
-                SizedBox(height: 12),
-                _ContentCard(
-                  title: 'ECHOES OF THE FALLEN',
-                  author: 'by T. Kazuki',
-                  genres: ['ACTION', 'FANTASY'],
-                  status: 'APPROVED',
-                  statusColor: AdminColors.cyberCyan,
-                  uploadTime: 'Uploaded 1d ago',
-                ),
-              ],
-            ),
-          ),
-        ],
-      );
-  }
-}
-
-class _ContentFilterTab extends StatelessWidget {
-  final String label;
-  final bool isActive;
-  final String? badge;
-
-  const _ContentFilterTab({required this.label, required this.isActive, this.badge});
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Row(
-          children: [
-            Text(
-              label,
-              style: GoogleFonts.spaceGrotesk(
-                fontSize: 11,
-                fontWeight: FontWeight.w700,
-                color: isActive ? AdminColors.sakuraPink : AdminColors.onSurfaceVariant,
-              ),
-            ),
-            if (badge != null) ...[
-              const SizedBox(width: 4),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
-                decoration: BoxDecoration(
-                  color: AdminColors.errorRedDark,
-                  borderRadius: BorderRadius.circular(4),
-                ),
-                child: Text(badge!, style: const TextStyle(fontSize: 8, color: Colors.white, fontWeight: FontWeight.bold)),
-              ),
-            ],
-          ],
-        ),
-        if (isActive)
-          Container(height: 2, width: 40, color: AdminColors.sakuraPink, margin: const EdgeInsets.only(top: 2)),
-      ],
-    );
-  }
-}
-
-class _ContentCard extends StatelessWidget {
-  final String title;
-  final String author;
-  final List<String> genres;
-  final String status;
-  final Color statusColor;
-  final String uploadTime;
-
-  const _ContentCard({
-    required this.title,
-    required this.author,
-    required this.genres,
-    required this.status,
-    required this.statusColor,
-    required this.uploadTime,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: AdminColors.surface,
-        border: Border.all(color: Colors.white24, width: 2),
-        borderRadius: BorderRadius.circular(4),
-        boxShadow: const [BoxShadow(color: AdminColors.sakuraPink, offset: Offset(4, 4))],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Banner
-          Stack(
-            children: [
-              Container(
-                height: 110,
-                width: double.infinity,
-                decoration: const BoxDecoration(
-                  color: AdminColors.surfaceHigh,
-                  borderRadius: BorderRadius.vertical(top: Radius.circular(2)),
-                ),
-                child: const Icon(Icons.image, color: Colors.white12, size: 40),
-              ),
-              // Status badge
-              Positioned(
-                top: 8,
-                right: 8,
-                child: Transform.rotate(
-                  angle: -0.05,
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
-                    decoration: BoxDecoration(
-                      color: statusColor,
-                      border: Border.all(color: Colors.black, width: 2),
-                      boxShadow: const [BoxShadow(color: Colors.black, offset: Offset(2, 2))],
-                    ),
-                    child: Text(
-                      status,
-                      style: const TextStyle(fontSize: 9, fontWeight: FontWeight.bold, color: Colors.black),
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-          // Content
-          Padding(
-            padding: const EdgeInsets.all(10),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(title, style: GoogleFonts.bebasNeue(fontSize: 20, color: AdminColors.onSurface, letterSpacing: 1)),
-                Text(author, style: const TextStyle(fontSize: 11, color: AdminColors.onSurfaceVariant)),
-                const SizedBox(height: 6),
-                Wrap(
-                  spacing: 6,
-                  children: genres
-                      .map((g) => Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                            decoration: BoxDecoration(
-                              border: Border.all(color: AdminColors.outlineVariant),
-                            ),
-                            child: Text(g,
-                                style: const TextStyle(fontSize: 9, color: AdminColors.onSurfaceVariant, fontWeight: FontWeight.bold)),
-                          ))
-                      .toList(),
-                ),
-                const SizedBox(height: 4),
-                Text(uploadTime, style: const TextStyle(fontSize: 10, color: AdminColors.onSurfaceVariant)),
-                const SizedBox(height: 10),
-                // Action buttons
-                Row(
-                  children: [
-                    Expanded(
-                      child: _ContentActionBtn(label: 'APPROVE', color: AdminColors.green, filled: true, onTap: () {}),
-                    ),
-                    const SizedBox(width: 6),
-                    Expanded(
-                      child: _ContentActionBtn(label: 'REJECT', color: AdminColors.errorRed, filled: false, onTap: () {}),
-                    ),
-                    const SizedBox(width: 6),
-                    Expanded(
-                      child: _ContentActionBtn(label: 'VIEW', color: AdminColors.onSurfaceVariant, filled: false, onTap: () {}),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _ContentActionBtn extends StatelessWidget {
-  final String label;
-  final Color color;
-  final bool filled;
-  final VoidCallback onTap;
-
-  const _ContentActionBtn({required this.label, required this.color, required this.filled, required this.onTap});
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 8),
-        decoration: BoxDecoration(
-          color: filled ? color : AdminColors.surface,
-          border: Border.all(color: color, width: 2),
-          boxShadow: [BoxShadow(color: color, offset: const Offset(2, 2))],
-        ),
-        child: Center(
-          child: Text(
-            label,
-            style: TextStyle(
-              fontSize: 9,
-              fontWeight: FontWeight.bold,
-              color: filled ? Colors.black : color,
-              letterSpacing: 1,
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-// ═══════════════════════════════════════════
-// TAB 4: SETTINGS
-// ═══════════════════════════════════════════
-class _AdminSettingsTab extends StatelessWidget {
-  const _AdminSettingsTab();
-
-  @override
-  Widget build(BuildContext context) {
-    return SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          children: [
-            _SectionDivider(label: 'SYSTEM — SETTINGS'),
-            const SizedBox(height: 16),
-
-            // ACCOUNT section
-            _SettingsGroupLabel(label: 'ACCOUNT'),
-            _SettingsGroup(children: [
-              _SettingsRow(icon: Icons.person, label: 'Admin Profile', trailing: const Icon(Icons.chevron_right, color: AdminColors.onSurfaceVariant)),
-              _SettingsRow(icon: Icons.lock, label: 'Change Password', trailing: const Icon(Icons.chevron_right, color: AdminColors.onSurfaceVariant)),
-              _SettingsRow(icon: Icons.notifications, label: 'Notifications',
-                  trailing: Switch(
-                    value: true,
-                    onChanged: (_) {},
-                    activeColor: AdminColors.sakuraPink,
-                    activeTrackColor: AdminColors.sakuraPink.withOpacity(0.3),
-                  )),
-            ]),
-            const SizedBox(height: 16),
-
-            // PLATFORM section
-            _SettingsGroupLabel(label: 'PLATFORM'),
-            _SettingsGroup(shadowColor: AdminColors.cyberCyan, children: [
-              _SettingsRow(icon: Icons.policy, label: 'Content Policy', trailing: const Icon(Icons.chevron_right, color: AdminColors.onSurfaceVariant)),
-              _SettingsRow(icon: Icons.group_add, label: 'Registration Mode',
-                  trailing: Switch(
-                    value: true,
-                    onChanged: (_) {},
-                    activeColor: AdminColors.cyberCyan,
-                    activeTrackColor: AdminColors.cyberCyan.withOpacity(0.3),
-                  )),
-              _SettingsRow(icon: Icons.star, label: 'Premium Features',
-                  trailing: Switch(
-                    value: true,
-                    onChanged: (_) {},
-                    activeColor: AdminColors.shonenPurple,
-                    activeTrackColor: AdminColors.shonenPurple.withOpacity(0.3),
-                  )),
-            ]),
-            const SizedBox(height: 16),
-
-            // DANGER ZONE section
-            _SettingsGroupLabel(label: 'DANGER ZONE', color: AdminColors.errorRed),
-            _SettingsGroup(borderColor: AdminColors.errorRed, shadowColor: AdminColors.errorRed, children: [
-              _SettingsRow(
-                icon: Icons.warning_amber,
-                iconColor: AdminColors.errorRed,
-                label: 'Maintenance Mode',
-                labelColor: AdminColors.errorRed,
-                trailing: Switch(
-                  value: false,
-                  onChanged: (_) {},
-                  activeColor: AdminColors.errorRed,
-                ),
-                leftBorderColor: AdminColors.errorRed,
-              ),
-              _SettingsRow(
-                icon: Icons.delete_forever,
-                iconColor: AdminColors.errorRed,
-                label: 'Clear Cache',
-                labelColor: AdminColors.errorRed,
-                trailing: const Icon(Icons.chevron_right, color: AdminColors.errorRed),
-                leftBorderColor: AdminColors.errorRed,
-              ),
-            ]),
-            const SizedBox(height: 24),
-
-            // Logout button
-            GestureDetector(
-              onTap: () async {
-                await context.read<AuthProvider>().logout();
-                if (context.mounted) {
-                  Navigator.pushNamedAndRemoveUntil(context, AppRouter.login, (r) => false);
-                }
-              },
-              child: Container(
-                width: double.infinity,
-                padding: const EdgeInsets.symmetric(vertical: 14),
-                decoration: BoxDecoration(
-                  color: AdminColors.surface,
-                  border: Border.all(color: AdminColors.errorRed, width: 2),
-                  boxShadow: const [BoxShadow(color: AdminColors.errorRed, offset: Offset(4, 4))],
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Icon(Icons.logout, color: AdminColors.errorRed, size: 20),
-                    const SizedBox(width: 8),
-                    Text(
-                      'LOGOUT',
-                      style: GoogleFonts.bebasNeue(
-                        fontSize: 20,
-                        color: AdminColors.errorRed,
-                        letterSpacing: 2,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ],
-        ),
-      );
-  }
-}
-
-class _SettingsGroupLabel extends StatelessWidget {
-  final String label;
-  final Color color;
-
-  const _SettingsGroupLabel({required this.label, this.color = AdminColors.onSurfaceVariant});
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 6),
-      child: Align(
-        alignment: Alignment.centerLeft,
-        child: Text(
-          label,
-          style: GoogleFonts.spaceGrotesk(
-            fontSize: 10,
-            fontWeight: FontWeight.w700,
-            color: color,
-            letterSpacing: 2,
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _SettingsGroup extends StatelessWidget {
-  final List<Widget> children;
-  final Color borderColor;
-  final Color shadowColor;
-
-  const _SettingsGroup({
-    required this.children,
-    this.borderColor = AdminColors.outlineVariant,
-    this.shadowColor = AdminColors.sakuraPink,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: AdminColors.surface,
-        border: Border.all(color: borderColor, width: 2),
-        borderRadius: BorderRadius.circular(4),
-        boxShadow: [BoxShadow(color: shadowColor, offset: const Offset(3, 3))],
-      ),
-      child: Column(
-        children: children
-            .asMap()
-            .entries
-            .map((e) => Column(children: [
-                  e.value,
-                  if (e.key < children.length - 1)
-                    Divider(height: 1, color: AdminColors.outlineVariant.withOpacity(0.5)),
-                ]))
-            .toList(),
-      ),
-    );
-  }
-}
-
-class _SettingsRow extends StatelessWidget {
-  final IconData icon;
-  final Color iconColor;
-  final String label;
-  final Color labelColor;
-  final Widget trailing;
-  final Color? leftBorderColor;
-
-  const _SettingsRow({
-    required this.icon,
-    this.iconColor = AdminColors.sakuraPink,
-    required this.label,
-    this.labelColor = AdminColors.onSurface,
-    required this.trailing,
-    this.leftBorderColor,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-      decoration: leftBorderColor != null
-          ? BoxDecoration(border: Border(left: BorderSide(color: leftBorderColor!, width: 3)))
-          : null,
-      child: Row(
-        children: [
-          Icon(icon, color: iconColor, size: 20),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Text(
-              label,
-              style: TextStyle(fontSize: 14, color: labelColor, fontWeight: FontWeight.w500),
-            ),
-          ),
-          trailing,
         ],
       ),
     );

@@ -17,11 +17,9 @@ class AppRouter {
   static const String paymentWebView = '/payment-webview';
   static const String paymentResult = '/payment-result';
   static const String create = '/create';
-  static const String library = '/library';
   static const String adminDashboard = '/admin';
   static const String readingHistory = '/reading-history';
   static const String favorites = '/favorites';
-  static const String settings = '/settings';
 
   /// Generate routes based on route settings
   static Route<dynamic> generateRoute(RouteSettings settings) {
@@ -51,12 +49,6 @@ class AppRouter {
       case create:
         return MaterialPageRoute(
           builder: (_) => const TaskBoardScreen(),
-          settings: settings,
-        );
-
-      case library:
-        return MaterialPageRoute(
-          builder: (_) => const LibraryScreen(),
           settings: settings,
         );
 
@@ -98,12 +90,6 @@ class AppRouter {
       case favorites:
         return MaterialPageRoute(
           builder: (_) => const FavoritesScreen(),
-          settings: settings,
-        );
-
-      case AppRouter.settings:
-        return MaterialPageRoute(
-          builder: (_) => const SettingsScreen(),
           settings: settings,
         );
 
