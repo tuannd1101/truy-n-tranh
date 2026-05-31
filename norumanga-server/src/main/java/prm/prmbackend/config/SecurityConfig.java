@@ -46,6 +46,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/genres/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/tags/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/creators/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/bundles/**").permitAll()
 
                         // Write operations require authentication
                         .anyRequest().authenticated())

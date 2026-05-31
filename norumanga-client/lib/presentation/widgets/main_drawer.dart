@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../../core/constants/app_colors.dart';
 import '../../core/routes/app_router.dart';
+import '../../providers/auth_provider.dart';
 
 class MainDrawer extends StatelessWidget {
   const MainDrawer({super.key});
@@ -29,12 +31,23 @@ class MainDrawer extends StatelessWidget {
                   Container(
                     width: 48,
                     height: 48,
+                    padding: const EdgeInsets.all(2),
                     decoration: BoxDecoration(
-                      color: AppColors.surfaceVariant,
+                      color: AppColors.background,
                       shape: BoxShape.circle,
-                      border: Border.all(color: AppColors.onSurface, width: 2),
+                      border: Border.all(color: AppColors.primaryContainer, width: 2),
                     ),
-                    child: const Icon(Icons.face, color: AppColors.onSurface, size: 28),
+                    child: ClipOval(
+                      child: Image.asset(
+                        'assets/images/logo.png',
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) => const Icon(
+                          Icons.menu_book,
+                          color: AppColors.onSurface,
+                          size: 24,
+                        ),
+                      ),
+                    ),
                   ),
                   const SizedBox(width: 16),
                   const Expanded(
@@ -42,7 +55,7 @@ class MainDrawer extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'MANGAFLOW',
+                          'NORUMANGA',
                           style: TextStyle(
                             fontFamily: 'Anton',
                             color: AppColors.onSurface,
@@ -65,7 +78,7 @@ class MainDrawer extends StatelessWidget {
                 ],
               ),
             ),
-            
+
             // Menu Items
             Expanded(
               child: ListView(
@@ -76,12 +89,6 @@ class MainDrawer extends StatelessWidget {
                     icon: Icons.home,
                     title: 'TRANG CHỦ',
                     route: AppRouter.home,
-                  ),
-                  _buildDrawerItem(
-                    context,
-                    icon: Icons.my_library_books,
-                    title: 'THƯ VIỆN',
-                    route: AppRouter.library,
                   ),
                   _buildDrawerItem(
                     context,
@@ -107,14 +114,15 @@ class MainDrawer extends StatelessWidget {
                   ),
                   _buildDrawerItem(
                     context,
-                    icon: Icons.settings,
-                    title: 'CÀI ĐẶT',
-                    route: AppRouter.settings,
+                    icon: Icons.logout,
+                    title: 'ĐĂNG XUẤT',
+                    onTap: () => _handleLogout(context),
+                    color: AppColors.error,
                   ),
                 ],
               ),
             ),
-            
+
             // Footer
             Container(
               padding: const EdgeInsets.all(16),
@@ -124,7 +132,7 @@ class MainDrawer extends StatelessWidget {
                 ),
               ),
               child: const Text(
-                'MangaFlow v1.0.0',
+                'NoruManga v1.0.0',
                 style: TextStyle(
                   fontFamily: 'Syne',
                   color: AppColors.onSurfaceVariant,
@@ -140,31 +148,46 @@ class MainDrawer extends StatelessWidget {
     );
   }
 
+  Future<void> _handleLogout(BuildContext context) async {
+    Navigator.pop(context); // close the drawer
+    await context.read<AuthProvider>().logout();
+    if (context.mounted) {
+      Navigator.pushNamedAndRemoveUntil(
+          context, AppRouter.login, (route) => false);
+    }
+  }
+
   Widget _buildDrawerItem(
     BuildContext context, {
     required IconData icon,
     required String title,
-    required String route,
+    String? route,
+    VoidCallback? onTap,
+    Color color = AppColors.onSurface,
   }) {
     return ListTile(
       contentPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 4),
-      leading: Icon(icon, color: AppColors.onSurface, size: 24),
+      leading: Icon(icon, color: color, size: 24),
       title: Text(
         title,
-        style: const TextStyle(
+        style: TextStyle(
           fontFamily: 'Anton',
-          color: AppColors.onSurface,
+          color: color,
           fontSize: 16,
           letterSpacing: 1,
         ),
       ),
       onTap: () {
+        if (onTap != null) {
+          onTap();
+          return;
+        }
         // Pop drawer
         Navigator.pop(context);
-        
+
         // Push route
         final currentRoute = ModalRoute.of(context)?.settings.name;
-        if (currentRoute != route) {
+        if (route != null && currentRoute != route) {
           if (route == AppRouter.home) {
             Navigator.pushNamedAndRemoveUntil(context, route, (r) => false);
           } else {

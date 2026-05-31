@@ -5,7 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-
+import java.time.Instant;
 
 @Data
 @Builder
@@ -16,4 +16,7 @@ public class UserResponseDTO {
     private String fullName;
     private String email;
     private String role;
+
+    /** When the user's premium access expires (null if not premium / no active sub). */
+    private Instant premiumExpiresAt;
 }

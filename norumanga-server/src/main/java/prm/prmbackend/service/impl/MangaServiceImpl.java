@@ -50,6 +50,11 @@ public class MangaServiceImpl implements MangaService {
     }
 
     @Override
+    public MangaResponseDTO getMangaByIdOrNull(String id) {
+        return mangaRepository.findById(id).map(this::toResponse).orElse(null);
+    }
+
+    @Override
     public MangaResponseDTO getMangaBySlug(String slug) {
         return toResponse(mangaRepository.findBySlug(slug)
                 .orElseThrow(() -> new AppException(ErrorCode.MANGA_NOT_FOUND)));

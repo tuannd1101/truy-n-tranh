@@ -8,6 +8,7 @@ import '../../../data/models/chapter.dart';
 import '../../../providers/manga_provider.dart';
 import '../../../providers/chapter_provider.dart';
 import '../../../providers/auth_provider.dart';
+import '../../../providers/favorite_provider.dart';
 
 class MangaDetailScreen extends StatefulWidget {
   final String mangaId;
@@ -22,6 +23,8 @@ class _MangaDetailScreenState extends State<MangaDetailScreen> {
   Manga? _manga;
   List<Chapter> _chapters = [];
   bool _isLoading = true;
+  bool _isFavorite = false;
+  bool _favBusy = false;
 
   @override
   void initState() {
@@ -43,10 +46,16 @@ class _MangaDetailScreenState extends State<MangaDetailScreen> {
     final manga = await mangaProvider.getMangaDetail(widget.mangaId);
     if (manga != null) {
       await chapterProvider.fetchChapters(widget.mangaId);
+      // Determine favorite state (best-effort; ignore failures e.g. not logged in)
+      bool fav = false;
+      try {
+        fav = await context.read<FavoriteProvider>().isFavorite(widget.mangaId);
+      } catch (_) {}
       if (mounted) {
         setState(() {
           _manga = manga;
           _chapters = chapterProvider.chapters;
+          _isFavorite = fav;
           _isLoading = false;
         });
       }
@@ -57,6 +66,43 @@ class _MangaDetailScreenState extends State<MangaDetailScreen> {
         });
       }
     }
+  }
+
+  Future<void> _toggleFavorite() async {
+    if (_favBusy) return;
+    setState(() => _favBusy = true);
+    final favProvider = context.read<FavoriteProvider>();
+    final auth = context.read<AuthProvider>();
+
+    if (!auth.isAuthenticated) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content: Text('Vui lòng đăng nhập để lưu truyện yêu thích.'),
+        backgroundColor: AppColors.error,
+      ));
+      setState(() => _favBusy = false);
+      return;
+    }
+
+    final newState = !_isFavorite;
+    bool ok;
+    if (newState) {
+      ok = await favProvider.addFavorite(widget.mangaId);
+    } else {
+      ok = await favProvider.removeFavorite(widget.mangaId);
+    }
+
+    if (!mounted) return;
+    setState(() {
+      if (ok) _isFavorite = newState;
+      _favBusy = false;
+    });
+
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text(ok
+          ? (newState ? 'Đã thêm vào yêu thích' : 'Đã bỏ yêu thích')
+          : (favProvider.errorMessage ?? 'Thao tác thất bại')),
+      backgroundColor: ok ? AppColors.tertiaryContainer : AppColors.error,
+    ));
   }
 
   void _onTapChapter(Chapter chapter) {
@@ -326,13 +372,13 @@ class _MangaDetailScreenState extends State<MangaDetailScreen> {
           Expanded(
             flex: 1,
             child: GestureDetector(
-              onTap: () {
-                // Thêm vào yêu thích
-              },
+              onTap: _toggleFavorite,
               child: Container(
                 padding: const EdgeInsets.symmetric(vertical: 16),
                 decoration: BoxDecoration(
-                  color: AppColors.surfaceContainer,
+                  color: _isFavorite
+                      ? AppColors.error
+                      : AppColors.surfaceContainer,
                   border: Border.all(color: AppColors.error, width: 2),
                   boxShadow: const [
                     BoxShadow(
@@ -341,7 +387,10 @@ class _MangaDetailScreenState extends State<MangaDetailScreen> {
                     ),
                   ],
                 ),
-                child: const Icon(Icons.favorite_border, color: AppColors.error),
+                child: Icon(
+                  _isFavorite ? Icons.favorite : Icons.favorite_border,
+                  color: _isFavorite ? Colors.white : AppColors.error,
+                ),
               ),
             ),
           ),

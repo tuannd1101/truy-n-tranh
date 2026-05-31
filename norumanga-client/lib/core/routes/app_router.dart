@@ -17,11 +17,9 @@ class AppRouter {
   static const String paymentWebView = '/payment-webview';
   static const String paymentResult = '/payment-result';
   static const String create = '/create';
-  static const String library = '/library';
   static const String adminDashboard = '/admin';
   static const String readingHistory = '/reading-history';
   static const String favorites = '/favorites';
-  static const String settings = '/settings';
 
   /// Generate routes based on route settings
   static Route<dynamic> generateRoute(RouteSettings settings) {
@@ -51,12 +49,6 @@ class AppRouter {
       case create:
         return MaterialPageRoute(
           builder: (_) => const TaskBoardScreen(),
-          settings: settings,
-        );
-
-      case library:
-        return MaterialPageRoute(
-          builder: (_) => const LibraryScreen(),
           settings: settings,
         );
 
@@ -101,12 +93,6 @@ class AppRouter {
           settings: settings,
         );
 
-      case AppRouter.settings:
-        return MaterialPageRoute(
-          builder: (_) => const SettingsScreen(),
-          settings: settings,
-        );
-
       case login:
         return MaterialPageRoute(
           builder: (_) => const LoginScreen(),
@@ -127,10 +113,15 @@ class AppRouter {
 
       case payment:
         final planArgs = args as Map<String, dynamic>? ?? {};
+        final bundleId = planArgs['bundle_id'] as String?;
         final planName = planArgs['plan_name'] as String? ?? 'Premium 1 Tháng';
         final price = planArgs['price'] as int? ?? 49000;
         return MaterialPageRoute(
-          builder: (_) => PaymentScreen(planName: planName, price: price),
+          builder: (_) => PaymentScreen(
+            bundleId: bundleId,
+            planName: planName,
+            price: price,
+          ),
           settings: settings,
         );
 
@@ -147,8 +138,13 @@ class AppRouter {
         final resultArgs = args as Map<String, dynamic>?;
         final success = resultArgs?['success'] as bool? ?? false;
         final method = resultArgs?['method'] as String? ?? 'momo';
+        final message = resultArgs?['message'] as String?;
         return MaterialPageRoute(
-          builder: (_) => PaymentResultScreen(success: success, method: method),
+          builder: (_) => PaymentResultScreen(
+            success: success,
+            method: method,
+            message: message,
+          ),
           settings: settings,
         );
 

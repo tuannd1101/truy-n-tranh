@@ -10,13 +10,18 @@ import prm.prmbackend.dto.request.ResetPasswordRequestDTO;
 import prm.prmbackend.dto.response.AuthResponseDTO;
 import prm.prmbackend.dto.response.UserResponseDTO;
 import prm.prmbackend.entity.Account;
+import prm.prmbackend.entity.Payment;
 import prm.prmbackend.entity.Role;
+import prm.prmbackend.entity.enums.PaymentStatus;
 import prm.prmbackend.exception.AppException;
 import prm.prmbackend.exception.ErrorCode;
 import prm.prmbackend.repository.AccountRepository;
+import prm.prmbackend.repository.PaymentRepository;
 import prm.prmbackend.repository.RoleRepository;
 import prm.prmbackend.service.AuthService;
 import prm.prmbackend.utils.JwtUtil;
+
+import java.time.Instant;
 
 @Service
 @RequiredArgsConstructor
@@ -26,6 +31,7 @@ public class AuthServiceImpl implements AuthService {
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
+    private final PaymentRepository paymentRepository;
 
     @Override
     public String registerLocal(RegisterRequestDTO request) {
@@ -127,6 +133,23 @@ public class AuthServiceImpl implements AuthService {
                 .fullName(account.getFullName())
                 .email(account.getEmail())
                 .role(roleName)
+                .premiumExpiresAt(resolvePremiumExpiry(account.getId(), roleName))
                 .build();
+    }
+
+    /**
+     * Premium expiry is the expiry of the latest successful payment, but only
+     * while the user currently holds the Premium role and that expiry is in the
+     * future.
+     */
+    private Instant resolvePremiumExpiry(String accountId, String roleName) {
+        if (!"Premium".equalsIgnoreCase(roleName)) {
+            return null;
+        }
+        return paymentRepository
+                .findFirstByAccountIdAndStatusOrderByExpiresAtDesc(accountId, PaymentStatus.SUCCESS)
+                .map(Payment::getExpiresAt)
+                .filter(exp -> exp != null && exp.isAfter(Instant.now()))
+                .orElse(null);
     }
 }

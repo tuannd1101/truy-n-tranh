@@ -699,3 +699,344 @@ Every API response follows a unified JSON format defined by `BaseApiResponse<T>`
 - `THEME`
 - `GENRE`
 - `FORMAT`
+
+### BillingCycle
+- `MONTHLY` (30 days)
+- `QUARTERLY` (90 days)
+- `YEARLY` (365 days)
+
+### PaymentMethod
+- `MOMO`
+
+### PaymentStatus
+- `PENDING`
+- `SUCCESS`
+- `FAILED`
+
+---
+
+## 9. Bundle Controller (`BundleController`)
+**Base Path:** `/api/bundles`
+
+A bundle is a subscription package a user can purchase to upgrade their account
+role (e.g. "Premium 1 Tháng"). Price is in VND (integer, no decimals).
+
+### 9.1 Get Bundles
+- **Method:** `GET`
+- **Path:** `/`
+- **Query Params:**
+  - `all` (boolean, default = false): when `true`, returns all bundles
+    (admin view, includes inactive). Default returns active bundles only.
+- **Auth Required:** No (public read)
+- **Output (JSON Response):**
+  ```json
+  {
+    "data": [
+      {
+        "id": "bundle-1-id",
+        "name": "Premium 1 Tháng",
+        "description": "Truy cập không giới hạn...",
+        "price": 49000,
+        "billingCycle": "MONTHLY",
+        "durationDays": 30,
+        "roleName": "Premium",
+        "features": ["Không quảng cáo", "Đọc chương mới trước 7 ngày"],
+        "active": true,
+        "createdAt": "2026-05-30T18:08:55.289Z",
+        "updatedAt": "2026-05-30T18:08:55.289Z"
+      }
+    ],
+    "message": "Success",
+    "error": null
+  }
+  ```
+
+### 9.2 Get Bundle by ID
+- **Method:** `GET`
+- **Path:** `/{id}`
+- **Auth Required:** No
+- **Output:** Single `BundleResponseDTO` inside the envelope.
+
+### 9.3 Create Bundle
+- **Method:** `POST`
+- **Path:** `/`
+- **Auth Required:** Yes (Admin or Manager)
+- **Input (JSON Request Body):**
+  ```json
+  {
+    "name": "Premium 3 Tháng",
+    "description": "Tiết kiệm hơn với gói quý",
+    "price": 129000,
+    "billingCycle": "QUARTERLY",
+    "roleName": "Premium",
+    "features": ["Không quảng cáo", "Tải offline"],
+    "active": true
+  }
+  ```
+- **Output:** Created `BundleResponseDTO`.
+
+### 9.4 Update Bundle
+- **Method:** `PUT`
+- **Path:** `/{id}`
+- **Auth Required:** Yes (Admin or Manager)
+- **Input:** Same format as Create Bundle.
+- **Output:** Updated `BundleResponseDTO`.
+
+### 9.5 Delete Bundle
+- **Method:** `DELETE`
+- **Path:** `/{id}`
+- **Auth Required:** Yes (Admin or Manager)
+- **Output:** `{ "data": null, "message": "Bundle deleted", "error": null }`
+
+---
+
+## 10. Payment Controller (`PaymentController`)
+**Base Path:** `/api/payments`
+
+Records subscription purchases. On a successful payment the transaction is
+persisted (the user's transaction history) and the user's role is upgraded to
+the bundle's `roleName`. Currently only MoMo is supported and is treated as
+immediately successful.
+
+### 10.1 Purchase a Bundle
+- **Method:** `POST`
+- **Path:** `/`
+- **Auth Required:** Yes (any authenticated user)
+- **Input (JSON Request Body):**
+  ```json
+  {
+    "bundleId": "bundle-1-id",
+    "method": "MOMO",
+    "transactionRef": "optional-external-ref"
+  }
+  ```
+- **Functionality:** Creates a SUCCESS payment, saves it to history, and
+  upgrades the caller's role to the bundle's `roleName`.
+- **Output (JSON Response):**
+  ```json
+  {
+    "data": {
+      "id": "payment-1-id",
+      "accountId": "account-1-id",
+      "bundleId": "bundle-1-id",
+      "bundleName": "Premium 1 Tháng",
+      "amount": 49000,
+      "method": "MOMO",
+      "status": "SUCCESS",
+      "transactionRef": "MOMO-1780164684687",
+      "expiresAt": "2026-06-29T18:11:24.687Z",
+      "createdAt": "2026-05-30T18:11:24.687Z",
+      "updatedAt": "2026-05-30T18:11:24.687Z"
+    },
+    "message": "Thanh toán thành công",
+    "error": null
+  }
+  ```
+
+### 10.2 My Transaction History
+- **Method:** `GET`
+- **Path:** `/me`
+- **Auth Required:** Yes (any authenticated user)
+- **Functionality:** Returns the caller's transactions, newest first (READ-only).
+- **Output:** `List<PaymentResponseDTO>` inside the envelope.
+
+### 10.3 All Transactions (Admin)
+- **Method:** `GET`
+- **Path:** `/`
+- **Query Params:** `page` (default 0), `size` (default 20)
+- **Auth Required:** Yes (Admin or Manager)
+- **Functionality:** READ-only paginated list of all transactions.
+- **Output:** Spring `Page<PaymentResponseDTO>` inside the envelope.
+
+### 10.4 Transactions by Account (Admin)
+- **Method:** `GET`
+- **Path:** `/account/{accountId}`
+- **Query Params:** `page` (default 0), `size` (default 20)
+- **Auth Required:** Yes (Admin or Manager)
+- **Output:** Spring `Page<PaymentResponseDTO>` inside the envelope.
+
+
+---
+
+## 11. Role Controller (`RoleController`)
+**Base Path:** `/api/roles`
+
+Read-only role endpoints for the admin dashboard. No create/update/delete.
+
+### 11.1 Get All Roles
+- **Method:** `GET`
+- **Path:** `/`
+- **Auth Required:** Yes (Admin or Manager)
+- **Output (JSON Response):**
+  ```json
+  {
+    "data": [
+      { "id": "role-1-id", "name": "Free", "description": "Free User" },
+      { "id": "role-2-id", "name": "Premium", "description": "Premium User" }
+    ],
+    "message": "Success",
+    "error": null
+  }
+  ```
+
+### 11.2 Get Role by ID
+- **Method:** `GET`
+- **Path:** `/{id}`
+- **Auth Required:** Yes (Admin or Manager)
+- **Output:** Single `RoleResponseDTO` inside the envelope.
+
+---
+
+## 12. User Controller (`UserController`)
+**Base Path:** `/api/users`
+
+Admin user management — view, view detail, and update. User creation and
+deletion are intentionally NOT exposed.
+
+### 12.1 Get Users (paginated)
+- **Method:** `GET`
+- **Path:** `/`
+- **Query Params:**
+  - `keyword` (string, optional): filter by full name or email (case-insensitive).
+  - `roleId` (string, optional): filter by role id.
+  - `page` (int, default = 0)
+  - `size` (int, default = 20)
+- **Auth Required:** Yes (Admin or Manager)
+- **Output:** Spring `Page<UserDetailResponseDTO>` inside the envelope:
+  ```json
+  {
+    "data": {
+      "content": [
+        {
+          "id": "account-1-id",
+          "fullName": "Nguyen Van A",
+          "email": "a@example.com",
+          "status": "ACTIVE",
+          "roleId": "role-1-id",
+          "roleName": "Free",
+          "createdAt": "2026-05-30T16:12:32.004",
+          "updatedAt": "2026-05-31T01:23:05.634"
+        }
+      ],
+      "totalElements": 5,
+      "totalPages": 1,
+      "number": 0,
+      "size": 20,
+      "first": true,
+      "last": true,
+      "numberOfElements": 1,
+      "empty": false
+    },
+    "message": "Success",
+    "error": null
+  }
+  ```
+
+### 12.2 Get User by ID
+- **Method:** `GET`
+- **Path:** `/{id}`
+- **Auth Required:** Yes (Admin or Manager)
+- **Output:** Single `UserDetailResponseDTO` inside the envelope.
+
+### 12.3 Update User
+- **Method:** `PUT`
+- **Path:** `/{id}`
+- **Auth Required:** Yes (Admin or Manager)
+- **Functionality:** Updates editable fields. All fields optional — only
+  non-null values are applied. `roleId` takes precedence over `roleName`.
+- **Input (JSON Request Body):**
+  ```json
+  {
+    "fullName": "Updated Name",
+    "roleId": "role-2-id",
+    "roleName": "Premium",
+    "status": "ACTIVE"
+  }
+  ```
+- **Output:** Updated `UserDetailResponseDTO`.
+
+
+---
+
+## 13. Favorite Controller (`FavoriteController`)
+**Base Path:** `/api/favorites`
+
+Favorite (saved) manga for the authenticated user.
+
+### 13.1 Get My Favorites
+- **Method:** `GET`
+- **Path:** `/`
+- **Auth Required:** Yes
+- **Output:** `List<FavoriteResponseDTO>` (each embeds a `manga` summary), newest first.
+
+### 13.2 Add Favorite
+- **Method:** `POST`
+- **Path:** `/{mangaId}`
+- **Auth Required:** Yes
+- **Functionality:** Adds the manga to favorites (idempotent).
+- **Output:** Created `FavoriteResponseDTO`.
+
+### 13.3 Remove Favorite
+- **Method:** `DELETE`
+- **Path:** `/{mangaId}`
+- **Auth Required:** Yes
+- **Output:** `{ "data": null, "message": "Đã bỏ yêu thích", "error": null }`
+
+### 13.4 Favorite Status
+- **Method:** `GET`
+- **Path:** `/{mangaId}/status`
+- **Auth Required:** Yes
+- **Output:** `{ "data": { "favorite": true|false }, ... }`
+
+---
+
+## 14. Reading History Controller (`ReadingHistoryController`)
+**Base Path:** `/api/reading-history`
+
+Per-user reading history. One entry per (user, manga): the last chapter read.
+
+### 14.1 Get My History
+- **Method:** `GET`
+- **Path:** `/`
+- **Auth Required:** Yes
+- **Output:** `List<ReadingHistoryResponseDTO>` (each embeds a `manga` summary), most recently read first.
+
+### 14.2 Record Reading
+- **Method:** `POST`
+- **Path:** `/`
+- **Auth Required:** Yes
+- **Input (JSON Request Body):**
+  ```json
+  { "mangaId": "manga-1-id", "chapterNumber": 14.0 }
+  ```
+- **Functionality:** Upserts the history entry for that manga with the given chapter.
+- **Output:** `ReadingHistoryResponseDTO`.
+
+### 14.3 Clear History
+- **Method:** `DELETE`
+- **Path:** `/`
+- **Auth Required:** Yes
+- **Output:** `{ "data": null, "message": "Đã xóa lịch sử đọc", "error": null }`
+
+---
+
+## 15. Auth `/me` premium info (update)
+
+`GET /api/v1/auth/me` (Section 2) now also returns `premiumExpiresAt` in the
+`UserResponseDTO`. It is the expiry instant of the user's latest successful
+payment while they hold the Premium role and the expiry is still in the future;
+otherwise `null`.
+
+```json
+{
+  "data": {
+    "id": "account-1-id",
+    "fullName": "Nguyen Van A",
+    "email": "a@example.com",
+    "role": "Premium",
+    "premiumExpiresAt": "2026-06-29T18:11:24.687Z"
+  },
+  "message": "Thành công",
+  "error": null
+}
+```

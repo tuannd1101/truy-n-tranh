@@ -20,6 +20,9 @@ public interface MangaService {
 
     MangaResponseDTO getMangaById(String id);
 
+    /** Returns the manga DTO or null if it no longer exists (no exception). */
+    MangaResponseDTO getMangaByIdOrNull(String id);
+
     MangaResponseDTO getMangaBySlug(String slug);
 
     /** Full-text / title search */

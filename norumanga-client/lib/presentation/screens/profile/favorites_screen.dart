@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../../../core/constants/app_colors.dart';
+import '../../../core/routes/app_router.dart';
+import '../../../data/models/favorite.dart';
+import '../../../providers/favorite_provider.dart';
 
 class FavoritesScreen extends StatefulWidget {
   const FavoritesScreen({super.key});
@@ -9,206 +13,81 @@ class FavoritesScreen extends StatefulWidget {
 }
 
 class _FavoritesScreenState extends State<FavoritesScreen> {
-  String _selectedSort = 'Mới thêm';
-  final List<String> _sortOptions = ['Mới thêm', 'Tên A-Z', 'Tên Z-A', 'Cập nhật mới nhất'];
-  final List<String> _genres = ['Tất cả', 'Shounen', 'Action', 'Romance', 'Fantasy'];
-  String _selectedGenre = 'Tất cả';
-
-  // Mock data
-  final List<Map<String, dynamic>> _favoritesData = [
-    {
-      'id': '1',
-      'title': 'Neon Drift',
-      'isNew': true,
-      'image': 'assets/images/hero_artist.png',
-    },
-    {
-      'id': '2',
-      'title': 'Crimson Blade',
-      'isNew': false,
-      'image': 'assets/images/hero_artist.png',
-    },
-    {
-      'id': '3',
-      'title': 'Starfall Magic',
-      'isNew': true,
-      'image': 'assets/images/hero_artist.png',
-    },
-    {
-      'id': '4',
-      'title': 'Cyber Samurai',
-      'isNew': false,
-      'image': 'assets/images/hero_artist.png',
-    },
-  ];
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<FavoriteProvider>().fetchFavorites();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
-      appBar: _buildAppBar(),
-      body: Column(
-        children: [
-          _buildFilterBar(),
-          Expanded(
-            child: _favoritesData.isEmpty ? _buildEmptyState() : _buildFavoritesGrid(),
-          ),
-        ],
+      appBar: _buildAppBar(context),
+      body: Consumer<FavoriteProvider>(
+        builder: (context, provider, child) {
+          if (provider.isLoading && provider.favorites.isEmpty) {
+            return const Center(
+                child: CircularProgressIndicator(color: AppColors.primaryContainer));
+          }
+          if (provider.errorMessage != null && provider.favorites.isEmpty) {
+            return _buildError(provider);
+          }
+          if (provider.favorites.isEmpty) {
+            return _buildEmptyState();
+          }
+          return RefreshIndicator(
+            color: AppColors.primaryContainer,
+            backgroundColor: AppColors.surfaceContainer,
+            onRefresh: () => provider.fetchFavorites(),
+            child: _buildFavoritesGrid(provider),
+          );
+        },
       ),
     );
   }
 
-  PreferredSizeWidget _buildAppBar() {
+  PreferredSizeWidget _buildAppBar(BuildContext context) {
     return AppBar(
       backgroundColor: AppColors.background,
       elevation: 0,
       iconTheme: const IconThemeData(color: AppColors.onSurface),
       bottom: PreferredSize(
         preferredSize: const Size.fromHeight(2),
-        child: Container(
-          color: AppColors.border,
-          height: 2,
-        ),
+        child: Container(color: AppColors.border, height: 2),
       ),
-      title: const Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'YÊU THÍCH',
-            style: TextStyle(
-              fontFamily: 'Anton',
-              color: AppColors.onSurface,
-              fontSize: 24,
-              letterSpacing: 1,
+      title: Consumer<FavoriteProvider>(
+        builder: (context, provider, _) => Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'YÊU THÍCH',
+              style: TextStyle(
+                fontFamily: 'Anton',
+                color: AppColors.onSurface,
+                fontSize: 24,
+                letterSpacing: 1,
+              ),
             ),
-          ),
-          Text(
-            '4 TRUYỆN',
-            style: TextStyle(
-              fontFamily: 'Syne',
-              color: AppColors.primaryContainer,
-              fontSize: 10,
-              fontWeight: FontWeight.bold,
-              letterSpacing: 1,
+            Text(
+              '${provider.favorites.length} TRUYỆN',
+              style: const TextStyle(
+                fontFamily: 'Syne',
+                color: AppColors.primaryContainer,
+                fontSize: 10,
+                fontWeight: FontWeight.bold,
+                letterSpacing: 1,
+              ),
             ),
-          ),
-        ],
-      ),
-      actions: [
-        IconButton(
-          icon: const Icon(Icons.search, color: AppColors.onSurface),
-          onPressed: () {
-            // Search in favorites
-          },
+          ],
         ),
-      ],
-    );
-  }
-
-  Widget _buildFilterBar() {
-    return Container(
-      color: AppColors.surfaceContainerLow,
-      child: Column(
-        children: [
-          // Sort Dropdown
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Text(
-                  'SẮP XẾP:',
-                  style: TextStyle(
-                    fontFamily: 'Syne',
-                    color: AppColors.onSurfaceVariant,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 12,
-                  ),
-                ),
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12),
-                  decoration: BoxDecoration(
-                    border: Border.all(color: AppColors.outline),
-                    color: AppColors.surface,
-                  ),
-                  height: 32,
-                  child: DropdownButtonHideUnderline(
-                    child: DropdownButton<String>(
-                      value: _selectedSort,
-                      dropdownColor: AppColors.surfaceContainerHigh,
-                      icon: const Icon(Icons.keyboard_arrow_down, color: AppColors.onSurface),
-                      style: const TextStyle(
-                        color: AppColors.onSurface,
-                        fontWeight: FontWeight.bold,
-                        fontFamily: 'Syne',
-                        fontSize: 12,
-                      ),
-                      items: _sortOptions.map((String value) {
-                        return DropdownMenuItem<String>(
-                          value: value,
-                          child: Text(value),
-                        );
-                      }).toList(),
-                      onChanged: (newValue) {
-                        setState(() {
-                          if (newValue != null) _selectedSort = newValue;
-                        });
-                      },
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          // Genre Chips
-          SizedBox(
-            height: 48,
-            child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              padding: const EdgeInsets.symmetric(horizontal: 12),
-              itemCount: _genres.length,
-              itemBuilder: (context, index) {
-                final genre = _genres[index];
-                final isSelected = genre == _selectedGenre;
-                return Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
-                  child: GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        _selectedGenre = genre;
-                      });
-                    },
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      alignment: Alignment.center,
-                      decoration: BoxDecoration(
-                        color: isSelected ? AppColors.primaryContainer : AppColors.surface,
-                        border: Border.all(
-                          color: isSelected ? AppColors.primaryContainer : AppColors.outline,
-                        ),
-                      ),
-                      child: Text(
-                        genre.toUpperCase(),
-                        style: TextStyle(
-                          fontFamily: 'Syne',
-                          color: isSelected ? AppColors.onPrimaryContainer : AppColors.onSurface,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 10,
-                        ),
-                      ),
-                    ),
-                  ),
-                );
-              },
-            ),
-          ),
-          Container(height: 2, color: AppColors.border),
-        ],
       ),
     );
   }
 
-  Widget _buildFavoritesGrid() {
+  Widget _buildFavoritesGrid(FavoriteProvider provider) {
     return GridView.builder(
       padding: const EdgeInsets.all(16),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -217,21 +96,25 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
         crossAxisSpacing: 16,
         mainAxisSpacing: 16,
       ),
-      itemCount: _favoritesData.length,
+      itemCount: provider.favorites.length,
       itemBuilder: (context, index) {
-        return _buildFavoriteItem(_favoritesData[index]);
+        return _buildFavoriteItem(provider, provider.favorites[index]);
       },
     );
   }
 
-  Widget _buildFavoriteItem(Map<String, dynamic> item) {
+  Widget _buildFavoriteItem(FavoriteProvider provider, Favorite fav) {
+    final manga = fav.manga;
+    final title = manga?.title ?? 'Truyện không tồn tại';
+    final coverUrl = manga?.coverUrl ?? '';
+
     return GestureDetector(
-      onLongPress: () {
-        _showItemMenu(item);
-      },
       onTap: () {
-        // Navigate to detail
+        if (manga != null) {
+          Navigator.pushNamed(context, AppRouter.mangaDetail, arguments: manga.id);
+        }
       },
+      onLongPress: () => _showItemMenu(provider, fav),
       child: Container(
         decoration: BoxDecoration(
           border: Border.all(color: AppColors.border, width: 2),
@@ -240,28 +123,26 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
         child: Stack(
           fit: StackFit.expand,
           children: [
-            // Cover Image
             Container(
               color: AppColors.surfaceVariant,
-              child: const Center(
-                child: Icon(Icons.image, color: AppColors.outline, size: 40),
-              ),
+              child: coverUrl.isNotEmpty
+                  ? Image.network(coverUrl, fit: BoxFit.cover,
+                      errorBuilder: (_, __, ___) => const Center(
+                          child: Icon(Icons.broken_image,
+                              color: AppColors.outline, size: 40)))
+                  : const Center(
+                      child: Icon(Icons.image, color: AppColors.outline, size: 40)),
             ),
-            // Gradient Overlay
             Container(
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
-                  colors: [
-                    Colors.transparent,
-                    Colors.black.withOpacity(0.8),
-                  ],
+                  colors: [Colors.transparent, Colors.black.withValues(alpha: 0.8)],
                   stops: const [0.4, 1.0],
                 ),
               ),
             ),
-            // Content
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Column(
@@ -269,7 +150,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    item['title'].toString().toUpperCase(),
+                    title.toUpperCase(),
                     style: const TextStyle(
                       fontFamily: 'Anton',
                       color: AppColors.onSurface,
@@ -282,61 +163,37 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                 ],
               ),
             ),
-            // Top Right Heart
             Positioned(
               top: 8,
               right: 8,
-              child: Container(
-                padding: const EdgeInsets.all(4),
-                decoration: BoxDecoration(
-                  color: AppColors.background.withOpacity(0.8),
-                  shape: BoxShape.circle,
-                  border: Border.all(color: AppColors.border),
-                ),
-                child: const Icon(
-                  Icons.favorite,
-                  color: AppColors.primaryContainer,
-                  size: 16,
+              child: GestureDetector(
+                onTap: () => provider.removeFavorite(fav.mangaId),
+                child: Container(
+                  padding: const EdgeInsets.all(4),
+                  decoration: BoxDecoration(
+                    color: AppColors.background.withValues(alpha: 0.8),
+                    shape: BoxShape.circle,
+                    border: Border.all(color: AppColors.border),
+                  ),
+                  child: const Icon(Icons.favorite,
+                      color: AppColors.primaryContainer, size: 16),
                 ),
               ),
             ),
-            // Top Left New Badge
-            if (item['isNew'] == true)
-              Positioned(
-                top: 8,
-                left: -8,
-                child: Transform.rotate(
-                  angle: -0.2,
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                    color: AppColors.secondaryContainer,
-                    child: const Text(
-                      'NEW',
-                      style: TextStyle(
-                        fontFamily: 'Anton',
-                        color: AppColors.onSecondaryContainer,
-                        fontSize: 12,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
           ],
         ),
       ),
     );
   }
 
-  void _showItemMenu(Map<String, dynamic> item) {
+  void _showItemMenu(FavoriteProvider provider, Favorite fav) {
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
       builder: (context) => Container(
         decoration: const BoxDecoration(
           color: AppColors.surfaceContainer,
-          border: Border(
-            top: BorderSide(color: AppColors.primaryContainer, width: 2),
-          ),
+          border: Border(top: BorderSide(color: AppColors.primaryContainer, width: 2)),
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -359,25 +216,35 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
               ),
               onTap: () {
                 Navigator.pop(context);
-                // Handle remove favorite
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.share, color: AppColors.onSurface),
-              title: const Text(
-                'CHIA SẺ',
-                style: TextStyle(
-                  fontFamily: 'Syne',
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.onSurface,
-                ),
-              ),
-              onTap: () {
-                Navigator.pop(context);
-                // Handle share
+                provider.removeFavorite(fav.mangaId);
               },
             ),
             const SizedBox(height: 16),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildError(FavoriteProvider provider) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(Icons.error_outline, size: 56, color: AppColors.error),
+            const SizedBox(height: 16),
+            Text(provider.errorMessage ?? 'Đã xảy ra lỗi',
+                textAlign: TextAlign.center,
+                style: const TextStyle(color: AppColors.onSurface)),
+            const SizedBox(height: 16),
+            ElevatedButton(
+              onPressed: () => provider.fetchFavorites(),
+              style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.primaryContainer),
+              child: const Text('THỬ LẠI'),
+            ),
           ],
         ),
       ),
@@ -389,11 +256,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Icon(
-            Icons.favorite_border,
-            size: 80,
-            color: AppColors.outline,
-          ),
+          const Icon(Icons.favorite_border, size: 80, color: AppColors.outline),
           const SizedBox(height: 24),
           const Text(
             'CHƯA CÓ TRUYỆN YÊU THÍCH',
@@ -403,18 +266,20 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
               fontSize: 24,
               letterSpacing: 1,
             ),
+            textAlign: TextAlign.center,
           ),
           const SizedBox(height: 8),
-          const Text(
-            'Nhấn vào icon ❤️ ở trang chi tiết để thêm truyện yêu thích',
-            style: TextStyle(color: AppColors.onSurfaceVariant),
-            textAlign: TextAlign.center,
+          const Padding(
+            padding: EdgeInsets.symmetric(horizontal: 32),
+            child: Text(
+              'Nhấn vào icon ❤️ ở trang chi tiết để thêm truyện yêu thích',
+              style: TextStyle(color: AppColors.onSurfaceVariant),
+              textAlign: TextAlign.center,
+            ),
           ),
           const SizedBox(height: 32),
           ElevatedButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
+            onPressed: () => Navigator.pop(context),
             style: ElevatedButton.styleFrom(
               backgroundColor: AppColors.primaryContainer,
               foregroundColor: AppColors.onPrimaryContainer,
@@ -423,7 +288,6 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                 borderRadius: BorderRadius.zero,
                 side: BorderSide(color: AppColors.border, width: 2),
               ),
-              elevation: 4,
             ),
             child: const Text(
               'KHÁM PHÁ NGAY',
