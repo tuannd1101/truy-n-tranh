@@ -854,3 +854,103 @@ immediately successful.
 - **Query Params:** `page` (default 0), `size` (default 20)
 - **Auth Required:** Yes (Admin or Manager)
 - **Output:** Spring `Page<PaymentResponseDTO>` inside the envelope.
+
+
+---
+
+## 11. Role Controller (`RoleController`)
+**Base Path:** `/api/roles`
+
+Read-only role endpoints for the admin dashboard. No create/update/delete.
+
+### 11.1 Get All Roles
+- **Method:** `GET`
+- **Path:** `/`
+- **Auth Required:** Yes (Admin or Manager)
+- **Output (JSON Response):**
+  ```json
+  {
+    "data": [
+      { "id": "role-1-id", "name": "Free", "description": "Free User" },
+      { "id": "role-2-id", "name": "Premium", "description": "Premium User" }
+    ],
+    "message": "Success",
+    "error": null
+  }
+  ```
+
+### 11.2 Get Role by ID
+- **Method:** `GET`
+- **Path:** `/{id}`
+- **Auth Required:** Yes (Admin or Manager)
+- **Output:** Single `RoleResponseDTO` inside the envelope.
+
+---
+
+## 12. User Controller (`UserController`)
+**Base Path:** `/api/users`
+
+Admin user management — view, view detail, and update. User creation and
+deletion are intentionally NOT exposed.
+
+### 12.1 Get Users (paginated)
+- **Method:** `GET`
+- **Path:** `/`
+- **Query Params:**
+  - `keyword` (string, optional): filter by full name or email (case-insensitive).
+  - `roleId` (string, optional): filter by role id.
+  - `page` (int, default = 0)
+  - `size` (int, default = 20)
+- **Auth Required:** Yes (Admin or Manager)
+- **Output:** Spring `Page<UserDetailResponseDTO>` inside the envelope:
+  ```json
+  {
+    "data": {
+      "content": [
+        {
+          "id": "account-1-id",
+          "fullName": "Nguyen Van A",
+          "email": "a@example.com",
+          "status": "ACTIVE",
+          "roleId": "role-1-id",
+          "roleName": "Free",
+          "createdAt": "2026-05-30T16:12:32.004",
+          "updatedAt": "2026-05-31T01:23:05.634"
+        }
+      ],
+      "totalElements": 5,
+      "totalPages": 1,
+      "number": 0,
+      "size": 20,
+      "first": true,
+      "last": true,
+      "numberOfElements": 1,
+      "empty": false
+    },
+    "message": "Success",
+    "error": null
+  }
+  ```
+
+### 12.2 Get User by ID
+- **Method:** `GET`
+- **Path:** `/{id}`
+- **Auth Required:** Yes (Admin or Manager)
+- **Output:** Single `UserDetailResponseDTO` inside the envelope.
+
+### 12.3 Update User
+- **Method:** `PUT`
+- **Path:** `/{id}`
+- **Auth Required:** Yes (Admin or Manager)
+- **Functionality:** Updates editable fields. All fields optional — only
+  non-null values are applied. `roleId` takes precedence over `roleName`.
+- **Input (JSON Request Body):**
+  ```json
+  {
+    "fullName": "Updated Name",
+    "roleId": "role-2-id",
+    "roleName": "Premium",
+    "status": "ACTIVE"
+  }
+  ```
+- **Output:** Updated `UserDetailResponseDTO`.

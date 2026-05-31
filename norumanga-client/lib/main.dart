@@ -11,6 +11,8 @@ import 'data/network/manga_api_service.dart';
 import 'data/network/chapter_api_service.dart';
 import 'data/network/bundle_api_service.dart';
 import 'data/network/payment_api_service.dart';
+import 'data/network/user_api_service.dart';
+import 'data/network/role_api_service.dart';
 import 'providers/tag_provider.dart';
 import 'providers/creator_provider.dart';
 import 'providers/manga_provider.dart';
@@ -18,6 +20,8 @@ import 'providers/chapter_provider.dart';
 import 'providers/search_provider.dart';
 import 'providers/bundle_provider.dart';
 import 'providers/payment_provider.dart';
+import 'providers/user_provider.dart';
+import 'providers/role_provider.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -85,6 +89,20 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProxyProvider<PaymentApiService, PaymentProvider>(
           create: (context) => PaymentProvider(PaymentApiService(ApiService())),
           update: (_, paymentApi, previous) => previous ?? PaymentProvider(paymentApi),
+        ),
+        ProxyProvider<ApiService, UserApiService>(
+          update: (_, api, __) => UserApiService(api),
+        ),
+        ChangeNotifierProxyProvider<UserApiService, UserProvider>(
+          create: (context) => UserProvider(UserApiService(ApiService())),
+          update: (_, userApi, previous) => previous ?? UserProvider(userApi),
+        ),
+        ProxyProvider<ApiService, RoleApiService>(
+          update: (_, api, __) => RoleApiService(api),
+        ),
+        ChangeNotifierProxyProvider<RoleApiService, RoleProvider>(
+          create: (context) => RoleProvider(RoleApiService(ApiService())),
+          update: (_, roleApi, previous) => previous ?? RoleProvider(roleApi),
         ),
       ],
       child: MaterialApp(

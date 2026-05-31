@@ -9,6 +9,8 @@ import 'tabs/admin_manga_tab.dart';
 import 'tabs/admin_tag_tab.dart';
 import 'tabs/admin_bundle_tab.dart';
 import 'tabs/admin_transaction_tab.dart';
+import 'tabs/admin_user_tab.dart';
+import 'tabs/admin_role_tab.dart';
 
 // ═══════════════════════════════════════════
 // COLORS
@@ -44,7 +46,8 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
 
   final List<Widget> _screens = const [
     _AdminDashboardTab(),
-    _AdminUsersTab(),
+    AdminUserTab(),
+    AdminRoleTab(),
     _AdminContentTab(),
     AdminMangaTab(),
     AdminCreatorTab(),
@@ -94,19 +97,20 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
           ),
           _drawerItem(icon: Icons.dashboard, title: 'Dashboard', index: 0),
           _drawerItem(icon: Icons.group, title: 'Users', index: 1),
-          _drawerItem(icon: Icons.library_books, title: 'Content', index: 2),
+          _drawerItem(icon: Icons.badge, title: 'Roles', index: 2),
+          _drawerItem(icon: Icons.library_books, title: 'Content', index: 3),
           const Divider(color: AdminColors.outlineVariant),
           Padding(
             padding: const EdgeInsets.only(left: 16, top: 8, bottom: 8),
             child: Text('MANAGEMENT', style: GoogleFonts.spaceGrotesk(fontSize: 12, color: AdminColors.onSurfaceVariant, fontWeight: FontWeight.bold)),
           ),
-          _drawerItem(icon: Icons.menu_book, title: 'Manga Series', index: 3),
-          _drawerItem(icon: Icons.person, title: 'Creators', index: 4),
-          _drawerItem(icon: Icons.local_offer, title: 'Tags', index: 5),
-          _drawerItem(icon: Icons.workspace_premium, title: 'Bundles', index: 6),
-          _drawerItem(icon: Icons.receipt_long, title: 'Transactions', index: 7),
+          _drawerItem(icon: Icons.menu_book, title: 'Manga Series', index: 4),
+          _drawerItem(icon: Icons.person, title: 'Creators', index: 5),
+          _drawerItem(icon: Icons.local_offer, title: 'Tags', index: 6),
+          _drawerItem(icon: Icons.workspace_premium, title: 'Bundles', index: 7),
+          _drawerItem(icon: Icons.receipt_long, title: 'Transactions', index: 8),
           const Divider(color: AdminColors.outlineVariant),
-          _drawerItem(icon: Icons.settings, title: 'Settings', index: 8),
+          _drawerItem(icon: Icons.settings, title: 'Settings', index: 9),
         ],
       ),
     );
@@ -704,216 +708,6 @@ class _ActivityRow extends StatelessWidget {
               color: AdminColors.onSurfaceVariant,
             ),
           ),
-        ],
-      ),
-    );
-  }
-}
-
-// ═══════════════════════════════════════════
-// TAB 2: USERS (Placeholder)
-// ═══════════════════════════════════════════
-class _AdminUsersTab extends StatelessWidget {
-  const _AdminUsersTab();
-
-  final _users = const [
-    {'initial': 'K', 'name': 'KiraArtist', 'email': 'kira@mail.com', 'role': 'PREMIUM'},
-    {'initial': 'R', 'name': 'RyuReader', 'email': 'ryu@mail.com', 'role': 'FREE'},
-    {'initial': 'N', 'name': 'NakamuraEd', 'email': 'naka@mail.com', 'role': 'MANAGER'},
-    {'initial': 'A', 'name': 'AdminSan', 'email': 'admin@mangaflow.com', 'role': 'ADMIN'},
-    {'initial': 'S', 'name': 'SakuraDraw', 'email': 'sakura@mail.com', 'role': 'PREMIUM'},
-    {'initial': 'X', 'name': 'Xx_Sniper', 'email': 'sniper@mail.com', 'role': 'BANNED'},
-    {'initial': 'M', 'name': 'MangaFan', 'email': 'fan@mail.com', 'role': 'FREE'},
-  ];
-
-  Color _roleColor(String role) {
-    switch (role) {
-      case 'PREMIUM': return AdminColors.sakuraPink;
-      case 'FREE': return AdminColors.cyberCyan;
-      case 'MANAGER': return AdminColors.shonenPurple;
-      case 'ADMIN': return AdminColors.warningYellow;
-      case 'BANNED': return AdminColors.errorRed;
-      default: return Colors.grey;
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-        children: [
-          // Page Title
-          Padding(
-            padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
-            child: _SectionDivider(label: 'USER — MANAGEMENT'),
-          ),
-          // Search bar
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            child: Container(
-              decoration: BoxDecoration(
-                color: AdminColors.surface,
-                border: Border.all(color: AdminColors.sakuraPink, width: 2),
-                boxShadow: const [BoxShadow(color: AdminColors.sakuraPink, offset: Offset(3, 3))],
-              ),
-              child: const TextField(
-                style: TextStyle(color: AdminColors.onSurface),
-                decoration: InputDecoration(
-                  hintText: 'SEARCH USER...',
-                  hintStyle: TextStyle(color: AdminColors.onSurfaceVariant),
-                  prefixIcon: Icon(Icons.search, color: AdminColors.sakuraPink),
-                  border: InputBorder.none,
-                  contentPadding: EdgeInsets.symmetric(vertical: 12),
-                ),
-              ),
-            ),
-          ),
-          // Filter chips
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
-                children: ['ALL', 'FREE', 'PREMIUM', 'MANAGER', 'ADMIN']
-                    .map((r) => Padding(
-                          padding: const EdgeInsets.only(right: 8),
-                          child: _FilterChip(label: r, color: _roleColor(r), isActive: r == 'ALL'),
-                        ))
-                    .toList(),
-              ),
-            ),
-          ),
-          const SizedBox(height: 8),
-          // User list
-          Expanded(
-            child: ListView.separated(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              itemCount: _users.length,
-              separatorBuilder: (_, __) => const SizedBox(height: 8),
-              itemBuilder: (context, i) {
-                final u = _users[i];
-                final role = u['role']!;
-                final color = _roleColor(role);
-                return _UserCard(
-                  initial: u['initial']!,
-                  name: u['name']!,
-                  email: u['email']!,
-                  role: role,
-                  roleColor: color,
-                );
-              },
-            ),
-          ),
-        ],
-      );
-  }
-}
-
-class _FilterChip extends StatelessWidget {
-  final String label;
-  final Color color;
-  final bool isActive;
-
-  const _FilterChip({required this.label, required this.color, this.isActive = false});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
-      decoration: BoxDecoration(
-        color: isActive ? color : Colors.transparent,
-        border: Border.all(color: color, width: 2),
-        boxShadow: isActive ? [BoxShadow(color: color, offset: const Offset(2, 2))] : null,
-      ),
-      child: Text(
-        label,
-        style: GoogleFonts.spaceGrotesk(
-          fontSize: 11,
-          fontWeight: FontWeight.w700,
-          color: isActive ? Colors.black : color,
-          letterSpacing: 1,
-        ),
-      ),
-    );
-  }
-}
-
-class _UserCard extends StatelessWidget {
-  final String initial;
-  final String name;
-  final String email;
-  final String role;
-  final Color roleColor;
-
-  const _UserCard({
-    required this.initial,
-    required this.name,
-    required this.email,
-    required this.role,
-    required this.roleColor,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(10),
-      decoration: BoxDecoration(
-        color: AdminColors.surface,
-        border: Border(
-          left: BorderSide(color: roleColor, width: 4),
-          top: BorderSide(color: Colors.black26, width: 1),
-          right: BorderSide(color: Colors.black26, width: 1),
-          bottom: BorderSide(color: Colors.black26, width: 1),
-        ),
-        boxShadow: [BoxShadow(color: roleColor.withOpacity(0.5), offset: const Offset(3, 3))],
-      ),
-      child: Row(
-        children: [
-          // Avatar
-          Container(
-            width: 40,
-            height: 40,
-            decoration: BoxDecoration(
-              color: roleColor,
-              shape: BoxShape.circle,
-              border: Border.all(color: Colors.black, width: 2),
-            ),
-            child: Center(
-              child: Text(
-                initial,
-                style: GoogleFonts.bebasNeue(fontSize: 18, color: Colors.black),
-              ),
-            ),
-          ),
-          const SizedBox(width: 10),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(name,
-                    style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: AdminColors.onSurface)),
-                Text(email,
-                    style: const TextStyle(fontSize: 11, color: AdminColors.onSurfaceVariant)),
-              ],
-            ),
-          ),
-          // Role badge
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
-            decoration: BoxDecoration(
-              border: Border.all(color: roleColor, width: 1),
-            ),
-            child: Text(
-              role,
-              style: TextStyle(
-                fontSize: 9,
-                fontWeight: FontWeight.bold,
-                color: roleColor,
-                letterSpacing: 1,
-              ),
-            ),
-          ),
-          const SizedBox(width: 8),
-          const Icon(Icons.more_vert, color: AdminColors.onSurfaceVariant, size: 18),
         ],
       ),
     );
